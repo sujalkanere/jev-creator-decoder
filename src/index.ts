@@ -1,7 +1,7 @@
 import { fetchShorts, parseInput } from "./adapters/youtube";
 import { classifyBatch } from "./jev";
 import { draftHooks, judgeHooks } from "./hooks";
-import { raceJev, raceLlmOne } from "./race";
+import { raceJev, raceLlmOne, listChallengers } from "./race";
 import { askDecoder } from "./ask";
 import { handleAuth, isSignedIn } from "./auth";
 
@@ -12,6 +12,13 @@ export interface Env {
   YOUTUBE_API_KEY: string;
   SETUP_TOKEN?: string;
   TYPESAFE_API_KEY?: string; // optional: when set, Jev runs on TypeSafe's API first, with Workers AI as fallback
+  // Optional Model Race challengers. Each appears in the race once its key is set.
+  ANTHROPIC_API_KEY?: string;
+  OPENAI_API_KEY?: string;
+  OPENROUTER_API_KEY?: string;
+  ANTHROPIC_MODEL?: string;
+  OPENAI_MODEL?: string;
+  OPENROUTER_MODEL?: string;
 }
 
 const json = (data: unknown, status = 200) =>
@@ -97,8 +104,10 @@ export default {
         }
         case "/api/race/jev":
           return json(await raceJev(env, body.videos || []));
+        case "/api/race/models":
+          return json({ models: listChallengers(env) });
         case "/api/race/llm":
-          return json(await raceLlmOne(env, body.video || {}));
+          return json(await raceLlmOne(env, body.video || {}, body.model));
         case "/api/ask": {
           const key = String(body.handle || "").toLowerCase();
           const saved = await env.DB.prepare("SELECT payload FROM decodes WHERE handle = ?").bind(key).first();

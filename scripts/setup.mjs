@@ -43,5 +43,8 @@ if (!vars.YOUTUBE_API_KEY || /paste-your/i.test(vars.YOUTUBE_API_KEY)) {
   if (!v) { console.error("\nNo key entered. Run npm run setup again."); process.exit(1); }
   vars.YOUTUBE_API_KEY = v;
 } else console.log("     Already saved in .dev.vars.");
-fs.writeFileSync(".dev.vars", `YOUTUBE_API_KEY=${vars.YOUTUBE_API_KEY}\n`);
+// Only the YouTube line changes, so other keys and comments in .dev.vars survive a re-run.
+const old = fs.existsSync(".dev.vars") ? fs.readFileSync(".dev.vars", "utf8") : "";
+const line = `YOUTUBE_API_KEY=${vars.YOUTUBE_API_KEY}`;
+fs.writeFileSync(".dev.vars", /^YOUTUBE_API_KEY=.*$/m.test(old) ? old.replace(/^YOUTUBE_API_KEY=.*$/m, () => line) : line + "\n" + old);
 console.log("\nSetup done. Next: npm run dev, then create your dashboard password in the browser.\n");

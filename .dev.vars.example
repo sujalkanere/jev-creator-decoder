@@ -4,3 +4,13 @@ YOUTUBE_API_KEY=paste-your-youtube-data-api-v3-key
 # Optional. When set, Jev runs on TypeSafe's own HTTP API first, with Cloudflare
 # Workers AI as the fallback. Leave unset to run Jev on Workers AI only.
 # TYPESAFE_API_KEY=paste-your-typesafe-api-key
+
+# Optional. Model Race challengers: each model appears in the race once its key is set.
+# ANTHROPIC_API_KEY=paste-your-anthropic-api-key
+# OPENAI_API_KEY=paste-your-openai-api-key
+# OPENROUTER_API_KEY=paste-your-openrouter-api-key
+
+# Optional model overrides (defaults: claude-opus-5, gpt-5-mini, google/gemini-2.5-flash-lite).
+# ANTHROPIC_MODEL=
+# OPENAI_MODEL=
+# OPENROUTER_MODEL=
