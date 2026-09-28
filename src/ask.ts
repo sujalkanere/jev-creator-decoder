@@ -95,8 +95,14 @@ export async function askDecoder(env: any, question: string, payload: any) {
   const act = check?.answers?.actionable || {};
   const levels = Object.keys(act.legend || { 0: 0, 1: 1, 2: 2 }).length - 1 || 2;
 
+  // A small chart built from real decoded numbers, never from the chat model.
+  const viz = topic === "timing"
+    ? { kind: "months", rows: data.recent_months }
+    : topic === "audience"
+      ? { kind: "top", rows: data.top_videos.map((v: any) => ({ label: v.title, value: v.views, hook: v.hook })) }
+      : { kind: "lift", rows: data.by_hook.map((h: any) => ({ label: h.hook, value: h.lift, share: h.share_pct })) };
   return {
-    blocked: false, topic, answerable, answer, steps,
+    blocked: false, topic, answerable, answer, steps, viz,
     grounded, grounded_ok: grounded >= 0.6,
     actionable: Math.max(0, Math.min(1, Number(act.score ?? 0) / levels)),
     chart: CHART[topic] || "formula",

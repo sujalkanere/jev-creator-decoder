@@ -13,9 +13,9 @@ Runs on Cloudflare's free tier. Built for a NextWork project.
 ```bash
 npm install
 npx wrangler login
-npm run setup      # creates the database, connects it, creates .dev.vars
+npm run setup      # creates the database, then asks for your YouTube key and a passcode
 ```
-Open `.dev.vars` and add your YouTube API key and a passcode of your choice. Then:
+Then:
 ```bash
 npm run dev        # open http://localhost:8787
 ```
@@ -27,7 +27,7 @@ npm run ship       # cloud database, deploy, then secrets from .dev.vars
 Open the workers.dev URL it prints and enter your passcode.
 
 ## How it works
-1. You enter a creator handle. A creator you decoded before loads instantly from your library with zero Jev calls.
+1. You enter a creator: `@handle`, a channel link, or any video or Shorts link from that creator. A creator you decoded before loads instantly from your library with zero Jev calls.
 2. The YouTube adapter pulls up to 200 Shorts (180 seconds or shorter) with title, description, views, likes, thumbnail, and date. About 10 to 20 YouTube quota units per creator. It never uses `search.list`.
 3. The dashboard sends 10 videos per request to the Worker, 4 requests at a time. Each request is **one Jev call** that answers every question in `schema.json` for all 10 videos in parallel.
 4. Answers below the confidence threshold are flagged for review.
@@ -36,6 +36,14 @@ Open the workers.dev URL it prints and enter your passcode.
 7. Ask the Decoder: Jev routes each question, Llama 3.3 70B writes the answer from your decoded data only, and Jev fact-checks it with the questions in `chat.json`.
 
 Google Cloud only supplies the YouTube API key. Cloudflare hosts the Worker, runs every model, and stores decodes in D1. The app reads public data only, so there is no YouTube login. It decodes titles and descriptions, not spoken scripts, because YouTube's captions API requires the video owner's login.
+
+## After a decode
+- **Gallery:** filter by hook, Needs review, or Outperformers, sort by views or date, click any video to see every Jev answer.
+- **Usage vs lift:** click a hook row to filter the gallery to it.
+- **Hooks:** Copy or Shortlist any scored hook.
+- **Copy client brief:** Winning Formula, top videos with links, and your shortlisted hooks, ready to paste.
+- **Download CSV:** every video with its Jev labels, confidence, views, and lift.
+- **Demo mode:** add `?demo` to the URL to try the dashboard with sample data and no API calls.
 
 ## The files you edit
 | File | What it controls |

@@ -1,4 +1,4 @@
-import { fetchShorts } from "./adapters/youtube";
+import { fetchShorts, parseInput } from "./adapters/youtube";
 import { classifyBatch } from "./jev";
 import { draftHooks, judgeHooks } from "./hooks";
 import { raceJev, raceLlmOne } from "./race";
@@ -21,7 +21,10 @@ export default {
     if (!url.pathname.startsWith("/api/")) return json({ error: "Not found" }, 404);
 
     // Every API route is gated behind the dashboard passcode.
-    if (!env.DASHBOARD_PASSCODE || req.headers.get("x-passcode") !== env.DASHBOARD_PASSCODE) {
+    if (!env.DASHBOARD_PASSCODE || /choose-a/i.test(env.DASHBOARD_PASSCODE)) {
+      return json({ error: "Set a real DASHBOARD_PASSCODE in .dev.vars, then restart npm run dev." }, 500);
+    }
+    if (req.headers.get("x-passcode") !== env.DASHBOARD_PASSCODE) {
       return json({ error: "Wrong or missing passcode" }, 401);
     }
 
@@ -30,9 +33,10 @@ export default {
 
       switch (url.pathname) {
         case "/api/ingest": {
-          const handle = (url.searchParams.get("handle") || "").trim();
-          if (!handle) return json({ error: "Add a creator handle, like @creator" }, 400);
-          const key = (handle.startsWith("@") ? handle : "@" + handle).toLowerCase();
+          const input = (url.searchParams.get("handle") || "").trim();
+          if (!input) return json({ error: "Add a creator handle, channel link, or video link." }, 400);
+          const parsed = parseInput(input);
+          const key = (parsed.handle || input).toLowerCase();
           const saved = await env.DB.prepare("SELECT payload FROM decodes WHERE handle = ?").bind(key).first();
           if (saved) {
             const data = JSON.parse(saved.payload);
@@ -40,8 +44,13 @@ export default {
             if (url.searchParams.get("fresh") === "1") return json({ handle: key, cached: false, channel: data.channel, records: data.records, quota_units: 0 });
             return json({ handle: key, cached: true, ...data });
           }
-          const data = await fetchShorts(key, env.YOUTUBE_API_KEY);
-          return json({ handle: key, cached: false, channel: data.channel, records: data.records, quota_units: data.quota_units });
+          const data = await fetchShorts(input, env.YOUTUBE_API_KEY);
+          const real = data.channel.handle;
+          if (real !== key) {
+            const again = await env.DB.prepare("SELECT payload FROM decodes WHERE handle = ?").bind(real).first();
+            if (again && url.searchParams.get("fresh") !== "1") return json({ handle: real, cached: true, ...JSON.parse(again.payload) });
+          }
+          return json({ handle: real, cached: false, channel: data.channel, records: data.records, quota_units: data.quota_units });
         }
         case "/api/classify": {
           if (!Array.isArray(body.videos) || !body.videos.length) return json({ error: "Send up to 10 videos" }, 400);

@@ -30,25 +30,27 @@ Generate a detailed NextWork project from this brief. Use every fact exactly as 
 ## Step 1: Set up and meet Jev (~15 min)
 - Create a free Cloudflare account and register a workers.dev subdomain. Explain that Jev runs remotely on Workers AI, so `wrangler dev` needs it.
 - Create a Google Cloud project, enable YouTube Data API v3, create an API key restricted to that API.
-- Clone the repo, run `npm install`, `npx wrangler login`, then `npm run setup`. Linux learners with a system libvips: `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install`.
-- Fill in `.dev.vars` (YouTube key and a passcode). Run `npm run dev` and open http://localhost:8787. Enter the passcode.
+- Clone the repo, run `npm install`, `npx wrangler login`, then `npm run setup`. Setup creates the database and asks for the YouTube key and a passcode. Linux learners with a system libvips: `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install`.
+- If the workers.dev onboarding link shows a 404, open Workers & Pages and check Account details for the subdomain, or run `npx wrangler deploy` once and accept the subdomain prompt.
+- Run `npm run dev` and open http://localhost:8787. Enter the passcode.
 - Guided tour of `src/jev.ts`: how `buildVideoQuestions` repeats each `schema.json` question per video as `v{i}_{key}`, and how answers are split back per video.
 - The learner predicts how many questions one call asks (10 videos x 4 questions = 40) and checks it in Step 2.
 - 📸 Screenshot: the welcome screen.
 
 ## Step 2: Decode your first creator (~15 min)
-- Enter any creator handle that posts Shorts and click Decode.
+- Enter a creator that posts Shorts: an @handle (shown under the channel name on YouTube), a channel link, or any video link. Click Decode.
 - Watch the thumbnail wall pass through the Jev lens, the four call lanes fill, and the call log stream. Read the hero: run time, videos per second, Jev spend, projected cost at 10,000 videos.
 - Turn on Watch mode and click Re-run Jev to replay at a followable pace. 📸 Screen record the decode.
 - Drag the confidence slider. Open a flagged video (Winning Formula, Review them) and read its probability bars in the drawer. Decide if Jev was right to be unsure.
-- Read the Winning Formula and the usage vs lift rows: which hook does the creator use most, and which one actually outperforms? Name the blind spot.
+- Read the summary strip and the usage vs lift rows: which hook does the creator use most, and which one actually outperforms? Name the blind spot. Click a hook row to filter the gallery to it.
+- Click Copy client brief and paste it somewhere. This is the deliverable.
 
 ## Step 3: Design Jev's questions (~15 min)
 - In `schema.json`, write two new questions: a `choice` with the learner's own criteria (for example topic) and a `noul` (for example "Does the title promise a specific number?"). Keep the existing `hook` option keys, because the dashboard colors depend on them.
 - Click Re-run Jev. Questions per call go from 40 to 60, and the lane bars show latency barely moves. Open a video in the drawer to see the new answers.
 - If a new question comes back with low confidence, rewrite its criteria and run again.
 - In `judge.json`, rewrite the `fit` and `lift_odds` questions in the learner's own words.
-- Type hooks into Score new hooks and watch Jev score each one live, then Add to board. Click Draft 5 (Llama 3.1 8B drafts, Jev scores all 5 in one call). The best hook gets the Film this next ribbon.
+- Type hooks into Score new hooks and watch Jev score each one live, then Add to board. Click Draft 5 (Llama 3.1 8B drafts, Jev scores all 5 in one call). The best hook gets the Film this next ribbon. Shortlist the hooks worth filming, then copy the client brief again: the shortlist is now included.
 
 ## Step 4: Race it and ship it (~12 min)
 - Click Model Race. Pick the decoded creator and click Start. Jev classifies 10 videos in one call while the chat model makes 10 calls, with unusable answers flashing red.
@@ -57,7 +59,7 @@ Generate a detailed NextWork project from this brief. Use every fact exactly as 
 - 📸 Screenshot: the race verdict and the deployed dashboard.
 
 ## Secret Mission: Ask the Decoder (~20 min)
-- Open Ask the Decoder from the Winning Formula row.
+- Open Ask the Decoder from the button in the bottom right.
 - Explain the flow: Jev routes the question with `chat.json` `router` (topic `choice`, answerable `noul`). Off-topic or unanswerable questions are blocked with no chat model call. Answerable questions go to Llama 3.3 70B with a factual summary of the decode. Jev then fact-checks the answer with `chat.json` `check` (grounded `noul`, actionable `score`) and shows Grounded or Check this, plus a See chart link.
 - The learner asks the three starter questions and the off-topic one, then tries to trick it by asking for a number that is not in the data.
 - The learner edits `chat.json`: adds a new topic option to the router and tightens the grounded question, then asks again.
