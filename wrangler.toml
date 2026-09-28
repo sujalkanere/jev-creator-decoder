@@ -1,0 +1,21 @@
+name = "nextwork-content-decoder"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+# The dashboard in /public is served as static assets.
+# Requests that do not match a file (like /api/*) run the Worker.
+[assets]
+directory = "./public"
+
+# Workers AI binding. Jev runs here as the model "typesafe/jev".
+[ai]
+binding = "AI"
+
+# D1 stores saved decodes so a creator only costs Jev calls once.
+# Run: npm run setup does this for you
+# Then paste the database_id it prints below.
+[[d1_databases]]
+binding = "DB"
+database_name = "content-decoder"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+migrations_dir = "migrations"

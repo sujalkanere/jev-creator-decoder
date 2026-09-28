@@ -1,0 +1,31 @@
+{
+  "_readme": "Questions Jev asks in Ask the Decoder. The router decides before any chat model runs. The check reviews the chat model's answer before you see it.",
+  "router": {
+    "topic": {
+      "type": "choice",
+      "instructions": "What kind of question is `question`?",
+      "criteria": {
+        "hook_strategy": "About which hooks, titles, or formats work or should be used",
+        "timing": "About how the creator's content changed over time, or when to post",
+        "audience": "About what viewers respond to or want",
+        "comparison": "Compares hooks, videos, or strategies against each other",
+        "off_topic": "Not about this creator's videos or performance"
+      }
+    },
+    "answerable": {
+      "type": "noul",
+      "instructions": "Can `question` be answered using only the data listed in `available_data`?"
+    }
+  },
+  "check": {
+    "grounded": {
+      "type": "noul",
+      "instructions": "Does every number in `answer` also appear in `data`?"
+    },
+    "actionable": {
+      "type": "score",
+      "instructions": "How clear is the next step that `answer` recommends?",
+      "criteria": ["Vague", "Somewhat clear", "Clear next step"]
+    }
+  }
+}

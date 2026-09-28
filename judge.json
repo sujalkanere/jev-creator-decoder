@@ -1,0 +1,29 @@
+{
+  "_readme": "Questions Jev asks about each new hook in the Hook Lab. {h} is replaced with hooks[i]. winning_pattern comes from the decoded creator.",
+  "per_hook": {
+    "type": {
+      "type": "choice",
+      "instructions": "Which hook type does `{h}` use?",
+      "criteria": {
+        "curiosity": "Teases information without revealing it",
+        "recognition": "Makes a specific type of viewer feel seen",
+        "result": "Promises or shows a concrete outcome or number",
+        "contrarian": "Challenges common advice or a popular belief",
+        "story": "Opens a personal story or moment"
+      }
+    },
+    "strength": {
+      "type": "score",
+      "instructions": "How strong is `{h}` as a hook for a short-form video?",
+      "criteria": ["Weak", "Decent", "Scroll-stopping"]
+    },
+    "fit": {
+      "type": "noul",
+      "instructions": "Does `{h}` match the voice and topics of the titles in `winning_pattern.examples`?"
+    },
+    "lift_odds": {
+      "type": "noul",
+      "instructions": "Given that `winning_pattern.top_hooks` are the hook types that outperform for this creator, is `{h}` likely to outperform their typical video?"
+    }
+  }
+}

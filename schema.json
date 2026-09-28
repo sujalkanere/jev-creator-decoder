@@ -1,0 +1,40 @@
+{
+  "_readme": "Questions Jev asks about every video. {v} is replaced with videos[i] so each question points at one video. Keep the hook option keys as they are: the dashboard colors depend on them. Add your own questions below.",
+  "per_video": {
+    "hook": {
+      "type": "choice",
+      "instructions": "Which hook type does the title in `{v}.title` use?",
+      "criteria": {
+        "curiosity": "Teases information without revealing it",
+        "recognition": "Makes a specific type of viewer feel seen",
+        "result": "Promises or shows a concrete outcome or number",
+        "contrarian": "Challenges common advice or a popular belief",
+        "story": "Opens a personal story or moment"
+      }
+    },
+    "structure": {
+      "type": "choice",
+      "instructions": "What structure does the video in `{v}` follow, based on its title and description?",
+      "criteria": {
+        "opinion": "States a view or take",
+        "story": "Tells a personal story or moment",
+        "listicle": "A list of tips, steps, or examples",
+        "problem_solution": "Names a problem, then gives the fix",
+        "tutorial": "Shows how to do something step by step"
+      }
+    },
+    "cta": {
+      "type": "noul",
+      "instructions": "Does `{v}.description` ask the viewer to take an action, like follow, comment, or click a link?"
+    },
+    "strength": {
+      "type": "score",
+      "instructions": "How strong is `{v}.title` as a hook for a short-form video?",
+      "criteria": [
+        "Weak",
+        "Decent",
+        "Scroll-stopping"
+      ]
+    }
+  }
+}

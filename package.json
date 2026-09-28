@@ -1,0 +1,14 @@
+{
+  "name": "nextwork-content-decoder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Decode any YouTube creator's Shorts with Jev, TypeSafe AI's System One model, on Cloudflare Workers.",
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "dev": "wrangler dev",
+    "ship": "node scripts/ship.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
