@@ -1,77 +1,171 @@
-# NextWork Project Prompt: NextWork Content Decoder
+# NextWork Project Prompt: Decode Any YouTube Creator with Jev
 
 Paste everything below the line into the NextWork project generator.
 
 ---
 
-Generate a detailed NextWork project from this brief. Use every fact exactly as written. The project has **Steps 1 to 4 plus one Secret Mission**, nothing more. Show full code for any file the learner edits in an "I'd like to check the full code" section, using the repository below.
+Generate a detailed, beginner-friendly NextWork project from this brief. Use every fact, command, file name, and button label exactly as written. The project has **Steps 1 to 4 plus one Secret Mission**, nothing more. For every file the learner edits, include an "I'd like to check the full code" section showing that file's full contents from the repository.
 
-## Repository
-- Starter repo: https://github.com/Nik-1019/Jev-Creator-Decoder-NextWork (branch `main`, the finished project)
-- Design preview: https://nik-1019.github.io/Jev-Creator-Decoder-NextWork/
+## Repository and links
+- Repository: https://github.com/Nik-1019/Jev-Creator-Decoder-NextWork (branch `main`, the finished project)
+- Live demo with sample data, no setup needed: https://nik-1019.github.io/Jev-Creator-Decoder-NextWork/
 
 ## Overview
 **Title:** Decode Any YouTube Creator with Jev
-**Persona:** You are the AI content strategist at a creator-led agency. Every client asks what actually works for creators in their niche. You are shipping an internal tool that answers it in about a minute, powered by a brand-new decision model called Jev.
-**Difficulty:** Intermediate. **Time:** about 60 minutes, plus about 20 for the Secret Mission. **Cost:** free.
-**Star of the project:** Jev. Every step should make Jev's speed, low cost, and decision quality visible. Point to the on-screen number that proves each claim.
+**Persona:** You are the AI content strategist at a creator-led agency. Every client asks what actually works for creators in their niche, and answering it means hours of scrolling. You are going to run an internal tool that answers it in about a minute, powered by a brand-new decision model called Jev.
+**What you will build:** the NextWork Content Decoder, a dashboard you run on your own Cloudflare account. Enter any YouTube creator, and Jev labels every Short by hook type, structure, call to action, and hook strength. The dashboard shows which hooks actually drive views, scores new hook ideas before you film, exports a client brief, and answers questions about the results.
+**Difficulty:** Intermediate
+**Time:** about 60 minutes, plus about 20 for the Secret Mission
+**Cost:** free. Every service used has a free tier with no credit card.
+**Star of the project:** Jev. Every step should make Jev's speed, low cost, and decision quality visible, and point to the on-screen number that proves each claim.
 
-## Verified facts
-- Jev is TypeSafe AI's first System One model, launched September 15, 2026. It does not generate text. You send a `state` and typed questions and get typed answers with probabilities and confidence.
-- Question types: `choice` (pick one, returns `choice`, `confidence`, `probabilities`), `noul` (yes/no probability), `score` (position on an ordered scale).
-- All questions in one call are answered in parallel. Adding questions barely changes latency. Typical latency is 70 to 500 ms.
-- Price: $0.042 per 1M input tokens, output free. On Cloudflare Workers AI the model id is `typesafe/jev`, called with `env.AI.run('typesafe/jev', { state, questions })`.
-- The app batches 10 videos per Jev call, with every `schema.json` question repeated per video. `schema.json` ships with 4 questions (hook, structure, cta, strength), so one call asks 40 questions.
-- Other models, both on Workers AI: `@cf/meta/llama-3.1-8b-instruct-fp8-fast` (Draft 5 and Model Race), `@cf/meta/llama-3.3-70b-instruct-fp8-fast` (Ask the Decoder answers).
-- Cloudflare Workers Free plan: no card. Workers AI includes 10,000 Neurons per day shared across all models. D1 free limits return errors when exceeded, they never bill.
-- YouTube Data API v3: free key, 10,000 quota units per day. The app uses `channels.list` (forHandle), `playlistItems.list`, and `videos.list` at 1 unit each, about 10 to 20 units per creator. It never uses `search.list`. It decodes titles and descriptions, not spoken scripts, because the captions API needs the owner's login.
-- Google Cloud is only used for the YouTube API key. Cloudflare hosts the Worker, runs every model, and stores decodes in D1.
+## Verified facts (use exactly)
+**Jev**
+- Jev is TypeSafe AI's first System One model, launched September 15, 2026. It does not write text. You send it a `state` (the data) and typed questions, and it returns typed answers with probabilities and confidence.
+- Question types: `choice` picks one option and returns `choice`, `confidence`, and `probabilities`. `noul` returns a yes/no probability. `score` places the answer on an ordered scale.
+- All questions in one call are answered in parallel, so adding questions barely changes the time a call takes. Typical call time is 70 to 500 ms.
+- Price: $0.042 per 1 million input tokens. Output is free.
+- On Cloudflare Workers AI the model id is `typesafe/jev`, called as `env.AI.run('typesafe/jev', { state, questions })`.
+
+**How this app uses Jev**
+- One Jev call decodes 10 videos. Every question in `schema.json` is repeated once per video, and the dashboard runs 4 calls at a time.
+- `schema.json` ships with 4 questions per video (hook, structure, cta, strength), so one call asks 40 questions. After the learner adds 2 questions in Step 3, one call asks 60.
+- A 200-video decode costs well under $0.01 of Jev usage.
+
+**Other models (all on Cloudflare Workers AI)**
+- `@cf/meta/llama-3.1-8b-instruct-fp8-fast`: drafts hooks (Draft 5) and is the opponent in the Model Race.
+- `@cf/meta/llama-3.3-70b-instruct-fp8-fast`: writes answers in Ask the Decoder (Secret Mission).
+
+**Free tiers**
+- Cloudflare Workers Free plan: no card. Workers AI includes 10,000 Neurons per day, shared by all models. Going over a free limit returns errors until the daily reset. It never bills you.
+- YouTube Data API v3: free key, 10,000 quota units per day. The app uses `channels.list`, `playlistItems.list`, and `videos.list` at 1 unit each, about 10 to 20 units per creator. It never uses `search.list`.
+
+**Which videos get decoded**
+- Shorts only. The app scans the creator's latest uploads and keeps up to 200 videos that are 3 minutes or shorter. YouTube's API has no official "is a Short" flag, so the app filters by length before Jev sees anything. Jev does not decide what counts as a Short.
+- Jev decodes titles and descriptions, not spoken words, because YouTube's captions API needs the video owner's login.
+
+**Accounts and roles**
+- Google Cloud is only used to create the YouTube API key. Cloudflare hosts the app, runs every model, and stores decodes in a D1 database.
+- The dashboard passcode protects the learner's quotas. Once deployed, the app has a public URL, and the passcode stops strangers from using it.
+
+## What the learner needs before starting
+- A computer with a terminal (macOS, Linux, or Windows with PowerShell or WSL)
+- Node.js 20 or newer (nodejs.org) and Git (git-scm.com)
+- A code editor such as VS Code
+- A Google account and an email for a free Cloudflare account
 
 ## Step 1: Set up and meet Jev (~15 min)
-- Create a free Cloudflare account and register a workers.dev subdomain. Explain that Jev runs remotely on Workers AI, so `wrangler dev` needs it.
-- Create a Google Cloud project, enable YouTube Data API v3, create an API key restricted to that API.
-- Clone the repo, run `npm install`, `npx wrangler login`, then `npm run setup`. Setup creates the database and asks for the YouTube key and a passcode. Linux learners with a system libvips: `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install`.
-- If the workers.dev onboarding link shows a 404, open Workers & Pages and check Account details for the subdomain, or run `npx wrangler deploy` once and accept the subdomain prompt.
-- Run `npm run dev` and open http://localhost:8787. Enter the passcode.
-- Guided tour of `src/jev.ts`: how `buildVideoQuestions` repeats each `schema.json` question per video as `v{i}_{key}`, and how answers are split back per video.
-- The learner predicts how many questions one call asks (10 videos x 4 questions = 40) and checks it in Step 2.
-- 📸 Screenshot: the welcome screen.
+**Goal:** get the Content Decoder running on your computer and understand how Jev thinks.
+
+1. **Check your tools.** Run `node --version` (needs 20 or newer) and `git --version`. If either is missing, install it, then continue.
+2. **Try the live demo first** at the demo link above. Click a sample creator and watch a decode on sample data. This is what you're about to run for real.
+3. **Get a YouTube API key.** In Google Cloud Console: create a project, go to APIs & Services, enable **YouTube Data API v3**, then Credentials, Create credentials, API key. Restrict the key to YouTube Data API v3. Copy it somewhere safe.
+4. **Create a free Cloudflare account** at dash.cloudflare.com. Then open **Compute, Workers & Pages**. Under **Account details** on the right, check that you have a **Subdomain** (like `yourname.workers.dev`). If not, set one. Explain why: Jev runs on Cloudflare's servers, and the local dev server needs this subdomain to connect to it.
+5. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Nik-1019/Jev-Creator-Decoder-NextWork.git
+   cd Jev-Creator-Decoder-NextWork
+   ```
+6. **Install the packages:**
+   ```bash
+   npm install
+   ```
+   Linux users: if this fails with an error mentioning `sharp`, run `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install` instead.
+7. **Log in to Cloudflare from the terminal:**
+   ```bash
+   npx wrangler login
+   ```
+   A browser tab opens. Click Allow. When the terminal says you're logged in, continue.
+8. **Run setup:**
+   ```bash
+   npm run setup
+   ```
+   Setup creates your D1 database, connects it, creates the database table (answer **Y** when asked), then asks you to paste your YouTube API key and choose a dashboard passcode. It saves both to `.dev.vars`, a file that stays on your computer and is never committed.
+9. **Start the app:**
+   ```bash
+   npm run dev
+   ```
+   When you see `Ready on http://localhost:8787`, press `b` to open it in your browser, then enter the passcode you chose.
+10. **Tour the Jev code.** Open `src/jev.ts` in your editor. Walk through `buildVideoQuestions`: it takes each question in `schema.json` and repeats it once per video, with keys like `v3_hook`, so one call can decide 10 videos. Then `classifyBatch` sends one call and splits the answers back per video.
+11. **Predict:** how many questions will one Jev call ask? (10 videos x 4 questions = 40.) You'll check your answer in Step 2.
+
+📸 Screenshot: the welcome screen of your running Content Decoder.
+
+**What you should see:** the dashboard with a welcome card and three sample creators.
 
 ## Step 2: Decode your first creator (~15 min)
-- Enter a creator that posts Shorts: an @handle (shown under the channel name on YouTube), a channel link, or any video link. Click Decode.
-- Watch the thumbnail wall pass through the Jev lens, the four call lanes fill, and the call log stream. Read the hero: run time, videos per second, Jev spend, projected cost at 10,000 videos.
-- Turn on Watch mode and click Re-run Jev to replay at a followable pace. 📸 Screen record the decode.
-- Drag the confidence slider. Open a flagged video (Winning Formula, Review them) and read its probability bars in the drawer. Decide if Jev was right to be unsure.
-- Read the summary strip and the usage vs lift rows: which hook does the creator use most, and which one actually outperforms? Name the blind spot. Click a hook row to filter the gallery to it.
-- Click Copy client brief and paste it somewhere. This is the deliverable.
+**Goal:** see Jev's speed, cost, and judgment on a real creator.
+
+1. **Pick a creator** that posts Shorts. In the input at the top, enter any of these: their `@handle` (shown under the channel name on YouTube), their channel link, or a link to any of their videos. Click **Decode**.
+2. **Watch it run.** Thumbnails stream through the Jev lens and get labeled. In **Every Jev call**, four lanes fill with bars, and each bar is one call deciding 10 videos. The **Call log** lists every call.
+3. **Check your prediction:** the Every Jev call header shows questions per call (40).
+4. **Record the numbers** from the summary strip: run time, videos per second, and Jev spend. Note how long 200 videos took and what it cost.
+5. **Watch it slowly.** Turn on **Watch mode** in the sidebar, then click **Re-run Jev**. The same decode replays at a pace you can follow. 📸 Screen record it.
+6. **Check Jev's judgment.** Click **Review them** in the summary strip. The drawer opens on videos where Jev was unsure. Read the probability bars and decide whether Jev was right to be unsure. Drag the **Flag below** slider and watch the Needs review count change.
+7. **Read the insight.** In the summary strip: Top hook, Best combo, and Blind spot. In **Find what outperforms**, compare Usage and Lift for each hook. Which hook does the creator use most? Which one actually performs best? Click a hook row to filter the gallery to it.
+8. **Make the deliverable.** Click **Copy client brief** and paste it into a note. This is what you would send a client.
+
+**What you should see:** a gallery of labeled Shorts, the Winning Formula in the summary strip, and a client brief in your clipboard.
 
 ## Step 3: Design Jev's questions (~15 min)
-- In `schema.json`, write two new questions: a `choice` with the learner's own criteria (for example topic) and a `noul` (for example "Does the title promise a specific number?"). Keep the existing `hook` option keys, because the dashboard colors depend on them.
-- Click Re-run Jev. Questions per call go from 40 to 60, and the lane bars show latency barely moves. Open a video in the drawer to see the new answers.
-- If a new question comes back with low confidence, rewrite its criteria and run again.
-- In `judge.json`, rewrite the `fit` and `lift_odds` questions in the learner's own words.
-- Type hooks into Score new hooks and watch Jev score each one live, then Add to board. Click Draft 5 (Llama 3.1 8B drafts, Jev scores all 5 in one call). The best hook gets the Film this next ribbon. Shortlist the hooks worth filming, then copy the client brief again: the shortlist is now included.
+**Goal:** learn the core skill, which is writing questions a decision model can answer cleanly.
+
+1. **Open `schema.json`.** Read the 4 existing questions and notice their shape: `type`, `instructions` (with `{v}` standing for the video), and `criteria`. Keep the existing `hook` option keys unchanged, because the dashboard colors depend on them.
+2. **Write two new questions** inside `per_video`:
+   - a `choice` with your own criteria, for example `topic` with 4 or 5 topics this creator covers
+   - a `noul`, for example `promises_number`: "Does the title in `{v}.title` promise a specific number?"
+3. **Save, then click Re-run Jev.** Questions per call go from 40 to 60, and the call bars stay about the same length. That's parallel questions: more decisions, same speed.
+4. **Inspect the answers.** Click a video in the gallery. Your new questions appear in the drawer with their probabilities.
+5. **Fix weak questions.** If one of your questions shows low confidence on many videos, rewrite its criteria to be clearer and more distinct, then Re-run Jev.
+6. **Open `judge.json`.** This file controls how Jev scores new hooks. Rewrite the `fit` and `lift_odds` instructions in your own words.
+7. **Score hooks.** In **Score new hooks**, type a hook idea. Jev scores it within a second. Click **Add to list**. Then click **Draft 5**: Llama 3.1 8B writes 5 hooks, and Jev scores all 5 in one call. The best hook gets the **Film this next** ribbon.
+8. **Shortlist** the hooks worth filming, then click **Copy client brief** again. Your shortlist is now included.
+
+**What you should see:** 60 questions per call, your new answers in the drawer, and a ranked, shortlisted list of hooks.
 
 ## Step 4: Race it and ship it (~12 min)
-- Click Model Race. Pick the decoded creator and click Start. Jev classifies 10 videos in one call while the chat model makes 10 calls, with unusable answers flashing red.
-- The learner explains why typed answers beat chat output for this job. Only cite numbers from the learner's own run. Do not claim Jev is better than chat models in general. Note that a chat model could batch too, and this race shows the common way people call one.
-- Run `npm run ship`. Open the workers.dev URL, enter the passcode, reload the creator from Library with zero Jev calls.
-- 📸 Screenshot: the race verdict and the deployed dashboard.
+**Goal:** prove Jev was the right model for this job, then deploy your tool.
+
+1. **Open Model Race** from the sidebar. Pick the creator you decoded and click **Start**.
+2. **Watch both lanes.** Jev classifies 10 videos in one call. The chat model makes 10 separate calls, and unusable answers flash red.
+3. **Read the verdict** and explain in your own words why typed answers beat chat output for this job. Only cite numbers from your own run. Do not claim Jev is better than chat models in general. A chat model could batch too, and this race shows the common way people call one.
+4. **Deploy:**
+   ```bash
+   npm run ship
+   ```
+   This creates the table in your cloud database, deploys the app, and uploads your two secrets from `.dev.vars`.
+5. **Open your live app** at the `workers.dev` URL printed at the end, and enter your passcode. Decode a creator, then click them in the sidebar **Library** to reload them instantly with 0 Jev calls.
+
+📸 Screenshot: the race verdict, and your deployed dashboard with its URL visible.
+
+**What you should see:** a live Content Decoder on your own URL that you can reuse on any creator.
 
 ## Secret Mission: Ask the Decoder (~20 min)
-- Open Ask the Decoder from the button in the bottom right.
-- Explain the flow: Jev routes the question with `chat.json` `router` (topic `choice`, answerable `noul`). Off-topic or unanswerable questions are blocked with no chat model call. Answerable questions go to Llama 3.3 70B with a factual summary of the decode. Jev then fact-checks the answer with `chat.json` `check` (grounded `noul`, actionable `score`) and shows Grounded or Check this, plus a See chart link.
-- The learner asks the three starter questions and the off-topic one, then tries to trick it by asking for a number that is not in the data.
-- The learner edits `chat.json`: adds a new topic option to the router and tightens the grounded question, then asks again.
-- Lesson: decide before you spend, guard what the data cannot answer, check the writer's work, and use the smallest model that does the job.
+**Goal:** add a chat that answers questions about your decoded creator, with Jev deciding what gets answered and checking every answer.
 
-## Troubleshooting (include)
-- sharp install error on Linux: `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install`
-- workers.dev subdomain error: register one from the link, do not switch to local mode
-- Wrong passcode: match `DASHBOARD_PASSCODE`
-- YouTube `quotaExceeded`: resets at midnight Pacific
-- No Shorts found: try a creator who posts Shorts
-- Many flagged videos: tighten criteria, then Re-run Jev
+1. **Open Ask the Decoder** with the button in the bottom right. The panel can be resized from its corner.
+2. **Learn the flow:**
+   - Jev **routes** the question using `chat.json` `router`: what kind of question it is (`topic`, a `choice`) and whether the decoded data can answer it (`answerable`, a `noul`).
+   - Off-topic or unanswerable questions are blocked instantly, with no chat model call.
+   - Answerable questions go to Llama 3.3 70B, which only sees a factual summary of your decode.
+   - Jev **checks** the answer using `chat.json` `check`: `grounded` (does every number appear in the data?) and `actionable` (how clear is the next step?). The answer shows **Grounded** or **Check this**, plus a small chart built from your real numbers.
+3. **Try it:** click all three starter questions, including the off-topic test, then ask your own.
+4. **Try to trick it:** ask for a number that isn't in the data and watch what the check says.
+5. **Make it yours:** in `chat.json`, add a new option to the router's `topic` criteria (for example `posting_frequency`) and tighten the `grounded` instructions. Save and ask again.
+6. **Lesson:** decide before you spend, block what the data can't answer, check the writer's work, and use the smallest model that does the job.
+
+## Troubleshooting (include as a section)
+- `npm install` fails with an error about `sharp` (Linux with a system libvips): run `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install`.
+- `You need to register a workers.dev subdomain`: set a subdomain under Workers & Pages, Account details. If the onboarding link shows a 404, use that page instead. Do not press `l` for local mode, because Jev only runs remotely.
+- `wrangler: command not found`: run `npm install` first.
+- The passcode screen says to set a real DASHBOARD_PASSCODE: run `npm run setup` again (or edit `.dev.vars`), then stop and restart `npm run dev`.
+- `quotaExceeded` from YouTube: the daily quota resets at midnight Pacific time.
+- `No Shorts found`: the creator may only post long videos. Try another creator.
+- Many videos flagged for review: make your criteria clearer, then Re-run Jev.
+- Your deployed app has an empty Library: the deployed app uses its own cloud database, separate from your local one.
 
 ## Style
-Second person. The learner IS the professional. No invented character names. Short, plain sentences. No em dashes. Use 📸 for screenshots. End each step with what the learner should now see.
+- Second person. The learner IS the professional. No invented character names.
+- Short, plain sentences. No em dashes.
+- Use 📸 for screenshots. End every step with what the learner should now see.
+- Keep Jev the hero: whenever something fast, cheap, or confident happens, point to the number on screen.

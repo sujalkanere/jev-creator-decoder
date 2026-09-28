@@ -227,7 +227,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
     <div class="cell"><div class="lab">Needs review</div><div class="val" id="fRev">0</div><button class="lnk" id="revBtn">Review them</button></div>
     <div class="cell run"><div class="lab">Run time</div><div class="val" id="tc">00:00<span>:00</span></div><div class="sub" id="runS">Waiting</div></div>
   </section>
-  <div class="span12 mode" id="mode" aria-live="polite"></div>
+  <div class="span12" style="display:flex;gap:12px;align-items:center"><span class="mode" id="mode" aria-live="polite"></span><button class="lnk" id="rerun" hidden>Re-run Jev</button></div>
 
   <section class="span4 card" id="s1"><div class="ph"><h2>Decode the library</h2><span class="st" id="st1">Waiting</span></div>
     <div class="stats"><div><b id="k1">0</b><span>Jev calls</span></div><div><b id="k2">0</b><span>Judgments</span></div><div><b id="k3">0</b><span>Flagged</span></div></div>
@@ -483,9 +483,9 @@ function reset(){D=fresh();U.filter=null;U.review=false;U.out=false;live=null;F4
 function start(fr){var h=($("h").value||"").trim();if(!h){$("h").focus();return}if(!DEMO&&!pass()){needPass();return}if(D.running)return;$("run").disabled=true;$("wErr").textContent="";say("Pulling Shorts from YouTube...");
   api("/api/ingest?handle="+encodeURIComponent(h)+(fr?"&fresh=1":"")).then(function(j){reset();D.handle=j.handle;D.channel=j.channel||{title:j.handle};D.cached=!!j.cached;D.videos=(j.records||[]).map(toV);
     if(!D.videos.length){$("run").disabled=false;var m="No Shorts found for "+j.handle+". Try a creator who posts Shorts.";$("wErr").textContent=m;say(m,true);return}
-    setCreator();clearWall();showGallery(false);fillWall();
+    setCreator();clearWall();showGallery(false);fillWall();$("rerun").hidden=true;
     if(j.cached){var by={};(j.results||[]).forEach(function(r){by[r.id]=r});D.videos.forEach(function(v){if(by[v.id])apply(v,by[v.id],0)});D.decoded=dec().length;D.qpc=(j.stats&&j.stats.qpc)||0;D.results=j.results||[];
-      say("Loaded "+j.handle+" from your library with 0 Jev calls. Re-run to decode again.");log(null,"Loaded "+j.handle,"0 Jev calls");done(true);return}
+      say("Loaded "+j.handle+" from your library with 0 Jev calls.");log(null,"Loaded "+j.handle,"0 Jev calls");done(true);return}
     say("Decoding "+D.videos.length+" Shorts with Jev...");run()}).catch(function(e){$("run").disabled=false;if(e.status===401){needPass("Wrong passcode.");return}$("wErr").textContent=e.message;say(e.message,true)})}
 function run(){var b=[];for(var i=0;i<D.videos.length;i+=BATCH)b.push(D.videos.slice(i,i+BATCH));var n=0,X=D;X.running=true;X.t0=performance.now();document.body.classList.add("running");["st1","st2"].forEach(function(i){$(i).textContent="Decoding"});
   function now(){return(performance.now()-X.t0)/1000}
@@ -497,9 +497,9 @@ function run(){var b=[];for(var i=0;i<D.videos.length;i+=BATCH)b.push(D.videos.s
   Promise.all(ls).then(function(){var t=now();X.ev.push({t:t,f:function(){X.running=false;X.end=X.vt;document.body.classList.remove("running");say("Decoded "+X.decoded+" Shorts in "+X.end.toFixed(1)+" s for $"+X.dcost.toFixed(4)+".");
     api("/api/save",{handle:X.handle,channel:X.channel,records:X.videos.map(function(v){return v.rec}),results:X.results,stats:{qpc:X.qpc,calls:X.calls.length,cost_usd:X.dcost}}).then(loadLib).catch(function(){});
     setTimeout(function(){if(X===D)done(false)},U.watch?1500:900)}})})}
-function done(cached){$("run").disabled=false;$("run").textContent="Decode";refresh();renderChips();showGallery(true);["st1","st2"].forEach(function(i){$(i).textContent="Done"});
+function done(cached){$("rerun").hidden=false;$("run").disabled=false;$("run").textContent="Decode";refresh();renderChips();showGallery(true);["st1","st2"].forEach(function(i){$(i).textContent="Done"});
   if(!cached&&!D.hooks.length)$("draft").click()}
-$("run").onclick=function(){start(false)};$("h").onkeydown=function(e){if(e.key==="Enter")start(false)};
+$("run").onclick=function(){start(false)};$("rerun").onclick=function(){$("h").value=D.handle;start(true)};$("h").onkeydown=function(e){if(e.key==="Enter")start(false)};
 
 /* ---------- counters + loop ---------- */
 function tc(t){var s=Math.floor(t)%60,m=Math.floor(t/60),f=Math.floor((t%1)*100);function p(n){return(n<10?"0":"")+n}return p(m)+":"+p(s)+'<span>.'+p(f)+"</span>"}
