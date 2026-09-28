@@ -83,7 +83,8 @@ export async function fetchShorts(input: string, key: string): Promise<AdapterRe
         id: v.id,
         url: `https://www.youtube.com/shorts/${v.id}`,
         title: v.snippet.title || "",
-        text: (v.snippet.description || "").slice(0, 300),
+        // Array.from splits by code point, so the cut never lands inside an emoji.
+        text: Array.from(v.snippet.description || "").slice(0, 300).join(""),
         views: Number(v.statistics?.viewCount || 0),
         likes: Number(v.statistics?.likeCount || 0),
         posted_at: v.snippet.publishedAt,

@@ -240,6 +240,42 @@ body:not(.has-data) .stage .stats,body:not(.has-data) .stage .pf{opacity:.45}
 @keyframes shimmer{60%,100%{transform:translateX(100%)}}
 @keyframes band{0%,30%{opacity:0}50%,80%{opacity:.9}100%{opacity:0}}
 .gal:not([hidden]){animation:fadein .35s ease-out}@keyframes fadein{from{opacity:0}}
+/* hover card, shared by canvases and anything with data-tip */
+.hov{position:fixed;left:0;top:0;z-index:95;pointer-events:none;background:var(--ink);color:var(--on);font-size:12px;line-height:1.45;padding:8px 10px;border-radius:9px;max-width:270px;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transition:opacity .12s}
+.hov.show{opacity:1}.hov b{font-weight:600}.hov .m{opacity:.7}
+.hov .r{display:flex;justify-content:space-between;gap:14px}.hov .r span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hov hr{border:0;border-top:1px solid color-mix(in srgb,var(--on) 25%,transparent);margin:5px 0}
+.hov .dot{display:inline-block;width:7px;height:7px;margin-right:5px}
+.stats [data-tip],.cell[data-tip],.log li[data-tip]{cursor:help}
+/* clickable hook cards */
+.hc[data-h]{cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.hc[data-h]:hover{border-color:color-mix(in srgb,var(--hc) 55%,var(--line));box-shadow:0 6px 16px -10px rgba(0,0,0,.3)}
+.hc .more{position:absolute;right:12px;bottom:10px;font-size:11px;color:var(--fnt)}
+.hc.enter{animation:cardin .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d,0ms)}
+@keyframes cardin{from{opacity:0;transform:translateY(12px)}}
+.hc.pend{border-style:dashed;grid-template-rows:auto auto}
+.hc.pend .ring{background:conic-gradient(var(--recognition) 0 28%,var(--line) 0);animation:spinr .9s linear infinite}
+.hc.pend .k strong{margin-right:4px}
+@keyframes spinr{to{transform:rotate(360deg)}}
+.hc.pop .ring{animation:pop .5s ease-out}@keyframes pop{40%{transform:scale(1.14)}}
+@media (prefers-reduced-motion:reduce){.hc.enter,.hc.pend .ring,.hc.pop .ring{animation:none}}
+/* hook drawer */
+.hhero{display:flex;gap:14px;align-items:center}
+.hhero .ring{width:64px;height:64px;flex:none}.hhero .ring b{width:50px;height:50px;font-size:20px}
+.hhero h3{margin:4px 0 0;font-size:17px;line-height:1.3}
+.verdict{margin:14px 0 4px;padding:10px 12px;border-radius:10px;background:var(--sunk);font-size:13px}.verdict b{display:block;margin-bottom:2px}
+.sec{margin:18px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--fnt)}
+.brk{display:grid;grid-template-columns:120px 1fr 36px;gap:2px 10px;align-items:center;font-size:12.5px;margin-top:8px}
+.brk i{height:6px;border-radius:3px;background:var(--line);position:relative;overflow:hidden}.brk i::after{content:"";position:absolute;inset:0;width:var(--w);background:var(--hc)}
+.brk b{text-align:right}.brk small{grid-column:1/-1;color:var(--mut);font-size:11.5px}
+.vrow{display:flex;gap:10px;align-items:center;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;text-align:left;border-radius:10px;padding:6px;margin-top:6px;cursor:pointer}.vrow:hover{background:var(--sunk)}
+.vrow span{width:30px;height:48px;border-radius:6px;flex:none}.vrow div{flex:1;min-width:0;font-size:12.5px;line-height:1.3}.vrow small{display:block;color:var(--mut)}
+.hacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:18px}.hacts .btn{height:36px}
+/* suggested hooks */
+.sug{display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none;margin-bottom:8px;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.sug:empty{display:none}.sug::-webkit-scrollbar{display:none}
+.sug>span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--fnt);flex:none}
+.sug .chip{flex:none;max-width:230px}.sug .chip em{font-style:normal;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 @media (prefers-reduced-motion:reduce){.card.busy::before{animation:none;background:linear-gradient(90deg,var(--curiosity),var(--recognition),var(--result))}.card.busy::after,.pull-row i,.pull-row i::after,.pull-row b,.gal:not([hidden]){animation:none}.pull-row b{opacity:.9}}
 </style>
 </head>
@@ -313,7 +349,7 @@ body:not(.has-data) .stage .stats,body:not(.has-data) .stage .pf{opacity:.45}
   <section class="span4 card stage" id="s3"><div class="ph"><h2>Score new hooks</h2><span class="st" id="st3">Waiting</span></div>
     <div class="stats"><div><b id="k7">0</b><span>Scored</span></div><div><b id="k8">0 ms</b><span>Avg judgment</span></div><div><b id="k9">0</b><span>Shortlisted</span></div></div>
     <div class="vis" id="vis3"><div class="hl" id="hl"><div class="gal"><div class="none">Decode a creator, then type a hook below or click Draft 5.</div></div></div></div>
-    <div class="pf"><div class="hin" style="padding:0;width:100%"><input id="hookIn" placeholder="Type a hook to score it live" aria-label="Type a hook"><button class="btn" id="draft">Draft 5</button></div></div>
+    <div class="pf" style="display:block"><div class="sug" id="sug"></div><div class="hin" style="padding:0;width:100%"><input id="hookIn" placeholder="Type a hook to score it live" aria-label="Type a hook"><button class="btn" id="draft">Draft 5</button></div></div>
   </section>
 
   <section class="span4 card" id="s4"><div class="ph"><h2>Every Jev call</h2><span class="st" id="qpc">0 questions per call</span></div><div class="lanes" style="height:150px"><canvas id="lanes" aria-label="Jev calls across four lanes"></canvas></div></section>
@@ -344,6 +380,7 @@ body:not(.has-data) .stage .stats,body:not(.has-data) .stage .pf{opacity:.45}
   <div id="fNone" hidden><h2>This dashboard isn't set up yet</h2><p>If this is your app, open the one-time setup link that <code>npm run ship</code> printed in your terminal.</p></div>
 </div></div>
 <div class="toast" id="toast"></div>
+<div class="hov" id="hov" role="tooltip"></div>
 
 <script>
 (function(){
@@ -384,7 +421,7 @@ $("lib").onclick=function(e){var x=e.target.closest("[data-rm]");if(x){e.stopPro
 $("lib").onkeydown=function(e){if(e.key==="Enter"){var c=e.target.closest("[data-h]");if(c)openCreator(c.dataset.h)}};
 $("recent").onclick=function(e){var b=e.target.closest("[data-h]");if(b)openCreator(b.dataset.h)};
 function renderSL(){$("slFor").textContent=D.handle?"for "+D.handle:"";$("sl").innerHTML=D.saved.length?D.saved.map(function(c){return '<div class="sli" data-t="'+esc(c.text)+'" title="Click to copy"><span>\u201C'+esc(c.text)+'\u201D <b>'+c.score+'</b></span><button class="x" data-unsave="'+esc(c.text)+'" aria-label="Remove from shortlist">×</button></div>'}).join(""):'<div class="lib-empty">'+(D.handle?"Shortlist hooks to keep them here.":"Decode a creator first.")+'</div>'}
-function loadSL(){if(!D.handle)return;var X=D;api("/api/shortlist?handle="+encodeURIComponent(D.handle)).then(function(j){if(X!==D)return;D.saved=j.items||[];D.saved.forEach(function(c){if(!D.hooks.some(function(h){return h.text===c.text}))D.hooks.push({text:c.text,score:c.score,hook_type:c.hook_type,bars:c.bars||{hook:0,fit:0,lift_odds:0},ms:c.ms||0})});renderSL();renderHooks()}).catch(function(){})}
+function loadSL(){if(!D.handle)return;var X=D;api("/api/shortlist?handle="+encodeURIComponent(D.handle)).then(function(j){if(X!==D)return;D.saved=j.items||[];D.saved.forEach(function(c){if(!D.hooks.some(function(h){return h.text===c.text}))D.hooks.push({text:c.text,score:c.score,hook_type:c.hook_type,bars:c.bars||{hook:0,fit:0,lift_odds:0},ms:c.ms||0,answers:c.answers})});renderSL();renderHooks()}).catch(function(){})}
 function saveSL(action,hook){return api("/api/shortlist",{handle:D.handle,action:action,hook:hook,text:hook.text}).then(function(j){D.saved=j.items||[];renderSL();renderHooks()})}
 $("sl").onclick=function(e){var x=e.target.closest("[data-unsave]");if(x){saveSL("remove",{text:x.dataset.unsave});return}var r=e.target.closest("[data-t]");if(r){copy(r.dataset.t);toast("Hook copied.")}};
 
@@ -405,10 +442,25 @@ function say(t,err){$("mode").textContent=t||"";$("mode").classList.toggle("err"
 var bz={};function busy(id,on){bz[id]=Math.max(0,(bz[id]||0)+(on?1:-1));$(id).classList.toggle("busy",bz[id]>0)}
 // The YouTube card only appears if the pull takes longer than a blink, so library loads don't flash it.
 var pullT0=0,pullTm=0;function pulling(on){clearTimeout(pullTm);if(on){pullT0=performance.now();pullTm=setTimeout(function(){document.body.classList.add("pulling")},250)}else document.body.classList.remove("pulling")}
+/* ---------- hover card ---------- */
+// Canvases register a hit test in HOV (local x,y -> html or null). Everything else uses data-tip,
+// which holds html whose dynamic parts are already escaped.
+var HOV={};
+function tipAt(h,x,y){var t=$("hov");if(t._h!==h){t.innerHTML=h;t._h=h}t.classList.add("show");var w=t.offsetWidth,ht=t.offsetHeight,l=Math.max(8,Math.min(x+14,innerWidth-w-8)),tp=y+18;if(tp+ht>innerHeight-8)tp=y-ht-12;t.style.transform="translate("+l+"px,"+tp+"px)"}
+function tipOff(){$("hov").classList.remove("show")}
+document.addEventListener("mousemove",function(e){var t=e.target,h=null;if(t&&t.id&&HOV[t.id]){var r=t.getBoundingClientRect();h=HOV[t.id](e.clientX-r.left,e.clientY-r.top)}else{var el=t&&t.closest&&t.closest("[data-tip]");if(el)h=el.dataset.tip}if(h)tipAt(h,e.clientX,e.clientY);else tipOff()});
+document.addEventListener("mouseout",function(e){if(!e.relatedTarget)tipOff()});document.addEventListener("scroll",tipOff,true);
+function trow(a,b){return '<div class="r"><span class="m">'+a+'</span><b>'+b+'</b></div>'}
+function mixLine(cn){cn=cn||{};return Object.keys(cn).sort(function(a,b){return cn[b]-cn[a]}).map(function(k){return '<span class="dot" style="background:'+col(k)+'"></span>'+esc(hn(k))+' '+cn[k]}).join(" &nbsp;")}
+var TIPS={k1:"Batched requests sent to Jev. Each call carries up to 10 videos.",k2:"Individual answers Jev returned: every question, for every video.",k3:"Videos where Jev's least confident answer falls below the Flag below slider. Open them to double-check.",
+  k4:"Shorts with at least 2x the channel's median views.",k5:"The middle view count across decoded Shorts. Every lift number is measured against it.",k6:"This decode's Jev cost divided by the videos decoded. Jev bills input tokens only.",
+  k7:"Hooks Jev has judged for this creator, including your shortlist.",k8:"Average time for one Jev call to score hooks.",k9:"Hooks you saved. They stay in your library for this creator.",
+  fTop:"The hook type with the highest median-view lift, among types used in 5 or more Shorts.",fCombo:"The hook and structure pair with the highest lift, among pairs used in 3 or more Shorts.",fBlind:"A hook type that outperforms (1.1x or more) but the creator rarely uses.",fRev:"Same as Flagged: videos where Jev was unsure. Click Review them to step through.",tc:"How long the decode took, and how many Shorts per second Jev got through."};
+Object.keys(TIPS).forEach(function(k){$(k).parentNode.dataset.tip=esc(TIPS[k])});
 (function(){var h="";for(var i=0;i<18;i++)h+='<i style="--i:'+i+';--hc:var(--'+HOOKS[i%HOOKS.length][0]+')"><b></b></i>';$("pullRow").innerHTML=h})();
 
 /* ---------- state ---------- */
-var D;function fresh(){return {handle:"",channel:null,videos:[],cached:false,running:false,vt:0,t0:0,end:0,calls:[],ev:[],decoded:0,qpc:0,q:0,cost:0,dcost:0,results:[],hooks:[],jms:0,jn:0,lift:{},saved:[]}}D=fresh();
+var D;function fresh(){return {pending:[],drafted:false,handle:"",channel:null,videos:[],cached:false,running:false,vt:0,t0:0,end:0,calls:[],ev:[],decoded:0,qpc:0,q:0,cost:0,dcost:0,results:[],hooks:[],jms:0,jn:0,lift:{},saved:[]}}D=fresh();
 function toV(r,i){return {i:i,rec:r,id:r.id,title:r.title||"",views:r.views||0,likes:r.likes||0,age:Math.max(1,Math.round((Date.now()-Date.parse(r.posted_at))/864e5)),thumb:r.thumbnail,hook:null,conf:1,ans:null,at:null}}
 function apply(v,r,t){var a=r.answers||{};v.ans=a;v.hook=a.hook&&HN[a.hook.choice]?a.hook.choice:null;var cs=Object.keys(a).map(function(k){return a[k]}).filter(function(x){return x&&x.type==="choice"}).map(function(x){return +x.confidence});v.conf=cs.length?Math.min.apply(null,cs):1;v.at=t}
 function dec(){return D.videos.filter(function(v){return v.at!==null})}
@@ -445,17 +497,29 @@ function dark(){return css("--on").toUpperCase()!=="#FFF"&&css("--on").toUpperCa
 function drawLanes(){var x=LN.x,W=LN.w,H=LN.h;x.clearRect(0,0,W,H);var ink=css("--ink"),line=css("--line"),fnt=css("--fnt"),on=css("--on");var L=46,B=16,lh=(H-B)/LANES,last=D.calls.reduce(function(m,c){return Math.max(m,c.t||0)},0),mx=Math.max(2,D.running?D.vt*1.15:0,last*1.05);
   function X(t){return L+(t/mx)*(W-L-2)}x.font="11.5px "+F;for(var l=0;l<LANES;l++){x.fillStyle=fnt;x.fillText("Lane "+(l+1),0,l*lh+lh/2+4)}
   for(var s=0;s<=Math.floor(mx);s+=(mx>8?2:1)){var xx=X(s);x.strokeStyle=line;x.beginPath();x.moveTo(xx,0);x.lineTo(xx,H-B);x.stroke();x.fillStyle=fnt;x.fillText(s+" s",xx+3,H-3)}
-  var n=0,sum=0;D.calls.forEach(function(c){if(c.s>D.vt)return;var dn=c.t!=null&&c.t<=D.vt,e=dn?c.t:D.vt,y=c.lane*lh+3,h=lh-6,x0=X(c.s)+1,x1=Math.max(x0+3,X(e)-1);x.beginPath();if(x.roundRect)x.roundRect(x0,y,x1-x0,h,h/2);else x.rect(x0,y,x1-x0,h);
+  var n=0,sum=0;LH=[];D.calls.forEach(function(c){if(c.s>D.vt)return;var dn=c.t!=null&&c.t<=D.vt,e=dn?c.t:D.vt,y=c.lane*lh+3,h=lh-6,x0=X(c.s)+1,x1=Math.max(x0+3,X(e)-1);LH.push({x0:x0,x1:x1,y:y,h:h,c:c});x.beginPath();if(x.roundRect)x.roundRect(x0,y,x1-x0,h,h/2);else x.rect(x0,y,x1-x0,h);
     if(dn){x.fillStyle=c.err?css("--story"):ink;x.fill();if(!c.err){n++;sum+=c.lat}if(x1-x0>40){x.fillStyle=on;x.font="600 10px "+F;x.fillText(c.err?"error":Math.round(c.lat)+" ms",x0+7,y+h/2+4);x.font="11.5px "+F}}else{x.strokeStyle=ink;x.stroke()}});
   if(!D.calls.length){x.fillStyle=fnt;x.font="12.5px "+F;x.fillText(D.cached?"Loaded from your library. 0 Jev calls.":"Calls appear here during a decode.",L,lh*2)}
   $("qpc").textContent=(D.qpc||0)+" questions per call";$("lat").textContent=(n?Math.round(sum/n):0)+" ms average"}
+var LH=[];
+HOV.lanes=function(mx,my){for(var i=0;i<LH.length;i++){var r=LH[i];if(mx>=r.x0&&mx<=r.x1&&my>=r.y&&my<=r.y+r.h)return callTip(r.c)}return null};
+function callTip(c){var h='<b>Call '+(D.calls.indexOf(c)+1)+'</b> <span class="m">Lane '+(c.lane+1)+', sent at '+c.s.toFixed(2)+' s</span><hr>';
+  if(c.t==null||c.t>D.vt)return h+'Waiting on Jev, '+Math.round((D.vt-c.s)*1000)+' ms so far';
+  if(c.err)return h+'Failed: '+esc(c.msg||"unknown error");
+  var fl=(c.vids||[]).filter(function(v){return v.at!==null&&v.conf<U.thr}).length,ml=mixLine(c.cn);
+  return h+trow("Videos",c.n)+trow("Questions",c.q+" ("+Math.round(c.q/Math.max(1,c.n))+" per video)")+trow("Jev time",Math.round(c.lat)+" ms")+trow("Round trip",Math.round((c.t-c.s)*1000)+" ms")+trow("Flagged",fl)+trow("Cost","$"+(+c.cost||0).toFixed(5))+
+    (ml?'<hr>'+ml:"")+'<hr><span class="m">One batched request. Jev answers every question for every video in it at once.</span>'}
 $("leg").innerHTML=HOOKS.map(function(h){return '<span><span class="dot" style="background:var(--'+h[0]+');display:inline-block;margin-right:5px"></span>'+h[1]+'</span>'}).join("");
 function drawMix(){var x=MX.x,W=MX.w,H=MX.h;x.clearRect(0,0,W,H);var ink=css("--ink"),line=css("--line"),c={},bw=W/12,bk=[];HOOKS.forEach(function(h){c[h[0]]=css("--"+h[0])});for(var m=0;m<12;m++)bk.push({n:0,by:{},v:[]});
   dec().forEach(function(v){if(!v.hook||v.age>365)return;var m=11-Math.min(11,Math.floor((v.age-1)/30.4)),b=bk[m];b.n++;b.by[v.hook]=(b.by[v.hook]||0)+1;b.v.push(v.views)});
   var mN=Math.max(4,Math.max.apply(null,bk.map(function(b){return b.n})))*1.1;bk.forEach(function(b,m){var y=H,x0=m*bw+bw*.2,w=bw*.6;HOOKS.forEach(function(h){var n=b.by[h[0]]||0;if(!n)return;var hh=n/mN*(H-6);x.fillStyle=c[h[0]];x.fillRect(x0,y-hh+1,w,hh-1);y-=hh})});
   var ms=bk.map(function(b){return med(b.v)}),vm=Math.max.apply(null,ms.concat([1]))*1.1,p=[];ms.forEach(function(v,m){if(v)p.push([m*bw+bw/2,H-(v/vm)*(H-6)])});
   if(p.length>1){x.strokeStyle=ink;x.lineWidth=2;x.beginPath();x.moveTo(p[0][0],p[0][1]);for(var i=1;i<p.length;i++)x.quadraticCurveTo(p[i-1][0],p[i-1][1],(p[i-1][0]+p[i][0])/2,(p[i-1][1]+p[i][1])/2);x.lineTo(p[p.length-1][0],p[p.length-1][1]);x.stroke();x.lineWidth=1}
-  x.strokeStyle=line;x.beginPath();x.moveTo(0,H-.5);x.lineTo(W,H-.5);x.stroke()}
+  x.strokeStyle=line;x.beginPath();x.moveTo(0,H-.5);x.lineTo(W,H-.5);x.stroke();MB=bk;MBW=bw}
+var MB=null,MBW=1;
+HOV.mix=function(mx){if(!MB||!dec().length)return null;var m=Math.floor(mx/MBW);if(m<0||m>11)return null;var b=MB[m],d=864e5*30.4,f=function(t){return new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric"})};
+  var h='<b>'+f(Date.now()-(12-m)*d)+' to '+f(Date.now()-(11-m)*d)+'</b><hr>';if(!b.n)return h+'<span class="m">No Shorts posted in this window.</span>';
+  var all=med(dec().map(function(v){return v.views}))||1,mv=med(b.v);return h+trow("Shorts",b.n)+trow("Median views",fmt(mv)+" ("+(mv/all).toFixed(1)+"x channel)")+'<hr>'+mixLine(b.by)};
 var pts=[];function drawPlot(){var x=PL.x,W=PL.w,H=PL.h;x.clearRect(0,0,W,H);var fnt=css("--fnt"),c={};HOOKS.forEach(function(h){c[h[0]]=css("--"+h[0])});var d=dec().filter(function(v){return v.views>0});pts=[];
   if(!d.length){x.fillStyle=fnt;x.font="12.5px "+F;x.fillText("Bubbles appear as Jev decodes.",14,H/2+20);return}
   var m=med(d.map(function(v){return v.views})),lv=d.map(function(v){return Math.log(v.views)}),lo=Math.min.apply(null,lv)-.2,hi=Math.max.apply(null,lv)+.2,am=Math.max.apply(null,d.map(function(v){return v.age}))*1.04,lm=Math.max.apply(null,d.map(function(v){return v.likes}).concat([1]));
@@ -473,7 +537,8 @@ var F4={};
 function refresh(){var d=dec().filter(function(v){return v.hook});$("k3").textContent=flagged().length;$("fRev").textContent=flagged().length;if(!d.length)return;var all=med(d.map(function(v){return v.views}));$("k5").textContent=fmt(all);$("k4").textContent=d.filter(function(v){return v.views>=all*2}).length;
   var rs=HOOKS.map(function(h){var g=d.filter(function(v){return v.hook===h[0]}),L=g.length?med(g.map(function(v){return v.views}))/all:0;D.lift[h[0]]=L;return {k:h[0],L:L,n:g.length}});
   var ok=rs.filter(function(r){return r.n>=5}).sort(function(a,b){return b.L-a.L}),bl=rs.filter(function(r){return r.L>1.1&&r.n>=3&&(!ok.length||r.k!==ok[0].k)}).sort(function(a,b){return a.n-b.n})[0];
-  rs.slice().sort(function(a,b){return b.L-a.L}).forEach(function(r,i){var e=ur[r.k];e.style.order=i+1;e.querySelector(".nm").innerHTML=hn(r.k)+(bl&&bl.k===r.k?'<span class="bs">Blind spot</span>':"");e.querySelector(".u").style.width=Math.min(100,r.n/d.length*250)+"%";e.querySelector("em").textContent=Math.round(r.n/d.length*100)+"%";e.querySelector(".l").style.width=Math.min(100,r.L/2.5*100)+"%";var b=e.querySelector("b");b.textContent=r.L.toFixed(1)+"x";b.style.color=r.L<1?"var(--fnt)":"var(--ink)"});
+  rs.slice().sort(function(a,b){return b.L-a.L}).forEach(function(r,i){var e=ur[r.k];e.style.order=i+1;e.querySelector(".nm").innerHTML=hn(r.k)+(bl&&bl.k===r.k?'<span class="bs">Blind spot</span>':"");e.querySelector(".u").style.width=Math.min(100,r.n/d.length*250)+"%";e.querySelector("em").textContent=Math.round(r.n/d.length*100)+"%";e.querySelector(".l").style.width=Math.min(100,r.L/2.5*100)+"%";var b=e.querySelector("b");b.textContent=r.L.toFixed(1)+"x";b.style.color=r.L<1?"var(--fnt)":"var(--ink)";
+    e.dataset.tip='<b>'+esc(hn(r.k))+' hooks</b>'+(bl&&bl.k===r.k?' <span class="m">Blind spot</span>':'')+'<hr>'+trow("Shorts",r.n+" ("+Math.round(r.n/d.length*100)+"%)")+trow("Lift",r.L.toFixed(1)+"x the channel median")+'<hr><span class="m">Click to filter the gallery to these Shorts.</span>'});
   function fv(id,k,t){$(id).innerHTML='<span class="dot" style="background:'+col(k)+'"></span>'+esc(t)}
   if(ok.length){fv("fTop",ok[0].k,hn(ok[0].k));$("fTopS").textContent=ok[0].L.toFixed(1)+"x median, "+ok[0].n+" videos";F4.top=ok[0]}
   var cb={};d.forEach(function(v){var s=v.ans&&v.ans.structure&&v.ans.structure.choice;if(s)(cb[v.hook+"|"+s]=cb[v.hook+"|"+s]||[]).push(v.views)});var be=null;Object.keys(cb).forEach(function(k){if(cb[k].length<3)return;var L=med(cb[k])/all;if(!be||L>be.L)be={k:k,L:L,n:cb[k].length}});
@@ -483,38 +548,94 @@ $("revBtn").onclick=function(){var f=flagged();if(f.length)openD(f[0].i,f.map(fu
 function topList(){return dec().slice().sort(function(a,b){return b.views-a.views}).map(function(v){return v.i})}
 
 /* ---------- drawer ---------- */
-var dl=[],di=0;
+var dl=[],di=0,dR=null;
 function pr(p,top,c){p=p||{};return Object.keys(p).sort(function(a,b){return p[b]-p[a]}).map(function(k){return '<div class="pr'+(k===top?" win":"")+'"><span>'+esc(hn(k))+'</span><i style="--w:'+Math.round(p[k]*100)+'%;--c:'+(c?col(k):"var(--ink)")+'"></i><span>'+Math.round(p[k]*100)+'%</span></div>'}).join("")}
 function block(k,a){if(!a)return "";var h='<div class="ans"><div class="ah"><b>'+esc(hn(k))+' <span style="font-weight:400;color:var(--fnt)">'+esc(a.type)+'</span></b>',b="";
   if(a.type==="choice"){h+='<span>'+Math.round((a.confidence||0)*100)+'% confident</span></div>';b=pr(a.probabilities,a.choice,k==="hook")}
   else if(a.type==="score"){var lg=a.legend||{},lab=lg[Math.round(a.score)]||a.score,pp={};Object.keys(a.probabilities||{}).forEach(function(i){pp[lg[i]||i]=a.probabilities[i]});h+='<span>'+esc(lab)+'</span></div>';b=pr(pp,lab)}
   else{var n=+a.noul||0;h+='<span>'+(n>=.5?"Yes":"No")+'</span></div>';b='<div class="pr win"><span>Probability</span><i style="--w:'+Math.round(n*100)+'%"></i><span>'+Math.round(n*100)+'%</span></div>'}return h+b+'</div>'}
-function openD(i,l){dl=l&&l.length?l:[i];di=Math.max(0,dl.indexOf(i));rD();$("drawer").classList.add("open");$("drawer").setAttribute("aria-hidden","false");$("scrim").classList.add("open");$("dx").focus()}
+function openD(i,l){openDr(l,i,rD)}
+// The drawer shows either videos (rD) or scored hooks (rH); dl holds the list it steps through.
+function openDr(l,i,render){dl=l&&l.length?l:[i];di=Math.max(0,dl.indexOf(i));dR=render;dR();$("drawer").classList.add("open");$("drawer").setAttribute("aria-hidden","false");$("scrim").classList.add("open");$("dx").focus()}
 function closeAll(){$("drawer").classList.remove("open");$("drawer").setAttribute("aria-hidden","true");$("scrim").classList.remove("open");closeSide()}
 function rD(){var v=D.videos[dl[di]];if(!v)return;var all=med(dec().map(function(x){return x.views}))||1,a=v.ans||{};$("dpos").textContent=(di+1)+" of "+dl.length;
   $("db").innerHTML='<div class="dthumb" style="background:'+bg(v)+'"></div><h3>'+esc(v.title)+(v.conf<U.thr?'<span class="flag">Needs review</span>':'')+'</h3><div class="sub">Posted '+new Date(v.rec.posted_at).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})+'</div>'+
   '<div class="dstats"><div><b>'+fmt(v.views)+'</b><span>views</span></div><div><b>'+(v.views/all).toFixed(1)+'x</b><span>vs median</span></div><div><b>'+Math.round(v.conf*100)+'%</b><span>lowest confidence</span></div></div>'+Object.keys(a).map(function(k){return block(k,a[k])}).join("")+'<p><a href="'+esc(v.rec.url)+'" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600">Open on YouTube</a></p>'}
-$("dx").onclick=closeAll;$("scrim").onclick=closeAll;$("dp").onclick=function(){if(di>0){di--;rD()}};$("dn").onclick=function(){if(di<dl.length-1){di++;rD()}};
+$("dx").onclick=closeAll;$("scrim").onclick=closeAll;$("dp").onclick=function(){if(di>0){di--;dR()}};$("dn").onclick=function(){if(di<dl.length-1){di++;dR()}};
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeAll();$("chat").hidden=true}if($("drawer").classList.contains("open")){if(e.key==="ArrowRight")$("dn").click();if(e.key==="ArrowLeft")$("dp").click()}});
 document.addEventListener("click",function(e){var t=e.target.closest(".tile[data-v]");if(t){var v=D.videos[+t.dataset.v];if(v)openD(v.i,galleryList().map(function(x){return x.i}))}});
 
 /* ---------- hooks: ranked shortlist ---------- */
 function pattern(){var d=dec().filter(function(v){return v.hook}),t=HOOKS.map(function(h){return {k:h[0],L:D.lift[h[0]]||0,n:d.filter(function(v){return v.hook===h[0]}).length}}).filter(function(r){return r.n>=3}).sort(function(a,b){return b.L-a.L}).slice(0,2).map(function(r){return r.k});
   return {channel:(D.channel&&D.channel.title)||D.handle,top_hooks:t.length?t:["result"],examples:d.slice().sort(function(a,b){return b.views-a.views}).slice(0,5).map(function(v){return v.title})}}
-function judge(l){return api("/api/judge",{hooks:l,pattern:pattern()}).then(function(j){D.cost+=j.cost_usd||0;D.jms+=j.latency_ms||0;D.jn++;var rs=(j.results||[]).map(function(r){r.ms=j.latency_ms;return r});var t=rs.slice().sort(function(a,b){return b.score-a.score})[0];if(t)log(t.hook_type,"Jev scored "+rs.length+(rs.length>1?" hooks":" hook"),j.latency_ms+" ms, best "+t.score);return rs})}
+function judge(l){return api("/api/judge",{hooks:l,pattern:pattern()}).then(function(j){D.cost+=j.cost_usd||0;D.jms+=j.latency_ms||0;D.jn++;var rs=(j.results||[]).map(function(r){r.ms=j.latency_ms;return r});var srt=rs.slice().sort(function(a,b){return b.score-a.score}),t=srt[0];if(t)log(t.hook_type,"Jev scored "+rs.length+(rs.length>1?" hooks":" hook"),j.latency_ms+" ms, best "+t.score,'<b>Scored '+rs.length+(rs.length>1?" hooks":" hook")+' in one call</b><hr>'+srt.map(function(r){return trow("“"+esc(r.text)+"”",r.score)}).join("")+'<hr>'+trow("Jev time",j.latency_ms+" ms")+trow("Cost","$"+(+j.cost_usd||0).toFixed(5)));return rs})}
 var live=null;
-function card(c,rank,preview){var sv=D.saved.some(function(s){return s.text===c.text});return '<div class="hc" style="--hc:'+col(c.hook_type)+';--s:'+c.score+(preview?";border-style:dashed":"")+'">'+(rank===1?'<span class="rib">Film this next</span>':'')+'<div class="ring"><b>'+c.score+'</b></div><div class="k"><strong>'+(preview?"Live":"#"+rank)+'</strong><span class="dot" style="background:'+col(c.hook_type)+'"></span>'+esc(hn(c.hook_type))+', judged in '+Math.round(c.ms)+' ms</div><div class="q">\u201C'+esc(c.text)+'\u201D</div>'+
+// _enter / _pop are one-shot animation flags: renderHooks clears them after drawing, so later redraws stay still.
+function card(c,rank,preview){var sv=D.saved.some(function(s){return s.text===c.text});return '<div class="hc'+(c._enter?" enter":"")+(c._pop?" pop":"")+'" style="--hc:'+col(c.hook_type)+';--s:'+c.score+';--d:'+(c._d||0)+'ms'+(preview?";border-style:dashed":"")+'" data-h="'+(preview?"live":D.hooks.indexOf(c))+'" tabindex="0" role="button" aria-label="Open details for this hook"><span class="more">Details ›</span>'+(rank===1?'<span class="rib">Film this next</span>':'')+'<div class="ring"><b>'+c.score+'</b></div><div class="k"><strong>'+(preview?"Live":"#"+rank)+'</strong><span class="dot" style="background:'+col(c.hook_type)+'"></span>'+esc(hn(c.hook_type))+', judged in '+Math.round(c.ms)+' ms</div><div class="q">\u201C'+esc(c.text)+'\u201D</div>'+
   '<div class="m3"><span>Hook<i style="--w:'+Math.round(c.bars.hook*100)+'%"></i></span><span>Fit<i style="--w:'+Math.round(c.bars.fit*100)+'%"></i></span><span>Lift odds<i style="--w:'+Math.round(c.bars.lift_odds*100)+'%"></i></span></div>'+
   '<div class="act">'+(preview?'<button data-a="add">Add to list</button>':'<button data-a="copy" data-t="'+esc(c.text)+'">Copy</button><button data-a="save" data-i="'+D.hooks.indexOf(c)+'" aria-pressed="'+sv+'">'+(sv?"Shortlisted":"Shortlist")+'</button>')+'</div></div>'}
-function renderHooks(){var l=D.hooks.slice().sort(function(a,b){return b.score-a.score});$("hl").innerHTML=(live?card(live,0,true):"")+(l.length?l.map(function(c,i){return card(c,i+1)}).join(""):(live?"":'<div class="gal"><div class="none">Type a hook below or click Draft 5.</div></div>'));
+function pcard(p){return '<div class="hc pend'+(p._enter?" enter":"")+'" style="--d:'+(p._d||0)+'ms"><div class="ring"><b></b></div><div class="k"><strong>Scoring</strong>Jev is judging this hook</div><div class="q">“'+esc(p.text)+'”</div></div>'}
+function renderHooks(){var l=D.hooks.slice().sort(function(a,b){return b.score-a.score}),pd=D.pending||[];
+  $("hl").innerHTML=(live?card(live,0,true):"")+pd.map(pcard).join("")+(l.length?l.map(function(c,i){return card(c,i+1)}).join(""):(live||pd.length?"":'<div class="gal"><div class="none">Type a hook below or click Draft 5.</div></div>'));
+  l.concat(pd,live?[live]:[]).forEach(function(c){c._enter=c._pop=false});
   $("k7").textContent=D.hooks.length;$("k8").textContent=D.jn?Math.round(D.jms/D.jn)+" ms":"0 ms";$("k9").textContent=D.saved.length;$("st3").textContent=D.hooks.length?D.hooks.length+" scored":"Waiting"}
-$("hl").onclick=function(e){var b=e.target.closest("button[data-a]");if(!b)return;var a=b.dataset.a;
+function hIdx(el){return el.dataset.h==="live"?-1:+el.dataset.h}
+$("hl").onclick=function(e){var b=e.target.closest("button[data-a]");if(!b){var hc=e.target.closest(".hc[data-h]");if(hc)openH(hIdx(hc));return}var a=b.dataset.a;
   if(a==="add"&&live){D.hooks.push(live);live=null;$("hookIn").value="";renderHooks()}
   if(a==="copy"){copy(b.dataset.t);toast("Hook copied.")}
-  if(a==="save"){var c=D.hooks[+b.dataset.i],on=D.saved.some(function(s){return s.text===c.text});saveSL(on?"remove":"add",{text:c.text,score:c.score,hook_type:c.hook_type,bars:c.bars,ms:c.ms}).then(function(){toast(on?"Removed from shortlist.":"Added to shortlist.")}).catch(function(x){say(x.message,true)})}};
-$("draft").onclick=function(){if(!dec().length){say("Decode a creator first, then draft hooks.",true);return}var b=this;b.disabled=true;b.textContent="Drafting...";busy("s3",true);
-  api("/api/draft",{pattern:pattern()}).then(function(j){return judge((j.hooks||[]).filter(function(t){return t&&!D.hooks.some(function(h){return h.text===t})}))}).then(function(rs){rs.forEach(function(r){D.hooks.push(r)});renderHooks()})
-  .catch(function(e){say("Draft failed: "+e.message,true)}).then(function(){b.disabled=false;b.textContent="Draft 5";busy("s3",false)})};
+  if(a==="save"){var c=D.hooks[+b.dataset.i],on=D.saved.some(function(s){return s.text===c.text});toggleSave(c)}};
+$("hl").onkeydown=function(e){if(e.key==="Enter"&&e.target.matches(".hc[data-h]"))openH(hIdx(e.target))};
+function toggleSave(c){var on=D.saved.some(function(s){return s.text===c.text});return saveSL(on?"remove":"add",{text:c.text,score:c.score,hook_type:c.hook_type,bars:c.bars,ms:c.ms,answers:c.answers}).then(function(){toast(on?"Removed from shortlist.":"Added to shortlist.");if(dR===rH&&$("drawer").classList.contains("open"))rH()}).catch(function(x){say(x.message,true)})}
+
+/* ---------- hook drawer: why it scored that, and what to do about it ---------- */
+// Index -1 is the live preview: the hook you're typing, scored but not added to the list yet.
+function openH(i){if(i===-1){if(live)openDr([-1],-1,rH);return}openDr(D.hooks.map(function(c,k){return k}).sort(function(a,b){return D.hooks[b].score-D.hooks[a].score}),i,rH)}
+function hookAt(){return dl[di]===-1?live:D.hooks[dl[di]]}
+function rH(){var c=hookAt(),isLive=dl[di]===-1;if(!c)return;
+  var rank=isLive?1+D.hooks.filter(function(h){return h.score>c.score}).length:di+1,of=isLive?D.hooks.length+1:dl.length;
+  $("dpos").textContent=isLive?"Live preview":"Hook "+(di+1)+" of "+dl.length;
+  var k=c.hook_type,b=c.bars||{hook:0,fit:0,lift_odds:0},a=c.answers||{},sv=D.saved.some(function(s){return s.text===c.text}),pt=pattern().top_hooks,all=med(dec().map(function(v){return v.views}))||1;
+  var lab=a.strength&&a.strength.legend?a.strength.legend[Math.round(a.strength.score)]:null;
+  var parts=[["hook","Hook strength",.4,"How scroll-stopping the line is on its own"+(lab?". Jev rated it "+lab+".":".")],["fit","Fit",.3,"Whether it sounds like this creator's top titles."],["lift_odds","Lift odds",.3,"Odds it beats their typical Short, given which hook types win here."]];
+  var weak=parts.slice().sort(function(x,y){return(b[x[0]]||0)-(b[y[0]]||0)})[0][0];
+  var head=c.score>=70?"Strong candidate. Film this one.":c.score>=50?"Promising. Tighten it before you film.":"Weak for this creator. Try another angle.";
+  var fix=weak==="hook"?"The line itself is the weak spot. Lead with something more specific or surprising.":weak==="fit"?"It doesn't sound like them yet. Borrow words and topics from their winning Shorts below.":
+    pt.indexOf(k)>=0?"Lift odds are lowest. Make the payoff clearer, since "+hn(k)+" hooks already work here.":hn(k)+" isn't what outperforms here. Their winners lean on "+pt.map(hn).join(" and ")+" hooks.";
+  var same=dec().filter(function(v){return v.hook===k}).sort(function(x,y){return y.views-x.views});
+  var ev=same.length?'<p class="sub" style="margin:0">'+same.length+' of their Shorts use '+esc(hn(k))+' hooks, at '+(D.lift[k]||0).toFixed(1)+'x the channel median.</p>'+same.slice(0,3).map(function(v){return '<button class="vrow" data-vv="'+v.i+'"><span style="background:'+bg(v)+'"></span><div>'+esc(v.title)+'<small>'+fmt(v.views)+' views, '+(v.views/all).toFixed(1)+'x median</small></div></button>'}).join(""):
+    '<p class="sub" style="margin:0">They haven\'t posted a '+esc(hn(k))+' hook yet, so there\'s no track record. Untested can mean opportunity or risk.</p>';
+  $("db").innerHTML='<div class="hhero" style="--hc:'+col(k)+';--s:'+c.score+'"><div class="ring"><b>'+c.score+'</b></div><div><div class="sub"><span class="dot" style="background:'+col(k)+';display:inline-block;margin-right:5px"></span>'+esc(hn(k))+' hook, '+(isLive?'would rank #'+rank+' of '+of:'#'+rank+' of '+of)+'</div><h3>“'+esc(c.text)+'”</h3></div></div>'+
+    '<div class="verdict"><b>'+head+'</b>'+esc(fix)+'</div>'+
+    '<div class="sec">How the score adds up</div>'+parts.map(function(p){var v=b[p[0]]||0;return '<div class="brk" style="--hc:'+col(k)+'"><span>'+p[1]+' <span style="color:var(--fnt)">×'+Math.round(p[2]*100)+'%</span></span><i style="--w:'+Math.round(v*100)+'%"></i><b>+'+Math.round(v*p[2]*100)+'</b><small>'+esc(p[3])+'</small></div>'}).join("")+
+    '<div class="sec">'+esc(hn(k))+' on this channel</div>'+ev+
+    (a.type||a.strength?'<div class="sec">Jev\'s answers</div>'+block("hook",a.type)+block("strength",a.strength)+block("fit",a.fit)+block("lift_odds",a.lift_odds):"")+
+    '<div class="hacts">'+(isLive?'<button class="btn" data-ha="add">Add to list</button>':'')+'<button class="'+(isLive?"ghost":"btn")+'" data-ha="save">'+(sv?"Shortlisted ✓":"Shortlist")+'</button><button class="ghost" data-ha="copy">Copy</button><button class="ghost" data-ha="vary">Edit and rescore</button></div>'}
+// Adding or shortlisting the live preview moves it into the ranked list, and the drawer follows it there.
+function adoptLive(){var c=live;D.hooks.push(c);live=null;$("hookIn").value="";renderHooks();openH(D.hooks.length-1);return c}
+$("db").onclick=function(e){var v=e.target.closest("[data-vv]");if(v){openD(+v.dataset.vv,topList());return}var b=e.target.closest("[data-ha]");if(!b||dR!==rH)return;var c=hookAt();if(!c)return;var isLive=dl[di]===-1;
+  if(b.dataset.ha==="add"&&isLive){adoptLive();toast("Added to your list.")}
+  if(b.dataset.ha==="save"){if(isLive)c=adoptLive();toggleSave(c)}
+  if(b.dataset.ha==="copy"){copy(c.text);toast("Hook copied.")}
+  if(b.dataset.ha==="vary"){closeAll();var i=$("hookIn");i.value=c.text;i.focus();i.oninput()}};
+
+/* ---------- suggested hooks: one per winning hook type, plus their top title as a baseline ---------- */
+var TPL={curiosity:["Nobody tells you this about getting started","This small change made the biggest difference","I wish I knew this one thing sooner"],
+  recognition:["If you've ever felt behind, this is for you","Every beginner makes this exact mistake","Tell me you're new without telling me"],
+  result:["How I got my first win in 30 days","I tried this for a week. Here are the results","The exact steps that doubled my results"],
+  contrarian:["Stop doing this. It's wasting your time.","Everyone says do this. They're wrong.","Unpopular opinion: you don't need more tips"],
+  story:["I almost quit. Then this happened.","The mistake that taught me everything","Day 1 vs day 100 of learning this"]},sugN=0;
+function renderSug(){var el=$("sug");if(!dec().length){el.innerHTML="";return}var ks=pattern().top_hooks.slice(),out=[],top=dec().slice().sort(function(a,b){return b.views-a.views})[0];
+  if(F4.blind&&ks.indexOf(F4.blind.k)<0)ks.push(F4.blind.k);
+  if(top&&sugN%2===0)out.push({t:top.title,k:top.hook,tip:"Their most-viewed Short's title ("+fmt(top.views)+" views). Score it as the baseline to beat."});
+  ks.forEach(function(k,i){var L=TPL[k];if(L)out.push({t:L[(sugN+i)%L.length],k:k,tip:(F4.blind&&F4.blind.k===k?hn(k)+" is their blind spot: it outperforms, but they rarely use it.":hn(k)+" is one of their best hook types, at "+(D.lift[k]||0).toFixed(1)+"x the median.")+" Click to score it, then make it yours."})});
+  el.innerHTML='<span>Try</span><button class="chip" data-sh aria-label="Show other suggestions" data-tip="Show other suggestions">↻</button>'+out.map(function(s){return '<button class="chip" data-s="'+esc(s.t)+'" data-tip="'+esc(esc(s.tip))+'"><span class="dot" style="background:'+col(s.k)+'"></span><em>'+esc(s.t)+'</em></button>'}).join("")}
+$("sug").onclick=function(e){if(e.target.closest("[data-sh]")){sugN++;renderSug();return}var b=e.target.closest("[data-s]");if(!b)return;var i=$("hookIn");i.value=b.dataset.s;i.focus();i.oninput()};
+$("draft").onclick=function(){if(!dec().length){say("Decode a creator first, then draft hooks.",true);return}var b=this,X=D;b.disabled=true;b.textContent="Drafting...";busy("s3",true);
+  api("/api/draft",{pattern:pattern()}).then(function(j){var l=(j.hooks||[]).filter(function(t){return t&&!D.hooks.some(function(h){return h.text===t})});if(X!==D||!l.length)return [];
+    // Show the drafts right away, one after another, while Jev scores them.
+    X.pending=l.map(function(t,i){return {text:t,_enter:true,_d:i*120}});b.textContent="Scoring...";$("hl").scrollTop=0;renderHooks();return judge(l)})
+  .then(function(rs){if(X!==D)return;X.pending=[];rs.forEach(function(r){r._pop=true;D.hooks.push(r)});renderHooks()})
+  .catch(function(e){X.pending=[];if(X===D)renderHooks();say("Draft failed: "+e.message,true)}).then(function(){b.disabled=false;b.textContent="Draft 5";busy("s3",false)})};
 var lt,seq=0;$("hookIn").oninput=function(){clearTimeout(lt);var t=this.value.trim();if(t.length<6){live=null;renderHooks();return}
   lt=setTimeout(function(){if(!dec().length){say("Decode a creator first, then score hooks.",true);return}var my=++seq;busy("s3",true);judge([t]).then(function(rs){if(my===seq&&rs[0]){live=rs[0];renderHooks()}}).catch(function(e){say("Scoring failed: "+e.message,true)}).then(function(){busy("s3",false)})},350)};
 
@@ -531,7 +652,7 @@ $("csv").onclick=function(){var d=dec(),all=med(d.map(function(v){return v.views
   var blob=new Blob([rows.map(function(r){return r.map(q).join(",")}).join("\n")],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(D.handle||"decode").replace("@","")+"-jev-decode.csv";document.body.appendChild(a);a.click();a.remove()};
 
 /* ---------- log ---------- */
-function log(k,t,s){var ul=$("log"),d=new Date(),p=function(n){return(n<10?"0":"")+n},li=document.createElement("li");li.innerHTML='<time>'+p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds())+'</time><span class="dot" style="background:'+col(k)+'"></span><span>'+esc(t)+', '+esc(s)+'</span>';ul.insertBefore(li,ul.firstChild);while(ul.children.length>40)ul.removeChild(ul.lastChild)}
+function log(k,t,s,tip){var ul=$("log"),d=new Date(),p=function(n){return(n<10?"0":"")+n},li=document.createElement("li");if(tip)li.dataset.tip=tip;li.innerHTML='<time>'+p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds())+'</time><span class="dot" style="background:'+col(k)+'"></span><span>'+esc(t)+', '+esc(s)+'</span>';ul.insertBefore(li,ul.firstChild);while(ul.children.length>40)ul.removeChild(ul.lastChild)}
 
 /* ---------- chat ---------- */
 $("fab").onclick=function(){$("chat").hidden=!$("chat").hidden;if(!$("chat").hidden)$("chi").focus()};$("cx").onclick=function(){$("chat").hidden=true};
@@ -540,8 +661,8 @@ function vizHTML(v){if(!v||!v.rows||!v.rows.length)return "";if(v.kind==="lift")
   if(v.kind==="top"){var m2=Math.max.apply(null,v.rows.map(function(r){return r.value}))||1;return '<div class="mc">'+v.rows.map(function(r){return '<div><span title="'+esc(r.label)+'">'+esc(String(r.label).slice(0,12))+'</span><i style="width:'+Math.round(r.value/m2*100)+'%;background:'+col(r.hook)+'"></i><span>'+fmt(r.value)+'</span></div>'}).join("")+'</div>'}return ""}
 function ask(q){q=(q||"").trim();if(!q)return;if(!dec().length){toast("Decode a creator first.");return}bub("q1",esc(q));var w=bub("a1","Jev is routing your question...");
   api("/api/ask",{handle:D.handle,question:q}).then(function(r){D.cost+=r.cost_usd||0;var st=r.steps||{},tg='<span class="tag">'+esc(hn(r.topic))+'</span>';
-    if(r.blocked){w.innerHTML=tg+'<span class="tag" style="color:var(--warn);border-color:var(--warn)">Blocked by Jev</span><p style="margin:6px 0 0">'+esc(r.answer)+'</p><div class="note">Routed in '+(st.route_ms||0)+' ms. No chat model call.</div>';log(null,"Jev blocked a question",(st.route_ms||0)+" ms");return}
-    w.innerHTML=tg+(r.grounded_ok?'<span class="tag ok">Grounded</span>':'<span class="tag" style="color:var(--warn);border-color:var(--warn)">Check this</span>')+'<p style="margin:6px 0">'+esc(r.answer)+'</p>'+vizHTML(r.viz)+'<div class="note">Route '+(st.route_ms||0)+' ms, answer '+(st.answer_ms||0)+' ms, check '+(st.check_ms||0)+' ms</div>';log(null,"Jev routed and checked an answer",(r.grounded_ok?"grounded":"flagged"))})
+    if(r.blocked){w.innerHTML=tg+'<span class="tag" style="color:var(--warn);border-color:var(--warn)">Blocked by Jev</span><p style="margin:6px 0 0">'+esc(r.answer)+'</p><div class="note">Routed in '+(st.route_ms||0)+' ms. No chat model call.</div>';log(null,"Jev blocked a question",(st.route_ms||0)+" ms","“"+esc(q)+"”<hr>Jev routed it as "+esc(hn(r.topic))+", so the chat model never ran.");return}
+    w.innerHTML=tg+(r.grounded_ok?'<span class="tag ok">Grounded</span>':'<span class="tag" style="color:var(--warn);border-color:var(--warn)">Check this</span>')+'<p style="margin:6px 0">'+esc(r.answer)+'</p>'+vizHTML(r.viz)+'<div class="note">Route '+(st.route_ms||0)+' ms, answer '+(st.answer_ms||0)+' ms, check '+(st.check_ms||0)+' ms</div>';log(null,"Jev routed and checked an answer",(r.grounded_ok?"grounded":"flagged"),"“"+esc(q)+"”<hr>"+trow("Jev route",(st.route_ms||0)+" ms")+trow("Chat answer",(st.answer_ms||0)+" ms")+trow("Jev check",(st.check_ms||0)+" ms")+trow("Grounded",Math.round((+r.grounded||0)*100)+"%"))})
   .catch(function(e){w.innerHTML='<span class="err">'+esc(e.message)+'</span>'})}
 $("chf").onsubmit=function(e){e.preventDefault();ask($("chi").value);$("chi").value=""};$("chb").onclick=function(e){var b=e.target.closest("[data-q]");if(b)ask(b.dataset.q)};
 
@@ -549,26 +670,29 @@ $("chf").onsubmit=function(e){e.preventDefault();ask($("chi").value);$("chi").va
 function setCreator(){var c=D.channel||{};document.body.classList.add("has-data");$("av").style.background=c.avatar?"url('"+c.avatar+"') center/cover":"var(--contrarian)";$("av").textContent=c.avatar?"":(c.title||D.handle).slice(0,2).toUpperCase();
   $("cname").textContent=c.title||D.handle;$("cmeta").textContent=D.handle+", "+D.videos.length+" Shorts"}
 function resetChat(){var c=$("chb");while(c.children.length>2)c.removeChild(c.lastChild)}
-function reset(){if(D.handle)resetChat();D=fresh();U.filter=null;U.review=false;U.out=false;live=null;F4={};$("log").innerHTML="";renderHooks();["fTop","fCombo","fBlind"].forEach(function(i){$(i).textContent="Waiting"})}
+function reset(){if(D.handle)resetChat();D=fresh();U.filter=null;U.review=false;U.out=false;live=null;F4={};sugN=0;$("log").innerHTML="";renderHooks();renderSug();["fTop","fCombo","fBlind"].forEach(function(i){$(i).textContent="Waiting"})}
 function start(fr){var h=($("h").value||"").trim();if(!h){$("h").focus();return}if(D.running)return;$("run").disabled=true;$("run").textContent="Pulling...";$("wErr").textContent="";say("Pulling Shorts from YouTube...");pulling(true);
   api("/api/ingest?handle="+encodeURIComponent(h)+(fr?"&fresh=1":"")).then(function(j){pulling(false);reset();D.handle=j.handle;D.channel=j.channel||{title:j.handle};D.cached=!!j.cached;D.videos=(j.records||[]).map(toV);
     if(!D.videos.length){$("run").disabled=false;$("run").textContent="Decode";var m="No Shorts found for "+j.handle+". Try a creator who posts Shorts.";$("wErr").textContent=m;say(m,true);return}
     setCreator();clearWall();showGallery(false);fillWall();$("rerun").hidden=true;$("slow").hidden=true;renderLib();loadSL();
     if(j.cached){var by={};(j.results||[]).forEach(function(r){by[r.id]=r});D.videos.forEach(function(v){if(by[v.id])apply(v,by[v.id],0)});D.decoded=dec().length;D.qpc=(j.stats&&j.stats.qpc)||0;D.results=j.results||[];D.stats=j.stats||{};
-      say("Loaded "+j.handle+" from your library with 0 Jev calls.");log(null,"Loaded "+j.handle,"0 Jev calls");done(true);return}
+      say("Loaded "+j.handle+" from your library with 0 Jev calls.");log(null,"Loaded "+j.handle,"0 Jev calls","Saved decode from your library. No Jev calls, no cost. Use Re-run Jev to decode it again.");done(true);return}
     say("Decoding "+D.videos.length+" Shorts with Jev...");run()}).catch(function(e){pulling(false);$("run").disabled=false;$("run").textContent="Decode";if(e.status===401)return;$("wErr").textContent=e.message;say(e.message,true)})}
 function run(){var b=[];for(var i=0;i<D.videos.length;i+=BATCH)b.push(D.videos.slice(i,i+BATCH));var n=0,X=D;X.running=true;X.t0=performance.now();document.body.classList.add("running");$("run").textContent="Decoding...";["st1","st2"].forEach(function(i){$(i).textContent="Decoding"});busy("s1",true);busy("s2",true);
   function now(){return(performance.now()-X.t0)/1000}
-  function lane(l){if(n>=b.length)return Promise.resolve();var bt=b[n++],c={lane:l,s:now(),t:null,lat:0};X.calls.push(c);
-    return api("/api/classify",{videos:bt.map(function(v){return v.rec}),threshold:U.thr}).then(function(j){var t=now();X.ev.push({t:t,f:function(){c.t=t;c.lat=j.latency_ms;X.qpc=j.questions;X.q+=j.questions;X.dcost+=j.cost_usd;X.cost+=j.cost_usd;var cn={};
-      (j.results||[]).forEach(function(r,k){var v=bt[k];if(v&&v.id===r.id){apply(v,r,X.vt);X.decoded++;X.results.push(r);if(v.hook)cn[v.hook]=(cn[v.hook]||0)+1}});log(Object.keys(cn).sort(function(a,z){return cn[z]-cn[a]})[0],"Jev decoded "+bt.length+" videos",j.latency_ms+" ms")}})})
-    .catch(function(e){var t=now();X.ev.push({t:t,f:function(){c.t=t;c.err=true;say("A Jev call failed: "+e.message,true)}})}).then(function(){return lane(l)})}
+  function lane(l){if(n>=b.length)return Promise.resolve();var bt=b[n++],c={lane:l,s:now(),t:null,lat:0,n:bt.length,vids:bt};X.calls.push(c);
+    return api("/api/classify",{videos:bt.map(function(v){return v.rec}),threshold:U.thr}).then(function(j){var t=now();X.ev.push({t:t,f:function(){c.t=t;c.lat=j.latency_ms;c.q=j.questions;c.cost=j.cost_usd;X.qpc=j.questions;X.q+=j.questions;X.dcost+=j.cost_usd;X.cost+=j.cost_usd;var cn={};
+      (j.results||[]).forEach(function(r,k){var v=bt[k];if(v&&v.id===r.id){apply(v,r,X.vt);X.decoded++;X.results.push(r);if(v.hook)cn[v.hook]=(cn[v.hook]||0)+1}});c.cn=cn;
+      // Once enough Shorts are decoded to see a pattern, start drafting hooks so that panel fills during the run.
+      if(X===D&&!X.drafted&&X.decoded>=Math.min(X.videos.length,Math.max(20,Math.round(X.videos.length*.4)))){X.drafted=true;refresh();renderSug();if(!X.hooks.length)$("draft").click()}
+      log(Object.keys(cn).sort(function(a,z){return cn[z]-cn[a]})[0],"Jev decoded "+bt.length+" videos",j.latency_ms+" ms",'<b>'+bt.length+' videos in one call</b><hr>'+mixLine(cn)+'<hr>'+trow("Questions",j.questions)+trow("Jev time",j.latency_ms+" ms")+trow("Cost","$"+(+j.cost_usd||0).toFixed(5)))}})})
+    .catch(function(e){var t=now();X.ev.push({t:t,f:function(){c.t=t;c.err=true;c.msg=e.message;say("A Jev call failed: "+e.message,true)}})}).then(function(){return lane(l)})}
   var ls=[];for(var l=0;l<LANES;l++)ls.push(lane(l));
   Promise.all(ls).then(function(){var t=now();X.ev.push({t:t,f:function(){X.running=false;X.end=X.vt;document.body.classList.remove("running");busy("s1",false);busy("s2",false);say("Decoded "+X.decoded+" Shorts in "+X.end.toFixed(1)+" s for $"+X.dcost.toFixed(4)+".");
     api("/api/save",{handle:X.handle,channel:X.channel,records:X.videos.map(function(v){return v.rec}),results:X.results,stats:{qpc:X.qpc,calls:X.calls.length,cost_usd:X.dcost,duration_s:X.end}}).then(loadLib).catch(function(){});
     if(X===D)done(false)}})})}
-function done(cached){$("rerun").hidden=false;$("slow").hidden=false;U.watch=false;$("run").disabled=false;$("run").textContent="Decode";refresh();renderChips();showGallery(true);["st1","st2"].forEach(function(i){$(i).textContent="Done"});
-  if(!cached&&!D.hooks.length)$("draft").click()}
+function done(cached){$("rerun").hidden=false;$("slow").hidden=false;U.watch=false;$("run").disabled=false;$("run").textContent="Decode";refresh();renderChips();renderSug();showGallery(true);["st1","st2"].forEach(function(i){$(i).textContent="Done"});
+  if(!cached&&!D.hooks.length&&!D.drafted)$("draft").click()}
 $("run").onclick=function(){start(false)};$("rerun").onclick=function(){U.watch=false;$("h").value=D.handle;start(true)};$("slow").onclick=function(){U.watch=true;$("h").value=D.handle;toast("Replaying at watch speed. Timings shown are real.");start(true)};$("h").onkeydown=function(e){if(e.key==="Enter")start(false)};
 
 /* ---------- counters + loop ---------- */

@@ -4,12 +4,17 @@ import type { VideoRecord } from "./adapters/adapter";
 export const JEV_MODEL = "typesafe/jev";
 export const JEV_PRICE_PER_M_INPUT = 0.042; // USD per 1M input tokens. Output tokens are free.
 
+// Drops lone UTF-16 surrogates (half an emoji), which TypeSafe rejects as invalid Unicode.
+// Older saved decodes can still contain them from before descriptions were cut safely.
+const LONE_SURROGATE = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g;
+const wellFormed = (_k: string, v: unknown) => (typeof v === "string" ? v.replace(LONE_SURROGATE, "") : v);
+
 // Calls TypeSafe's own HTTP API. Throws on network errors and non-2xx responses.
 async function runJevTypesafe(env: any, input: { state: unknown; questions: Record<string, any> }) {
   const res = await fetch("https://api.typesafe.ai/v1/systemone", {
     method: "POST",
     headers: { "content-type": "application/json", authorization: `Bearer ${env.TYPESAFE_API_KEY}` },
-    body: JSON.stringify({ state: input.state, model: "jev-latest", questions: input.questions }),
+    body: JSON.stringify({ state: input.state, model: "jev-latest", questions: input.questions }, wellFormed),
   });
   if (!res.ok) {
     const body = await res.text().catch(() => "");

@@ -58,6 +58,7 @@ export async function judgeHooks(env: any, hooks: string[], pattern: WinningPatt
       hook_type: type.choice || "unknown",
       score: Math.round(100 * (0.4 * s + 0.3 * fit + 0.3 * lift)),
       bars: { hook: s, fit, lift_odds: lift },
+      answers: { type: a[`h${i}_type`], strength: a[`h${i}_strength`], fit: a[`h${i}_fit`], lift_odds: a[`h${i}_lift_odds`] },
     };
   });
 
