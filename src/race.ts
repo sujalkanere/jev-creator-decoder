@@ -26,7 +26,8 @@ export async function raceLlmOne(env: any, v: VideoRecord) {
   const t0 = Date.now();
   const res: any = await env.AI.run(LLM_MODEL, { messages: [{ role: "user", content: prompt }], max_tokens: 60 });
   const ms = Date.now() - t0;
-  const text: string = res?.response ?? "";
+  // Workers AI hands back already-parsed JSON when the model replies with pure JSON.
+  const text = typeof res?.response === "string" ? res.response : JSON.stringify(res?.response ?? "");
   const inTok = Number(res?.usage?.prompt_tokens ?? Math.ceil(prompt.length / 4));
   const outTok = Number(res?.usage?.completion_tokens ?? Math.ceil(text.length / 4));
   const cost_usd = (inTok * LLM_IN + outTok * LLM_OUT) / 1_000_000;

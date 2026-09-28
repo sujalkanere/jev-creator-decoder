@@ -1,5 +1,5 @@
 import chat from "../chat.json";
-import { JEV_MODEL, JEV_PRICE_PER_M_INPUT } from "./jev";
+import { JEV_PRICE_PER_M_INPUT, runJev } from "./jev";
 
 export const ANSWER_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 const A_IN = 0.293, A_OUT = 2.253; // USD per 1M tokens, Workers AI list price
@@ -57,7 +57,7 @@ export async function askDecoder(env: any, question: string, payload: any) {
 
   // 1. Jev routes the question before any chat model runs.
   let t0 = Date.now();
-  const route: any = await env.AI.run(JEV_MODEL, { state: { question: q, available_data: AVAILABLE_DATA }, questions: expand((chat as any).router) });
+  const route: any = await runJev(env, { state: { question: q, available_data: AVAILABLE_DATA }, questions: expand((chat as any).router) });
   steps.route_ms = Date.now() - t0;
   jevTokens += Number(route?.usage?.input_tokens || 0);
   const topic = route?.answers?.topic?.choice || "off_topic";
@@ -88,7 +88,7 @@ export async function askDecoder(env: any, question: string, payload: any) {
 
   // 3. Jev fact-checks the answer before it is shown.
   t0 = Date.now();
-  const check: any = await env.AI.run(JEV_MODEL, { state: { data, answer }, questions: expand((chat as any).check) });
+  const check: any = await runJev(env, { state: { data, answer }, questions: expand((chat as any).check) });
   steps.check_ms = Date.now() - t0;
   jevTokens += Number(check?.usage?.input_tokens || 0);
   const grounded = Number(check?.answers?.grounded?.noul ?? 0);

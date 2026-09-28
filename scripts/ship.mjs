@@ -6,8 +6,11 @@ import fs from "node:fs";
 
 const DB = "content-decoder";
 if (!fs.existsSync(".dev.vars")) { console.error("Missing .dev.vars. Run npm run setup first."); process.exit(1); }
-const key = (fs.readFileSync(".dev.vars", "utf8").match(/^YOUTUBE_API_KEY=(.+)$/m) || [])[1]?.trim();
+const vars = fs.readFileSync(".dev.vars", "utf8");
+const key = (vars.match(/^YOUTUBE_API_KEY=(.+)$/m) || [])[1]?.trim();
 if (!key || /paste-your/i.test(key)) { console.error("Add your YouTube API key with npm run setup first."); process.exit(1); }
+// Optional: only uploaded if you've set it in .dev.vars. Makes TypeSafe's API the primary Jev backend.
+const typesafeKey = (vars.match(/^TYPESAFE_API_KEY=(.+)$/m) || [])[1]?.trim();
 
 console.log("\n1/3  Creating the tables in the cloud database (answer Y if asked)...");
 execSync(`npx wrangler d1 migrations apply ${DB} --remote`, { stdio: "inherit" });
@@ -19,7 +22,9 @@ const url = (out.match(/https:\/\/[^\s]+\.workers\.dev/) || [])[0];
 
 console.log("\n3/3  Uploading secrets...");
 const token = crypto.randomBytes(16).toString("hex");
-for (const [k, v] of [["YOUTUBE_API_KEY", key], ["SETUP_TOKEN", token]]) {
+const secrets = [["YOUTUBE_API_KEY", key], ["SETUP_TOKEN", token]];
+if (typesafeKey) secrets.push(["TYPESAFE_API_KEY", typesafeKey]);
+for (const [k, v] of secrets) {
   execSync(`npx wrangler secret put ${k}`, { input: v + "\n", stdio: ["pipe", "inherit", "inherit"] });
 }
 

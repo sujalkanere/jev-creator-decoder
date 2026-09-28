@@ -1,5 +1,5 @@
 import judge from "../judge.json";
-import { JEV_MODEL, JEV_PRICE_PER_M_INPUT } from "./jev";
+import { JEV_PRICE_PER_M_INPUT, runJev } from "./jev";
 
 export const LLM_MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8-fast";
 
@@ -18,7 +18,9 @@ export async function draftHooks(env: any, pattern: WinningPattern, topic?: stri
     `Their top titles: ${pattern.examples.slice(0, 5).join(" | ")}. ` +
     `Each hook must be under 12 words. Return only a JSON array of 5 strings.`;
   const res: any = await env.AI.run(LLM_MODEL, { messages: [{ role: "user", content: prompt }], max_tokens: 300 });
-  const text: string = res?.response ?? "";
+  // Workers AI hands back already-parsed JSON when the model replies with pure JSON.
+  if (Array.isArray(res?.response)) return res.response.map(String).filter(Boolean).slice(0, 5);
+  const text = typeof res?.response === "string" ? res.response : JSON.stringify(res?.response ?? "");
   try {
     const m = text.match(/\[[\s\S]*\]/);
     const arr = JSON.parse(m ? m[0] : text);
@@ -40,7 +42,7 @@ export async function judgeHooks(env: any, hooks: string[], pattern: WinningPatt
   });
 
   const t0 = Date.now();
-  const res: any = await env.AI.run(JEV_MODEL, { state: { hooks: list, winning_pattern: pattern }, questions });
+  const res: any = await runJev(env, { state: { hooks: list, winning_pattern: pattern }, questions });
   const latency_ms = Date.now() - t0;
   const a = res?.answers || {};
 

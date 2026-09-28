@@ -11,6 +11,7 @@ export interface Env {
   ASSETS: any;
   YOUTUBE_API_KEY: string;
   SETUP_TOKEN?: string;
+  TYPESAFE_API_KEY?: string; // optional: when set, Jev runs on TypeSafe's API first, with Workers AI as fallback
 }
 
 const json = (data: unknown, status = 200) =>

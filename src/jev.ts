@@ -4,6 +4,36 @@ import type { VideoRecord } from "./adapters/adapter";
 export const JEV_MODEL = "typesafe/jev";
 export const JEV_PRICE_PER_M_INPUT = 0.042; // USD per 1M input tokens. Output tokens are free.
 
+// Calls TypeSafe's own HTTP API. Throws on network errors and non-2xx responses.
+async function runJevTypesafe(env: any, input: { state: unknown; questions: Record<string, any> }) {
+  const res = await fetch("https://api.typesafe.ai/v1/systemone", {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: `Bearer ${env.TYPESAFE_API_KEY}` },
+    body: JSON.stringify({ state: input.state, model: "jev-latest", questions: input.questions }),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`${res.status} ${body.slice(0, 200)}`);
+  }
+  return await res.json();
+}
+
+// Runs Jev on TypeSafe's own HTTP API when TYPESAFE_API_KEY is set, falling back to
+// Cloudflare Workers AI if that call fails. Without the key, Cloudflare is used alone.
+// Both speak the same state/questions/answers contract, so callers read the result the same way.
+export async function runJev(env: any, input: { state: unknown; questions: Record<string, any> }) {
+  if (!env.TYPESAFE_API_KEY) return await env.AI.run(JEV_MODEL, input);
+  try {
+    return await runJevTypesafe(env, input);
+  } catch (tsErr: any) {
+    try {
+      return await env.AI.run(JEV_MODEL, input);
+    } catch (cfErr: any) {
+      throw new Error(`Jev unavailable: TypeSafe API (${tsErr?.message || tsErr}) and Cloudflare (${cfErr?.message || cfErr})`);
+    }
+  }
+}
+
 // Build one questions object for a batch: every schema question repeated per video.
 // Keys look like v3_hook. {v} in instructions becomes videos[3].
 export function buildVideoQuestions(count: number) {
@@ -35,7 +65,7 @@ export async function classifyBatch(env: any, videos: VideoRecord[], threshold =
   const questions = buildVideoQuestions(batch.length);
 
   const t0 = Date.now();
-  const res: any = await env.AI.run(JEV_MODEL, { state, questions });
+  const res: any = await runJev(env, { state, questions });
   const latency_ms = Date.now() - t0;
 
   const input_tokens = Number(res?.usage?.input_tokens || 0);

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>NextWork Content Decoder</title>
+<title>NextWork Jev Content Decoder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&display=swap" rel="stylesheet">
@@ -17,8 +17,8 @@
 body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg);color:var(--ink);font:14px/1.45 Geist,system-ui,sans-serif;font-feature-settings:"tnum"}
 .app{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
 /* sidebar */
-.side{position:sticky;top:0;height:100vh;padding:20px 16px;border-right:1px solid var(--line);display:flex;flex-direction:column}
-.logo{font-size:16px;white-space:nowrap;letter-spacing:-.02em;margin:0 8px 22px}.logo b{font-weight:600}.logo span{color:var(--mut)}
+.side{position:sticky;top:0;height:100vh;padding:20px 16px;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow-x:hidden}
+.logo{font-size:16px;letter-spacing:-.02em;margin:0 8px 22px;line-height:1.25}.logo b{font-weight:600;display:block}.logo span{color:var(--mut)}
 .grp{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--fnt);margin:18px 8px 6px}
 .it{display:flex;align-items:center;gap:10px;height:34px;padding:0 8px;border-radius:9px;color:var(--ink);text-decoration:none;font-size:13.5px}
 .it:hover,.it.on{background:var(--card)}.it.on{font-weight:600;box-shadow:0 0 0 1px var(--line)}
@@ -216,12 +216,37 @@ body:not(.has-data) .stage .stats,body:not(.has-data) .stage .pf{opacity:.45}
 .rule{font-size:12px!important;color:var(--fnt)!important;margin:0 0 6px!important}.rule.ok{color:var(--result)!important}
 .auth .btn{width:100%;height:42px;margin-top:6px}
 .auth code{font:12px ui-monospace,Menlo,monospace;background:var(--sunk);border-radius:5px;padding:1px 5px}
+/* working card: light travels around the border */
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+.card.busy{position:relative}
+.card.busy::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1.5px;pointer-events:none;z-index:4;
+  background:conic-gradient(from var(--ang),transparent 0deg 240deg,var(--curiosity) 285deg,var(--recognition) 320deg,var(--result) 348deg,transparent 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+  animation:orbit 2.6s linear infinite}
+.card.busy::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 10px 30px -14px color-mix(in srgb,var(--recognition) 60%,transparent);animation:breathe 2.6s ease-in-out infinite}
+@keyframes orbit{to{--ang:360deg}}
+@keyframes breathe{50%{opacity:.3}}
+/* pulling from YouTube */
+.pull{display:none;padding:20px 22px 22px;overflow:hidden}
+.pulling .pull{display:block}.pulling .welcome-card{display:none}
+.pull-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.pull h2{margin:4px 0;font-size:20px;letter-spacing:-.02em}
+.pull-t{font-size:22px;font-weight:600;letter-spacing:-.02em;flex:none}
+.pull-row{display:flex;gap:6px;margin-top:18px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,#000 75%,transparent);mask-image:linear-gradient(90deg,#000 75%,transparent)}
+.pull-row i{width:54px;height:88px;border-radius:9px;flex:none;background:var(--sunk);border:1px solid var(--line);position:relative;overflow:hidden;animation:rise 1.8s ease-in-out infinite;animation-delay:calc(var(--i)*90ms)}
+.pull-row i::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,color-mix(in srgb,var(--card) 80%,transparent) 50%,transparent 70%);transform:translateX(-100%);animation:shimmer 1.8s ease-in-out infinite;animation-delay:calc(var(--i)*90ms)}
+.pull-row b{position:absolute;left:0;right:0;bottom:0;height:16px;background:var(--hc);opacity:0;animation:band 1.8s ease-in-out infinite;animation-delay:calc(var(--i)*90ms)}
+@keyframes rise{0%,100%{transform:none}40%{transform:translateY(-6px)}}
+@keyframes shimmer{60%,100%{transform:translateX(100%)}}
+@keyframes band{0%,30%{opacity:0}50%,80%{opacity:.9}100%{opacity:0}}
+.gal:not([hidden]){animation:fadein .35s ease-out}@keyframes fadein{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.card.busy::before{animation:none;background:linear-gradient(90deg,var(--curiosity),var(--recognition),var(--result))}.card.busy::after,.pull-row i,.pull-row i::after,.pull-row b,.gal:not([hidden]){animation:none}.pull-row b{opacity:.9}}
 </style>
 </head>
 <body>
 <div class="app" id="app">
 <aside class="side" id="side" aria-label="Sidebar">
-  <div class="logo"><b>NextWork</b> <span>Content Decoder</span></div>
+  <div class="logo"><b>NextWork</b> <span>Jev Content Decoder</span></div>
   <div class="grp">Creators</div>
   <div id="lib" class="sb-list"><div class="lib-empty">Creators you decode are saved here.</div></div>
   <div class="grp">Shortlist <span id="slFor"></span></div>
@@ -247,6 +272,11 @@ body:not(.has-data) .stage .stats,body:not(.has-data) .stage .pf{opacity:.45}
     <span class="hint">Shorts are videos 3 minutes or shorter.</span>
     <div class="exp"><button class="ghost" id="brief">Copy client brief</button><button class="ghost" id="csv">Download CSV</button></div>
   </div>
+
+  <section class="span12 card pull busy" id="pull" aria-hidden="true">
+    <div class="pull-hd"><div><div class="lab">YouTube Data API</div><h2>Pulling Shorts from YouTube</h2><div class="sub">Finding the channel, then reading each Short's title, views, likes, and post date. Jev decodes them next.</div></div><div class="pull-t" id="pullTime">0.0 s</div></div>
+    <div class="pull-row" id="pullRow"></div>
+  </section>
 
   <section class="span12 card welcome-card"><div class="welcome">
     <div><h1>Decode any YouTube creator in seconds.</h1><p>Jev labels every Short by hook, structure, and strength, shows which hooks actually drive views, and scores new hooks before you film.</p><p class="err" id="wErr"></p><div id="recent"></div></div>
@@ -302,7 +332,7 @@ body:not(.has-data) .stage .stats,body:not(.has-data) .stage .pf{opacity:.45}
   <form class="chf" id="chf"><input id="chi" placeholder="Ask about this creator" aria-label="Your question"><button class="btn">Ask</button></form></div>
 
 <div class="auth" id="auth" hidden><div class="auth-card">
-  <div class="logo" style="margin:0 0 22px"><b>NextWork</b> <span>Content Decoder</span></div>
+  <div class="logo" style="margin:0 0 22px"><b>NextWork</b> <span>Jev Content Decoder</span></div>
   <form id="fCreate" hidden><h2>Create your password</h2><p>You'll use it to open your dashboard. Only a secure hash is stored.</p>
     <label>New password<div class="pw"><input id="np" type="password" autocomplete="new-password" minlength="8"><button type="button" class="eye" data-for="np">Show</button></div></label>
     <label>Confirm password<div class="pw"><input id="cp" type="password" autocomplete="new-password"><button type="button" class="eye" data-for="cp">Show</button></div></label>
@@ -371,6 +401,11 @@ function jump(id){var t=$(id);if(!t||t.offsetParent===null){toast("Decode a crea
 [].forEach.call(document.querySelectorAll("[data-go]"),function(b){b.onclick=function(){jump(b.dataset.go)}});
 if("IntersectionObserver" in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)[].forEach.call(document.querySelectorAll("[data-go]"),function(b){b.classList.toggle("on",b.dataset.go===e.target.id)})})},{rootMargin:"-45% 0px -50% 0px"});["strip","s1","s2","s3","s4"].forEach(function(i){io.observe($(i))})}
 function say(t,err){$("mode").textContent=t||"";$("mode").classList.toggle("err",!!err)}
+// A card glows while work for it is in flight. Counted, since drafts and live scoring can overlap.
+var bz={};function busy(id,on){bz[id]=Math.max(0,(bz[id]||0)+(on?1:-1));$(id).classList.toggle("busy",bz[id]>0)}
+// The YouTube card only appears if the pull takes longer than a blink, so library loads don't flash it.
+var pullT0=0,pullTm=0;function pulling(on){clearTimeout(pullTm);if(on){pullT0=performance.now();pullTm=setTimeout(function(){document.body.classList.add("pulling")},250)}else document.body.classList.remove("pulling")}
+(function(){var h="";for(var i=0;i<18;i++)h+='<i style="--i:'+i+';--hc:var(--'+HOOKS[i%HOOKS.length][0]+')"><b></b></i>';$("pullRow").innerHTML=h})();
 
 /* ---------- state ---------- */
 var D;function fresh(){return {handle:"",channel:null,videos:[],cached:false,running:false,vt:0,t0:0,end:0,calls:[],ev:[],decoded:0,qpc:0,q:0,cost:0,dcost:0,results:[],hooks:[],jms:0,jn:0,lift:{},saved:[]}}D=fresh();
@@ -477,11 +512,11 @@ $("hl").onclick=function(e){var b=e.target.closest("button[data-a]");if(!b)retur
   if(a==="add"&&live){D.hooks.push(live);live=null;$("hookIn").value="";renderHooks()}
   if(a==="copy"){copy(b.dataset.t);toast("Hook copied.")}
   if(a==="save"){var c=D.hooks[+b.dataset.i],on=D.saved.some(function(s){return s.text===c.text});saveSL(on?"remove":"add",{text:c.text,score:c.score,hook_type:c.hook_type,bars:c.bars,ms:c.ms}).then(function(){toast(on?"Removed from shortlist.":"Added to shortlist.")}).catch(function(x){say(x.message,true)})}};
-$("draft").onclick=function(){if(!dec().length){say("Decode a creator first, then draft hooks.",true);return}var b=this;b.disabled=true;b.textContent="Drafting...";
+$("draft").onclick=function(){if(!dec().length){say("Decode a creator first, then draft hooks.",true);return}var b=this;b.disabled=true;b.textContent="Drafting...";busy("s3",true);
   api("/api/draft",{pattern:pattern()}).then(function(j){return judge((j.hooks||[]).filter(function(t){return t&&!D.hooks.some(function(h){return h.text===t})}))}).then(function(rs){rs.forEach(function(r){D.hooks.push(r)});renderHooks()})
-  .catch(function(e){say("Draft failed: "+e.message,true)}).then(function(){b.disabled=false;b.textContent="Draft 5"})};
+  .catch(function(e){say("Draft failed: "+e.message,true)}).then(function(){b.disabled=false;b.textContent="Draft 5";busy("s3",false)})};
 var lt,seq=0;$("hookIn").oninput=function(){clearTimeout(lt);var t=this.value.trim();if(t.length<6){live=null;renderHooks();return}
-  lt=setTimeout(function(){if(!dec().length){say("Decode a creator first, then score hooks.",true);return}var my=++seq;judge([t]).then(function(rs){if(my===seq&&rs[0]){live=rs[0];renderHooks()}}).catch(function(e){say("Scoring failed: "+e.message,true)})},350)};
+  lt=setTimeout(function(){if(!dec().length){say("Decode a creator first, then score hooks.",true);return}var my=++seq;busy("s3",true);judge([t]).then(function(rs){if(my===seq&&rs[0]){live=rs[0];renderHooks()}}).catch(function(e){say("Scoring failed: "+e.message,true)}).then(function(){busy("s3",false)})},350)};
 
 /* ---------- export ---------- */
 function copy(t){if(navigator.clipboard)navigator.clipboard.writeText(t).catch(function(){});else{var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(e){}a.remove()}}
@@ -515,23 +550,23 @@ function setCreator(){var c=D.channel||{};document.body.classList.add("has-data"
   $("cname").textContent=c.title||D.handle;$("cmeta").textContent=D.handle+", "+D.videos.length+" Shorts"}
 function resetChat(){var c=$("chb");while(c.children.length>2)c.removeChild(c.lastChild)}
 function reset(){if(D.handle)resetChat();D=fresh();U.filter=null;U.review=false;U.out=false;live=null;F4={};$("log").innerHTML="";renderHooks();["fTop","fCombo","fBlind"].forEach(function(i){$(i).textContent="Waiting"})}
-function start(fr){var h=($("h").value||"").trim();if(!h){$("h").focus();return}if(D.running)return;$("run").disabled=true;$("wErr").textContent="";say("Pulling Shorts from YouTube...");
-  api("/api/ingest?handle="+encodeURIComponent(h)+(fr?"&fresh=1":"")).then(function(j){reset();D.handle=j.handle;D.channel=j.channel||{title:j.handle};D.cached=!!j.cached;D.videos=(j.records||[]).map(toV);
-    if(!D.videos.length){$("run").disabled=false;var m="No Shorts found for "+j.handle+". Try a creator who posts Shorts.";$("wErr").textContent=m;say(m,true);return}
+function start(fr){var h=($("h").value||"").trim();if(!h){$("h").focus();return}if(D.running)return;$("run").disabled=true;$("run").textContent="Pulling...";$("wErr").textContent="";say("Pulling Shorts from YouTube...");pulling(true);
+  api("/api/ingest?handle="+encodeURIComponent(h)+(fr?"&fresh=1":"")).then(function(j){pulling(false);reset();D.handle=j.handle;D.channel=j.channel||{title:j.handle};D.cached=!!j.cached;D.videos=(j.records||[]).map(toV);
+    if(!D.videos.length){$("run").disabled=false;$("run").textContent="Decode";var m="No Shorts found for "+j.handle+". Try a creator who posts Shorts.";$("wErr").textContent=m;say(m,true);return}
     setCreator();clearWall();showGallery(false);fillWall();$("rerun").hidden=true;$("slow").hidden=true;renderLib();loadSL();
     if(j.cached){var by={};(j.results||[]).forEach(function(r){by[r.id]=r});D.videos.forEach(function(v){if(by[v.id])apply(v,by[v.id],0)});D.decoded=dec().length;D.qpc=(j.stats&&j.stats.qpc)||0;D.results=j.results||[];D.stats=j.stats||{};
       say("Loaded "+j.handle+" from your library with 0 Jev calls.");log(null,"Loaded "+j.handle,"0 Jev calls");done(true);return}
-    say("Decoding "+D.videos.length+" Shorts with Jev...");run()}).catch(function(e){$("run").disabled=false;if(e.status===401)return;$("wErr").textContent=e.message;say(e.message,true)})}
-function run(){var b=[];for(var i=0;i<D.videos.length;i+=BATCH)b.push(D.videos.slice(i,i+BATCH));var n=0,X=D;X.running=true;X.t0=performance.now();document.body.classList.add("running");["st1","st2"].forEach(function(i){$(i).textContent="Decoding"});
+    say("Decoding "+D.videos.length+" Shorts with Jev...");run()}).catch(function(e){pulling(false);$("run").disabled=false;$("run").textContent="Decode";if(e.status===401)return;$("wErr").textContent=e.message;say(e.message,true)})}
+function run(){var b=[];for(var i=0;i<D.videos.length;i+=BATCH)b.push(D.videos.slice(i,i+BATCH));var n=0,X=D;X.running=true;X.t0=performance.now();document.body.classList.add("running");$("run").textContent="Decoding...";["st1","st2"].forEach(function(i){$(i).textContent="Decoding"});busy("s1",true);busy("s2",true);
   function now(){return(performance.now()-X.t0)/1000}
   function lane(l){if(n>=b.length)return Promise.resolve();var bt=b[n++],c={lane:l,s:now(),t:null,lat:0};X.calls.push(c);
     return api("/api/classify",{videos:bt.map(function(v){return v.rec}),threshold:U.thr}).then(function(j){var t=now();X.ev.push({t:t,f:function(){c.t=t;c.lat=j.latency_ms;X.qpc=j.questions;X.q+=j.questions;X.dcost+=j.cost_usd;X.cost+=j.cost_usd;var cn={};
       (j.results||[]).forEach(function(r,k){var v=bt[k];if(v&&v.id===r.id){apply(v,r,X.vt);X.decoded++;X.results.push(r);if(v.hook)cn[v.hook]=(cn[v.hook]||0)+1}});log(Object.keys(cn).sort(function(a,z){return cn[z]-cn[a]})[0],"Jev decoded "+bt.length+" videos",j.latency_ms+" ms")}})})
     .catch(function(e){var t=now();X.ev.push({t:t,f:function(){c.t=t;c.err=true;say("A Jev call failed: "+e.message,true)}})}).then(function(){return lane(l)})}
   var ls=[];for(var l=0;l<LANES;l++)ls.push(lane(l));
-  Promise.all(ls).then(function(){var t=now();X.ev.push({t:t,f:function(){X.running=false;X.end=X.vt;document.body.classList.remove("running");say("Decoded "+X.decoded+" Shorts in "+X.end.toFixed(1)+" s for $"+X.dcost.toFixed(4)+".");
+  Promise.all(ls).then(function(){var t=now();X.ev.push({t:t,f:function(){X.running=false;X.end=X.vt;document.body.classList.remove("running");busy("s1",false);busy("s2",false);say("Decoded "+X.decoded+" Shorts in "+X.end.toFixed(1)+" s for $"+X.dcost.toFixed(4)+".");
     api("/api/save",{handle:X.handle,channel:X.channel,records:X.videos.map(function(v){return v.rec}),results:X.results,stats:{qpc:X.qpc,calls:X.calls.length,cost_usd:X.dcost,duration_s:X.end}}).then(loadLib).catch(function(){});
-    setTimeout(function(){if(X===D)done(false)},U.watch?1500:900)}})})}
+    if(X===D)done(false)}})})}
 function done(cached){$("rerun").hidden=false;$("slow").hidden=false;U.watch=false;$("run").disabled=false;$("run").textContent="Decode";refresh();renderChips();showGallery(true);["st1","st2"].forEach(function(i){$(i).textContent="Done"});
   if(!cached&&!D.hooks.length)$("draft").click()}
 $("run").onclick=function(){start(false)};$("rerun").onclick=function(){U.watch=false;$("h").value=D.handle;start(true)};$("slow").onclick=function(){U.watch=true;$("h").value=D.handle;toast("Replaying at watch speed. Timings shown are real.");start(true)};$("h").onkeydown=function(e){if(e.key==="Enter")start(false)};
@@ -542,7 +577,7 @@ var lastTC="";function counters(){var t=tc(D.cached?((D.stats&&D.stats.duration_
   $("runS").textContent=D.cached?"Loaded from library, 0 Jev calls":d?Math.round(d/dur)+" per sec, $"+D.dcost.toFixed(4)+(U.watch&&D.running?" (watch speed)":""):"Waiting";
   $("k1").textContent=D.calls.length;$("k2").textContent=(d*(D.qpc?D.qpc/BATCH:4)).toLocaleString();$("k6").textContent=d&&D.dcost?"$"+(D.dcost/d).toFixed(6):"$0"}
 var last=performance.now(),lp=0;
-function tick(now){fr++;var dt=Math.min(.05,(now-last)/1000);last=now;
+function tick(now){fr++;var dt=Math.min(.05,(now-last)/1000);last=now;if(pullT0&&document.body.classList.contains("pulling"))$("pullTime").textContent=((now-pullT0)/1000).toFixed(1)+" s";
   if(D.running||D.ev.length){D.vt+=dt*(U.watch?.2:1);if(!U.watch){var real=(performance.now()-D.t0)/1000;if(D.vt<real-.05)D.vt=real}D.ev.sort(function(a,b){return a.t-b.t});while(D.ev.length&&D.ev[0].t<=D.vt)D.ev.shift().f()}
   stepWall(dt);if(now-lp>250){if(D.running){refresh();renderChips()}lp=now}drawLanes();drawMix();drawPlot();counters();requestAnimationFrame(tick)}
 window.addEventListener("resize",function(){sizeAll()});

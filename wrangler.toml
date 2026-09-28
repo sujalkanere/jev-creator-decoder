@@ -17,5 +17,5 @@ remote = true
 [[d1_databases]]
 binding = "DB"
 database_name = "content-decoder"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "823b6ec5-5bab-4b5d-9641-02059adac37b"
 migrations_dir = "migrations"

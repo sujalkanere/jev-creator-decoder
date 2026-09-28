@@ -1,2 +1,6 @@
 # npm run setup fills this in for you. Never commit .dev.vars.
 YOUTUBE_API_KEY=paste-your-youtube-data-api-v3-key
+
+# Optional. When set, Jev runs on TypeSafe's own HTTP API first, with Cloudflare
+# Workers AI as the fallback. Leave unset to run Jev on Workers AI only.
+# TYPESAFE_API_KEY=paste-your-typesafe-api-key
