@@ -1,4 +1,4 @@
-# NextWork Project Prompt: Decode Any YouTube Creator with Jev
+# NextWork Project Prompt: Jev Content Decoder
 
 Paste everything below the line into the NextWork project generator.
 
@@ -11,7 +11,7 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
 - Live demo with sample data, no setup needed: https://nik-1019.github.io/Jev-Creator-Decoder-NextWork/
 
 ## Overview
-**Title:** Decode Any YouTube Creator with Jev
+**Title:** Jev Content Decoder
 **Persona:** You are the AI content strategist at a creator-led agency. Every client asks what actually works for creators in their niche, and answering it means hours of scrolling. You are going to run an internal tool that answers it in about a minute, powered by a brand-new decision model called Jev.
 **What you will build:** the NextWork Content Decoder, a dashboard you run on your own Cloudflare account. Enter any YouTube creator, and Jev labels every Short by hook type, structure, call to action, and hook strength. The dashboard shows which hooks actually drive views, scores new hook ideas before you film, exports a client brief, and answers questions about the results.
 **Difficulty:** Intermediate
