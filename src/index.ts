@@ -3,13 +3,14 @@ import { classifyBatch } from "./jev";
 import { draftHooks, judgeHooks } from "./hooks";
 import { raceJev, raceLlmOne } from "./race";
 import { askDecoder } from "./ask";
+import { handleAuth, isSignedIn } from "./auth";
 
 export interface Env {
   AI: any;
   DB: any;
   ASSETS: any;
   YOUTUBE_API_KEY: string;
-  DASHBOARD_PASSCODE: string;
+  SETUP_TOKEN?: string;
 }
 
 const json = (data: unknown, status = 200) =>
@@ -20,12 +21,15 @@ export default {
     const url = new URL(req.url);
     if (!url.pathname.startsWith("/api/")) return json({ error: "Not found" }, 404);
 
-    // Every API route is gated behind the dashboard passcode.
-    if (!env.DASHBOARD_PASSCODE || /choose-a/i.test(env.DASHBOARD_PASSCODE)) {
-      return json({ error: "Set a real DASHBOARD_PASSCODE in .dev.vars, then restart npm run dev." }, 500);
-    }
-    if (req.headers.get("x-passcode") !== env.DASHBOARD_PASSCODE) {
-      return json({ error: "Wrong or missing passcode" }, 401);
+    try {
+      // Sign-in routes are open. Everything else needs a signed-in session.
+      if (url.pathname.startsWith("/api/auth/")) {
+        const b: any = req.method === "POST" ? await req.json().catch(() => ({})) : {};
+        return await handleAuth(env, req, url.pathname, b);
+      }
+      if (!(await isSignedIn(env, req))) return json({ error: "Please sign in." }, 401);
+    } catch (err: any) {
+      return json({ error: err?.message || "Something went wrong" }, 500);
     }
 
     try {
@@ -67,11 +71,27 @@ export default {
           return json({ ok: true });
         }
         case "/api/library": {
-          const { results } = await env.DB.prepare("SELECT handle, title, count, saved_at FROM decodes ORDER BY saved_at DESC LIMIT 50").all();
+          const { results } = await env.DB.prepare(
+            "SELECT handle, title, count, saved_at, json_extract(payload, '$.channel.avatar') AS avatar FROM decodes ORDER BY saved_at DESC LIMIT 50"
+          ).all();
           return json({ items: results || [] });
         }
+        case "/api/shortlist": {
+          const handle = String(body.handle || url.searchParams.get("handle") || "").toLowerCase();
+          if (req.method === "POST" && body.action === "add") {
+            const h = body.hook || {};
+            await env.DB.prepare("INSERT INTO shortlist (handle, text, data, created_at) VALUES (?, ?, ?, ?) ON CONFLICT(handle, text) DO NOTHING")
+              .bind(handle, String(h.text || "").slice(0, 300), JSON.stringify(h), new Date().toISOString()).run();
+          } else if (req.method === "POST" && body.action === "remove") {
+            await env.DB.prepare("DELETE FROM shortlist WHERE handle = ? AND text = ?").bind(handle, String(body.text || "")).run();
+          }
+          const { results } = await env.DB.prepare("SELECT text, data FROM shortlist WHERE handle = ? ORDER BY created_at").bind(handle).all();
+          return json({ items: (results || []).map((r: any) => JSON.parse(r.data)) });
+        }
         case "/api/forget": {
-          await env.DB.prepare("DELETE FROM decodes WHERE handle = ?").bind(String(body.handle || "").toLowerCase()).run();
+          const h = String(body.handle || "").toLowerCase();
+          await env.DB.prepare("DELETE FROM decodes WHERE handle = ?").bind(h).run();
+          await env.DB.prepare("DELETE FROM shortlist WHERE handle = ?").bind(h).run();
           return json({ ok: true });
         }
         case "/api/race/jev":

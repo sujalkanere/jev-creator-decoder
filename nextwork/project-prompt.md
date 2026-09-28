@@ -8,7 +8,6 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
 
 ## Repository and links
 - Repository: https://github.com/Nik-1019/Jev-Creator-Decoder-NextWork (branch `main`, the finished project)
-- Live demo with sample data, no setup needed: https://nik-1019.github.io/Jev-Creator-Decoder-NextWork/
 
 ## Overview
 **Title:** Jev Content Decoder
@@ -46,7 +45,7 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
 
 **Accounts and roles**
 - Google Cloud is only used to create the YouTube API key. Cloudflare hosts the app, runs every model, and stores decodes in a D1 database.
-- The dashboard passcode protects the learner's quotas. Once deployed, the app has a public URL, and the passcode stops strangers from using it.
+- The dashboard is protected by a password the learner creates in the browser. Only a salted hash is stored in their D1 database, sign-in uses a secure session cookie, and 10 wrong attempts lock sign-in for 15 minutes. On the deployed app, the password can only be created through a one-time setup link printed by `npm run ship`, so a stranger who finds the URL can never claim it.
 
 ## What the learner needs before starting
 - A computer with a terminal (macOS, Linux, or Windows with PowerShell or WSL)
@@ -58,52 +57,53 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
 **Goal:** get the Content Decoder running on your computer and understand how Jev thinks.
 
 1. **Check your tools.** Run `node --version` (needs 20 or newer) and `git --version`. If either is missing, install it, then continue.
-2. **Try the live demo first** at the demo link above. Click a sample creator and watch a decode on sample data. This is what you're about to run for real.
-3. **Get a YouTube API key.** In Google Cloud Console: create a project, go to APIs & Services, enable **YouTube Data API v3**, then Credentials, Create credentials, API key. Restrict the key to YouTube Data API v3. Copy it somewhere safe.
-4. **Create a free Cloudflare account** at dash.cloudflare.com. Then open **Compute, Workers & Pages**. Under **Account details** on the right, check that you have a **Subdomain** (like `yourname.workers.dev`). If not, set one. Explain why: Jev runs on Cloudflare's servers, and the local dev server needs this subdomain to connect to it.
-5. **Clone the repository:**
+2. **Get a YouTube API key.** In Google Cloud Console: create a project, go to APIs & Services, enable **YouTube Data API v3**, then Credentials, Create credentials, API key. Restrict the key to YouTube Data API v3. Copy it somewhere safe.
+3. **Create a free Cloudflare account** at dash.cloudflare.com. Then open **Compute, Workers & Pages**. Under **Account details** on the right, check that you have a **Subdomain** (like `yourname.workers.dev`). If not, set one. Explain why: Jev runs on Cloudflare's servers, and the local dev server needs this subdomain to connect to it.
+4. **Clone the repository:**
    ```bash
    git clone https://github.com/Nik-1019/Jev-Creator-Decoder-NextWork.git
    cd Jev-Creator-Decoder-NextWork
    ```
-6. **Install the packages:**
+5. **Install the packages:**
    ```bash
    npm install
    ```
    Linux users: if this fails with an error mentioning `sharp`, run `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install` instead.
-7. **Log in to Cloudflare from the terminal:**
+6. **Log in to Cloudflare from the terminal:**
    ```bash
    npx wrangler login
    ```
    A browser tab opens. Click Allow. When the terminal says you're logged in, continue.
-8. **Run setup:**
+7. **Run setup:**
    ```bash
    npm run setup
    ```
-   Setup creates your D1 database, connects it, creates the database table (answer **Y** when asked), then asks you to paste your YouTube API key and choose a dashboard passcode. It saves both to `.dev.vars`, a file that stays on your computer and is never committed.
-9. **Start the app:**
+   Setup creates your D1 database, connects it, creates the database tables (answer **Y** when asked), then asks you to paste your YouTube API key. It saves the key to `.dev.vars`, a file that stays on your computer and is never committed.
+8. **Start the app:**
    ```bash
    npm run dev
    ```
-   When you see `Ready on http://localhost:8787`, press `b` to open it in your browser, then enter the passcode you chose.
+   When you see `Ready on http://localhost:8787`, press `b` to open it in your browser.
+9. **Create your dashboard password.** Enter a new password (at least 8 characters) and confirm it. Explain how it is stored: only a salted hash, never the password itself.
 10. **Tour the Jev code.** Open `src/jev.ts` in your editor. Walk through `buildVideoQuestions`: it takes each question in `schema.json` and repeats it once per video, with keys like `v3_hook`, so one call can decide 10 videos. Then `classifyBatch` sends one call and splits the answers back per video.
 11. **Predict:** how many questions will one Jev call ask? (10 videos x 4 questions = 40.) You'll check your answer in Step 2.
 
 📸 Screenshot: the welcome screen of your running Content Decoder.
 
-**What you should see:** the dashboard with a welcome card and three sample creators.
+**What you should see:** the dashboard with a welcome card that explains how to find a creator.
 
 ## Step 2: Decode your first creator (~15 min)
 **Goal:** see Jev's speed, cost, and judgment on a real creator.
 
-1. **Pick a creator** that posts Shorts. In the input at the top, enter any of these: their `@handle` (shown under the channel name on YouTube), their channel link, or a link to any of their videos. Click **Decode**.
+1. **Pick a creator** that posts Shorts. Open their channel on YouTube, copy the link from the address bar (or the @name under their channel name), paste it into the input at the top, and click **Decode**. A link to any of their videos works too.
 2. **Watch it run.** Thumbnails stream through the Jev lens and get labeled. In **Every Jev call**, four lanes fill with bars, and each bar is one call deciding 10 videos. The **Call log** lists every call.
 3. **Check your prediction:** the Every Jev call header shows questions per call (40).
 4. **Record the numbers** from the summary strip: run time, videos per second, and Jev spend. Note how long 200 videos took and what it cost.
-5. **Watch it slowly.** Turn on **Watch mode** in the sidebar, then click **Re-run Jev**. The same decode replays at a pace you can follow. 📸 Screen record it.
+5. **Watch it slowly.** Click **Replay slowly** under the summary strip. Jev decodes the creator again at a pace you can follow, and the timings shown are still real. 📸 Screen record it.
 6. **Check Jev's judgment.** Click **Review them** in the summary strip. The drawer opens on videos where Jev was unsure. Read the probability bars and decide whether Jev was right to be unsure. Drag the **Flag below** slider and watch the Needs review count change.
 7. **Read the insight.** In the summary strip: Top hook, Best combo, and Blind spot. In **Find what outperforms**, compare Usage and Lift for each hook. Which hook does the creator use most? Which one actually performs best? Click a hook row to filter the gallery to it.
-8. **Make the deliverable.** Click **Copy client brief** and paste it into a note. This is what you would send a client.
+8. **Use the sidebar.** The creator now appears under **Creators**. Use **Jump to** to move between panels: each click scrolls to that panel and highlights it.
+9. **Make the deliverable.** Click **Copy client brief** and paste it into a note. This is what you would send a client.
 
 **What you should see:** a gallery of labeled Shorts, the Winning Formula in the summary strip, and a client brief in your clipboard.
 
@@ -119,7 +119,7 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
 5. **Fix weak questions.** If one of your questions shows low confidence on many videos, rewrite its criteria to be clearer and more distinct, then Re-run Jev.
 6. **Open `judge.json`.** This file controls how Jev scores new hooks. Rewrite the `fit` and `lift_odds` instructions in your own words.
 7. **Score hooks.** In **Score new hooks**, type a hook idea. Jev scores it within a second. Click **Add to list**. Then click **Draft 5**: Llama 3.1 8B writes 5 hooks, and Jev scores all 5 in one call. The best hook gets the **Film this next** ribbon.
-8. **Shortlist** the hooks worth filming, then click **Copy client brief** again. Your shortlist is now included.
+8. **Shortlist** the hooks worth filming. They appear in the sidebar **Shortlist** and are saved to your database. Click **Copy client brief** again: your shortlist is now included.
 
 **What you should see:** 60 questions per call, your new answers in the drawer, and a ranked, shortlisted list of hooks.
 
@@ -133,8 +133,9 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
    ```bash
    npm run ship
    ```
-   This creates the table in your cloud database, deploys the app, and uploads your two secrets from `.dev.vars`.
-5. **Open your live app** at the `workers.dev` URL printed at the end, and enter your passcode. Decode a creator, then click them in the sidebar **Library** to reload them instantly with 0 Jev calls.
+   This creates the tables in your cloud database, deploys the app, uploads your YouTube key, and prints your app URL plus a **one-time setup link**.
+5. **Open the setup link** and create the password for your deployed app. Keep the link private. Anyone else who opens your app URL only sees a sign-in screen.
+6. **Decode a creator** on your live app, then click them under **Creators** in the sidebar to reload them instantly with 0 Jev calls. Your deployed app has its own database, separate from your local one.
 
 📸 Screenshot: the race verdict, and your deployed dashboard with its URL visible.
 
@@ -158,11 +159,12 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
 - `npm install` fails with an error about `sharp` (Linux with a system libvips): run `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install`.
 - `You need to register a workers.dev subdomain`: set a subdomain under Workers & Pages, Account details. If the onboarding link shows a 404, use that page instead. Do not press `l` for local mode, because Jev only runs remotely.
 - `wrangler: command not found`: run `npm install` first.
-- The passcode screen says to set a real DASHBOARD_PASSCODE: run `npm run setup` again (or edit `.dev.vars`), then stop and restart `npm run dev`.
+- Forgot your password: run `npm run reset-password`, choose local or deployed, then create a new one.
+- The deployed app says it isn't set up yet: open the one-time setup link that `npm run ship` printed.
 - `quotaExceeded` from YouTube: the daily quota resets at midnight Pacific time.
 - `No Shorts found`: the creator may only post long videos. Try another creator.
 - Many videos flagged for review: make your criteria clearer, then Re-run Jev.
-- Your deployed app has an empty Library: the deployed app uses its own cloud database, separate from your local one.
+- Your deployed app has no saved creators: the deployed app uses its own cloud database, separate from your local one.
 
 ## Style
 - Second person. The learner IS the professional. No invented character names.

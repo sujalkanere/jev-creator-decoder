@@ -13,18 +13,25 @@ Runs on Cloudflare's free tier. Built for a NextWork project.
 ```bash
 npm install
 npx wrangler login
-npm run setup      # creates the database, then asks for your YouTube key and a passcode
+npm run setup      # creates the database, then asks for your YouTube API key
 ```
 Then:
 ```bash
 npm run dev        # open http://localhost:8787
 ```
+The first time you open it, create your dashboard password.
 
 ## Deploy
 ```bash
-npm run ship       # cloud database, deploy, then secrets from .dev.vars
+npm run ship       # cloud database, deploy, then your YouTube key
 ```
-Open the workers.dev URL it prints and enter your passcode.
+Ship prints your app URL and a **one-time setup link**. Open the setup link to create the password for your deployed app. Anyone else who opens the URL sees a sign-in screen, never a way to create one.
+
+## Your password
+- Only a salted PBKDF2 hash is stored, in your own D1 database. The password itself is never saved.
+- Signing in sets a secure, HttpOnly session cookie. Choose "Keep me signed in" for 30 days, otherwise 12 hours.
+- 10 wrong attempts lock sign-in for 15 minutes.
+- Forgot it? `npm run reset-password`, then create a new one.
 
 ## How it works
 1. You enter a creator: `@handle`, a channel link, or any video or Shorts link from that creator. A creator you decoded before loads instantly from your library with zero Jev calls.
@@ -37,13 +44,18 @@ Open the workers.dev URL it prints and enter your passcode.
 
 Google Cloud only supplies the YouTube API key. Cloudflare hosts the Worker, runs every model, and stores decodes in D1. The app reads public data only, so there is no YouTube login. It decodes titles and descriptions, not spoken scripts, because YouTube's captions API requires the video owner's login.
 
+## The sidebar
+- **Creators:** everyone you've decoded, with their avatar. Click to reload instantly with 0 Jev calls, or remove them.
+- **Shortlist:** the hooks you saved for the current creator. Click to copy.
+- **Jump to:** scrolls to a panel and highlights it.
+- **Model Race, Theme, Sign out.**
+
 ## After a decode
 - **Gallery:** filter by hook, Needs review, or Outperformers, sort by views or date, click any video to see every Jev answer.
 - **Usage vs lift:** click a hook row to filter the gallery to it.
 - **Hooks:** Copy or Shortlist any scored hook.
 - **Copy client brief:** Winning Formula, top videos with links, and your shortlisted hooks, ready to paste.
 - **Download CSV:** every video with its Jev labels, confidence, views, and lift.
-- **Demo mode:** add `?demo` to the URL to try the dashboard with sample data and no API calls.
 
 ## The files you edit
 | File | What it controls |
@@ -52,7 +64,7 @@ Google Cloud only supplies the YouTube API key. Cloudflare hosts the Worker, run
 | `judge.json` | How Jev scores new hooks in the Hook Lab |
 | `chat.json` | How Jev routes questions and fact-checks answers in Ask the Decoder |
 
-Question types: `choice` picks one option and returns confidence, `noul` returns a yes/no probability, `score` places the answer on an ordered scale. After editing `schema.json`, use **Re-run Jev** on the dashboard. It re-decodes the saved creator without new YouTube calls.
+Question types: `choice` picks one option and returns confidence, `noul` returns a yes/no probability, `score` places the answer on an ordered scale. After editing `schema.json`, use **Re-run Jev** on the dashboard. **Replay slowly** re-runs the decode at watch speed for recordings. It re-decodes the saved creator without new YouTube calls.
 
 ## Pages
 - `/` the dashboard
@@ -77,7 +89,8 @@ All three run on Workers AI and share the free 10,000 Neurons per day.
 |---|---|
 | `npm install` fails on `sharp` (Linux with a system libvips, like Arch) | `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install` |
 | `You need to register a workers.dev subdomain` | Open the link in the error, pick a free subdomain, run `npm run dev` again. Do not press `l` for local mode: Workers AI has no local version. |
-| Wrong passcode | Match it to `DASHBOARD_PASSCODE` in `.dev.vars` (locally) or the secret you shipped. |
+| Forgot your password | `npm run reset-password` |
+| Deployed app says it isn't set up yet | Open the one-time setup link that `npm run ship` printed |
 | Jev access or billing error | Confirm your account can call `typesafe/jev` on Workers AI. |
 | `quotaExceeded` from YouTube | The quota resets at midnight Pacific time. |
 | `No public channel found` | Include the `@` and check the channel is public. |

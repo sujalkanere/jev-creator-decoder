@@ -178,30 +178,66 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
 .chat .mc div{grid-template-columns:90px 1fr 44px}
 .chat .note{font-size:11px;color:var(--fnt);margin-top:6px}
 .glow{animation:glow 1.4s ease-out}@keyframes glow{0%{box-shadow:0 0 0 3px var(--ink)}100%{box-shadow:0 0 0 0 transparent}}
-.demo-badge{font-size:11px;letter-spacing:.06em;text-transform:uppercase;border:1px dashed var(--line);border-radius:999px;padding:3px 9px;color:var(--mut)}
 @media (max-width:1180px){.menu-btn{display:grid;place-items:center}.side{display:flex;position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--bg);z-index:70;transform:translateX(-100%);transition:transform .25s}.side.open{transform:none}.welcome{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.drawer,.scrim,.side{transition:none}}
 
 .gal[hidden]{display:none}.gal{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+
+.sb-list{display:flex;flex-direction:column;gap:2px;max-height:30vh;overflow-y:auto;scrollbar-width:thin}
+.cr{display:flex;align-items:center;gap:9px;padding:5px 6px 5px 8px;border-radius:9px;cursor:pointer;font-size:13px}
+.cr:hover,.cr.on{background:var(--card)}.cr.on{box-shadow:0 0 0 1px var(--line);font-weight:600}
+.cr .av{width:26px;height:26px;border-radius:50%;flex:none;background:var(--contrarian);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:600}
+.cr .nm{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.cr small{display:block;color:var(--fnt);font-size:11px;font-weight:400}
+.x{border:0;background:none;color:var(--fnt);cursor:pointer;width:24px;height:24px;border-radius:6px;font-size:14px;flex:none}.x:hover{background:var(--sunk);color:var(--ink)}
+.sli{display:flex;align-items:flex-start;gap:6px;padding:6px 6px 6px 8px;border-radius:9px;font-size:12.5px;line-height:1.3;cursor:pointer}.sli:hover{background:var(--card)}
+.sli span{flex:1}.sli b{color:var(--mut);font-weight:600;font-size:11px}
+.grp span{text-transform:none;letter-spacing:0;color:var(--mut)}
+.jump .it{height:30px;font-size:13px}.jump .it.on{background:var(--card);font-weight:600;box-shadow:0 0 0 1px var(--line)}
+.sb-foot .it{height:32px}
+.howto{background:var(--sunk);border-radius:14px;padding:16px 18px}
+.howto ol{margin:8px 0 0;padding-left:18px;font-size:13.5px;line-height:1.7}
+.fmt{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.fmt code{font:12.5px ui-monospace,Menlo,monospace;background:var(--card);border:1px solid var(--line);border-radius:7px;padding:3px 8px}
+#recent{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+#recent button{display:flex;align-items:center;gap:8px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;padding:0 12px 0 6px;cursor:pointer}
+#recent .av{width:24px;height:24px;border-radius:50%;background:var(--contrarian);color:#fff;display:grid;place-items:center;font-size:10px}
+.card.hl-card{animation:hlc 1.6s ease-out}@keyframes hlc{0%,40%{box-shadow:0 0 0 2px var(--ink)}100%{box-shadow:0 0 0 2px transparent}}
+body:not(.has-data) .stage .vis::after{content:"Decode a creator to fill this";position:absolute;inset:0;display:grid;place-items:center;color:var(--fnt);font-size:13px;background:color-mix(in srgb,var(--sunk) 70%,transparent)}
+body:not(.has-data) .stage .stats,body:not(.has-data) .stage .pf{opacity:.45}
+.auth{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center;padding:20px;padding-top:max(20px,env(safe-area-inset-top,0px))}
+.auth[hidden]{display:none}
+.auth-card{width:min(400px,100%);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px}
+.auth h2{margin:0 0 6px;font-size:24px;letter-spacing:-.03em}.auth p{margin:0 0 18px;color:var(--mut);font-size:13.5px}
+.auth label{display:block;font-size:12.5px;font-weight:600;margin-bottom:12px}
+.pw{display:flex;align-items:center;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.pw:focus-within{outline:2px solid var(--ink);outline-offset:1px}
+.pw input{flex:1;height:42px;border:0;background:none;color:var(--ink);font:inherit;padding:0 12px;outline:none;min-width:0}
+.eye{border:0;background:none;color:var(--mut);font:inherit;font-size:12px;padding:0 12px;cursor:pointer}
+.chk{display:flex!important;align-items:center;gap:8px;font-weight:400!important}
+.rule{font-size:12px!important;color:var(--fnt)!important;margin:0 0 6px!important}.rule.ok{color:var(--result)!important}
+.auth .btn{width:100%;height:42px;margin-top:6px}
+.auth code{font:12px ui-monospace,Menlo,monospace;background:var(--sunk);border-radius:5px;padding:1px 5px}
 </style>
 </head>
 <body>
 <div class="app" id="app">
 <aside class="side" id="side" aria-label="Sidebar">
   <div class="logo"><b>NextWork</b> <span>Content Decoder</span></div>
-  <nav>
-    <button class="it on" data-go="top"><i>◧</i>Overview</button>
+  <div class="grp">Creators</div>
+  <div id="lib" class="sb-list"><div class="lib-empty">Creators you decode are saved here.</div></div>
+  <div class="grp">Shortlist <span id="slFor"></span></div>
+  <div id="sl" class="sb-list"><div class="lib-empty">Shortlist hooks to keep them here.</div></div>
+  <div class="grp">Jump to</div>
+  <nav class="jump">
+    <button class="it" data-go="strip"><i>◧</i>Summary</button>
     <button class="it" data-go="s1"><i>▦</i>Decode the library</button>
     <button class="it" data-go="s2"><i>◔</i>Find what outperforms</button>
     <button class="it" data-go="s3"><i>✎</i>Score new hooks</button>
     <button class="it" data-go="s4"><i>⋯</i>Jev activity</button>
-    <a class="it" href="race.html" id="raceLink"><i>⚑</i>Model Race</a>
   </nav>
-  <div class="grp">Library</div>
-  <div id="lib"><div class="lib-empty">Decoded creators appear here.</div></div>
   <div class="sb-foot">
-    <button class="it" id="watch" aria-pressed="false">Watch mode <span class="tgl" id="watchT"></span></button>
+    <a class="it" href="race.html"><i>⚑</i>Model Race</a>
     <button class="it" id="theme"><i>◐</i>Theme</button>
+    <button class="it" id="signout"><i>⎋</i>Sign out</button>
   </div>
 </aside>
 <main class="main" id="top">
@@ -210,15 +246,17 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
     <div class="inp"><input id="h" placeholder="@creator, channel link, or video link" aria-label="Handle, channel link, or video link" spellcheck="false"><button class="btn" id="run">Decode</button></div>
     <span class="hint">Shorts are videos 3 minutes or shorter.</span>
     <div class="exp"><button class="ghost" id="brief">Copy client brief</button><button class="ghost" id="csv">Download CSV</button></div>
-    <span class="demo-badge" id="demoBadge" hidden>Demo data</span>
   </div>
 
   <section class="span12 card welcome-card"><div class="welcome">
-    <div><h1>Decode any YouTube creator in seconds.</h1><p>Jev labels every Short by hook, structure, and strength, shows which hooks actually drive views, and scores new hooks before you film. On YouTube, a creator's handle is the @name under their channel name.</p><p class="err" id="wErr"></p></div>
-    <div class="try" id="try"><button data-h="@mkbhd">Marques Brownlee <small>@mkbhd</small></button><button data-h="@aliabdaal">Ali Abdaal <small>@aliabdaal</small></button><button data-h="@veritasium">Veritasium <small>@veritasium</small></button></div>
+    <div><h1>Decode any YouTube creator in seconds.</h1><p>Jev labels every Short by hook, structure, and strength, shows which hooks actually drive views, and scores new hooks before you film.</p><p class="err" id="wErr"></p><div id="recent"></div></div>
+    <div class="howto"><div class="lab">Find a creator in 10 seconds</div>
+      <ol><li>Open the creator's channel on YouTube.</li><li>Copy the link from your address bar, or the <b>@name</b> under their channel name.</li><li>Paste it above and click <b>Decode</b>.</li></ol>
+      <div class="lab" style="margin-top:14px">Any of these work</div>
+      <div class="fmt"><code>@handle</code><code>youtube.com/@handle</code><code>youtube.com/shorts/…</code></div></div>
   </div></section>
 
-  <section class="span12 card strip" aria-live="polite">
+  <section class="span12 card strip" id="strip" aria-live="polite">
     <div class="cell who"><div class="av" id="av"></div><div><div class="val" style="font-size:17px" id="cname"></div><div class="sub" id="cmeta"></div></div></div>
     <div class="cell"><div class="lab">Top hook</div><div class="val" id="fTop">Waiting</div><div class="sub" id="fTopS"></div></div>
     <div class="cell"><div class="lab">Best combo</div><div class="val" id="fCombo">Waiting</div><div class="sub" id="fComboS"></div></div>
@@ -226,9 +264,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
     <div class="cell"><div class="lab">Needs review</div><div class="val" id="fRev">0</div><button class="lnk" id="revBtn">Review them</button></div>
     <div class="cell run"><div class="lab">Run time</div><div class="val" id="tc">00:00<span>:00</span></div><div class="sub" id="runS">Waiting</div></div>
   </section>
-  <div class="span12" style="display:flex;gap:12px;align-items:center"><span class="mode" id="mode" aria-live="polite"></span><button class="lnk" id="rerun" hidden>Re-run Jev</button></div>
+  <div class="span12" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span class="mode" id="mode" aria-live="polite"></span><button class="lnk" id="rerun" hidden>Re-run Jev</button><button class="lnk" id="slow" hidden>Replay slowly</button></div>
 
-  <section class="span4 card" id="s1"><div class="ph"><h2>Decode the library</h2><span class="st" id="st1">Waiting</span></div>
+  <section class="span4 card stage" id="s1"><div class="ph"><h2>Decode the library</h2><span class="st" id="st1">Waiting</span></div>
     <div class="stats"><div><b id="k1">0</b><span>Jev calls</span></div><div><b id="k2">0</b><span>Judgments</span></div><div><b id="k3">0</b><span>Flagged</span></div></div>
     <div class="vis" id="vis1"><div id="wall"><div class="row"></div><div class="row"></div><div class="row"></div><div class="lens" id="lens"><span>Jev lens</span></div></div><div class="gal" id="gal" hidden></div></div>
     <div class="pf" style="display:block"><div class="fchips" id="fchips"></div>
@@ -236,13 +274,13 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
       <select id="sort" aria-label="Sort videos"><option value="views">Most views</option><option value="lift">Highest lift</option><option value="new">Newest</option></select></div></div>
   </section>
 
-  <section class="span4 card" id="s2"><div class="ph"><h2>Find what outperforms</h2><span class="st" id="st2">Waiting</span></div>
+  <section class="span4 card stage" id="s2"><div class="ph"><h2>Find what outperforms</h2><span class="st" id="st2">Waiting</span></div>
     <div class="stats"><div><b id="k4">0</b><span>Outperformers</span></div><div><b id="k5">0</b><span>Median views</span></div><div><b id="k6">$0</b><span>Jev cost per video</span></div></div>
     <div class="vis" id="vis2"><div class="zone"><span>Outperform zone, 2x median and up</span></div><canvas id="plot" aria-label="Views by video age, sized by likes"></canvas><div class="tip2" id="tip"></div></div>
     <div class="pf" style="display:block;padding:10px 0 12px"><div class="ul" id="ul"><div class="ur" style="height:20px;color:var(--fnt);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;cursor:default"><span>Hook</span><span style="text-align:right">Usage</span><span></span><span>Lift</span><span></span></div></div></div>
   </section>
 
-  <section class="span4 card" id="s3"><div class="ph"><h2>Score new hooks</h2><span class="st" id="st3">Waiting</span></div>
+  <section class="span4 card stage" id="s3"><div class="ph"><h2>Score new hooks</h2><span class="st" id="st3">Waiting</span></div>
     <div class="stats"><div><b id="k7">0</b><span>Scored</span></div><div><b id="k8">0 ms</b><span>Avg judgment</span></div><div><b id="k9">0</b><span>Shortlisted</span></div></div>
     <div class="vis" id="vis3"><div class="hl" id="hl"><div class="gal"><div class="none">Decode a creator, then type a hook below or click Draft 5.</div></div></div></div>
     <div class="pf"><div class="hin" style="padding:0;width:100%"><input id="hookIn" placeholder="Type a hook to score it live" aria-label="Type a hook"><button class="btn" id="draft">Draft 5</button></div></div>
@@ -263,7 +301,18 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
   <div class="fchips"><button class="chip" data-q="Which hooks should I use more?">Which hooks should I use more?</button><button class="chip" data-q="How has their strategy changed lately?">How has their strategy changed?</button><button class="chip" data-q="What's the weather in Tokyo?">Off-topic test</button></div></div>
   <form class="chf" id="chf"><input id="chi" placeholder="Ask about this creator" aria-label="Your question"><button class="btn">Ask</button></form></div>
 
-<div class="modal" id="pm" hidden><form id="pf"><h2>Enter your passcode</h2><p>The DASHBOARD_PASSCODE you chose during npm run setup. It stays in this browser tab.</p><input id="pw" type="password" aria-label="Passcode"><p class="err" id="pwe"></p><button class="btn">Continue</button></form></div>
+<div class="auth" id="auth" hidden><div class="auth-card">
+  <div class="logo" style="margin:0 0 22px"><b>NextWork</b> <span>Content Decoder</span></div>
+  <form id="fCreate" hidden><h2>Create your password</h2><p>You'll use it to open your dashboard. Only a secure hash is stored.</p>
+    <label>New password<div class="pw"><input id="np" type="password" autocomplete="new-password" minlength="8"><button type="button" class="eye" data-for="np">Show</button></div></label>
+    <label>Confirm password<div class="pw"><input id="cp" type="password" autocomplete="new-password"><button type="button" class="eye" data-for="cp">Show</button></div></label>
+    <p class="rule" id="rule">At least 8 characters.</p><p class="err" id="ce"></p><button class="btn">Create password</button></form>
+  <form id="fLogin" hidden><h2>Welcome back</h2><p>Enter your password to open your dashboard.</p>
+    <label>Password<div class="pw"><input id="lp" type="password" autocomplete="current-password"><button type="button" class="eye" data-for="lp">Show</button></div></label>
+    <label class="chk"><input type="checkbox" id="rem" checked> Keep me signed in for 30 days</label>
+    <p class="err" id="le"></p><button class="btn">Sign in</button><p class="rule" style="margin-top:14px">Forgot it? Run <code>npm run reset-password</code> in your project folder.</p></form>
+  <div id="fNone" hidden><h2>This dashboard isn't set up yet</h2><p>If this is your app, open the one-time setup link that <code>npm run ship</code> printed in your terminal.</p></div>
+</div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -280,61 +329,47 @@ function col(k){return HN[k]?"var(--"+k+")":"var(--fnt)"}
 function hn(k){return HN[k]||String(k||"Unlabeled").replace(/_/g," ")}
 function toast(t){var e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(e._t);e._t=setTimeout(function(){e.classList.remove("show")},1800)}
 
-/* ---------- demo mode: a fake API with realistic Jev timings ---------- */
-var DEMO=!!window.__DEMO||/[?&]demo/.test(location.search)||/github\.io$/.test(location.hostname)||location.protocol==="file:";
-var Mock=(function(){
-  var s=7;function R(){s=(s*16807)%2147483647;return s/2147483647}
-  function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
-  var saved={},T={curiosity:["Nobody tells you this about hiring","The pricing mistake that cost me $40k","Why I stopped running ads"],recognition:["If you run an agency, watch this","Every new coach does this wrong","Your calendar is full but your bank isn't"],result:["31 clients in 60 days","112 leads in a week with one offer","$0 to $30k with this script"],contrarian:["Stop posting every day","Discounts are killing your business","Your offer is not the problem"],story:["I almost quit in 2021","My first client fired me","The day my business nearly died"]};
-  var LIFT={curiosity:1.2,recognition:.9,result:2,contrarian:2.4,story:.8},SC=["#6D83B8","#8E5E7A","#4F8C86","#9C7A4E","#5E6B8F","#9A5448","#5D8A5E","#6F6394"];
-  function thumb(i){var a=SC[i%8];return "data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 16"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+a+'"/><stop offset="1" stop-color="#1C2233"/></linearGradient></defs><rect width="9" height="16" fill="url(#g)"/><circle cx="4.5" cy="9" r="2.6" fill="#fff" opacity=".18"/></svg>')}
-  var truth={};
-  function records(h){var n=200,out=[];for(var i=0;i<n;i++){var age=1+Math.floor(Math.pow(R(),1.15)*360),f=1-age/360,ks=Object.keys(T),w=ks.map(function(k){return k==="contrarian"||k==="result"?(.4+2*f*f):k==="story"||k==="recognition"?(.5+1.2*(1-f)):1}),tot=w.reduce(function(a,b){return a+b}),r=R()*tot,k=ks[0];for(var j=0;j<ks.length;j++){r-=w[j];if(r<=0){k=ks[j];break}}
-    var id=h.slice(1)+i,views=Math.round(150000*LIFT[k]*Math.exp(.8*(R()*2-1)*1.6));truth[id]=k;
-    out.push({platform:"youtube",id:id,url:"https://www.youtube.com/@"+h.slice(1),title:T[k][Math.floor(R()*3)],text:"Follow for more",views:views,likes:Math.round(views*.03*R()),posted_at:new Date(Date.now()-age*864e5).toISOString(),thumbnail:thumb(i),duration_s:40})}return out}
-  function ans(v){var k=truth[v.id]||"curiosity",a={},ks=Object.keys(T),c=R()<.07?.45+R()*.1:.7+R()*.29,p={};ks.forEach(function(x){p[x]=x===k?c:(1-c)/4});a.hook={type:"choice",choice:k,confidence:c,probabilities:p};
-    var S=["opinion","story","listicle","problem_solution","tutorial"],st=k==="story"?"story":S[Math.floor(R()*5)],sp={};S.forEach(function(x){sp[x]=x===st?.8:.05});a.structure={type:"choice",choice:st,confidence:.8,probabilities:sp};
-    a.cta={type:"noul",noul:R()};var lv=Math.floor(R()*3);a.strength={type:"score",score:lv,confidence:.85,legend:{0:"Weak",1:"Decent",2:"Scroll-stopping"},probabilities:{0:lv===0?.7:.15,1:lv===1?.7:.15,2:lv===2?.7:.15}};return a}
-  var DR={result:["3 clients in 10 days from one cold DM","One offer tweak doubled my close rate"],contrarian:["Stop niching down. Do this instead.","Posting less got me more leads"],curiosity:["The 9-word message that closes deals"],recognition:["Every coach hits this wall at $10k"],story:["I lost my biggest client on a Tuesday"]};
-  function guess(t){t=t.toLowerCase();return /\d/.test(t)?"result":/^(stop|don't|never)|overrated|not the|isn't/.test(t)?"contrarian":/^(i |my )/.test(t)?"story":/^(if you|every|you )/.test(t)?"recognition":"curiosity"}
-  return function(path,body){
-    var u=new URL(path,"http://x"),p=u.pathname;
-    if(p==="/api/library")return wait(80).then(function(){return {items:Object.keys(saved).map(function(h){return {handle:h,title:saved[h].channel.title,count:saved[h].records.length,saved_at:""}})}});
-    if(p==="/api/ingest"){var raw=(u.searchParams.get("handle")||"").trim(),m=raw.match(/@[\w.-]+/),h=(m?m[0]:"@"+raw.replace(/^@/,"")).toLowerCase();
-      return wait(500).then(function(){if(saved[h]&&u.searchParams.get("fresh")!=="1")return Object.assign({handle:h,cached:true},saved[h]);var recs=saved[h]?saved[h].records:records(h);
-        return {handle:h,cached:false,channel:{title:h.slice(1).replace(/^./,function(c){return c.toUpperCase()}),handle:h,avatar:""},records:recs,quota_units:12}})}
-    if(p==="/api/classify")return wait(140+R()*260).then(function(){var lat=Math.round(140+R()*260);return {results:body.videos.map(function(v){var a=ans(v),mc=Math.min(a.hook.confidence,a.structure.confidence);return {id:v.id,answers:a,needs_review:mc<(body.threshold||.6)}}),questions:body.videos.length*4,latency_ms:lat,input_tokens:2600,cost_usd:2600*.042/1e6}})
-    if(p==="/api/save"){saved[body.handle]={channel:body.channel,records:body.records,results:body.results,stats:body.stats};return wait(60).then(function(){return {ok:true}})}
-    if(p==="/api/draft")return wait(900).then(function(){var o=[];Object.keys(DR).forEach(function(k){DR[k].forEach(function(t){o.push(t)})});return {hooks:o.sort(function(){return R()-.5}).slice(0,5)}})
-    if(p==="/api/judge")return wait(120+R()*150).then(function(){var lat=Math.round(120+R()*150);return {latency_ms:lat,cost_usd:1300*.042/1e6,results:body.hooks.map(function(t){var k=guess(t),L=LIFT[k],s=.5+R()*.5,fit=.5+R()*.5,lo=Math.min(1,.25+L/3);return {text:t,hook_type:k,score:Math.round(100*(.4*s+.3*fit+.3*lo)),bars:{hook:s,fit:fit,lift_odds:lo}}})}})
-    if(p==="/api/ask")return wait(300).then(function(){var q=body.question||"";if(/weather|recipe|stock/i.test(q))return {blocked:true,topic:"off_topic",answer:"That question isn't about this creator's videos, so I skipped the chat model.",steps:{route_ms:170},cost_usd:.00002};
-      var timing=/change|lately|over time|when/i.test(q);return wait(1100).then(function(){return {blocked:false,topic:timing?"timing":"hook_strategy",grounded_ok:true,answer:timing?"They shifted from Story and Recognition toward Result and Contrarian over the last few months. Next: keep leaning into Result-led hooks.":"Contrarian hooks get the highest lift, and Result hooks come next. Contrarian is underused. Next: film two Contrarian Shorts this week.",steps:{route_ms:180,answer_ms:1100,check_ms:150},cost_usd:.0004,viz:timing?null:{kind:"lift",rows:[{label:"contrarian",value:2.4},{label:"result",value:2},{label:"curiosity",value:1.2},{label:"recognition",value:.9},{label:"story",value:.8}]}}})})
-    return Promise.reject(new Error("Demo has no "+p))}
-})();
-
 /* ---------- api ---------- */
-function pass(){try{return sessionStorage.getItem("cd-pass")||""}catch(e){return window.__p||""}}
-function setPass(p){try{sessionStorage.setItem("cd-pass",p)}catch(e){window.__p=p}}
-function api(path,body){if(DEMO)return Mock(path,body);return fetch(path,{method:body?"POST":"GET",headers:{"x-passcode":pass(),"content-type":"application/json"},body:body?JSON.stringify(body):undefined})
-  .then(function(r){return r.json().catch(function(){return {error:r.statusText}}).then(function(j){if(!r.ok){var e=new Error(j.error||("HTTP "+r.status));e.status=r.status;throw e}return j})})}
-function needPass(msg){$("pwe").textContent=msg||"";$("pm").hidden=false;setTimeout(function(){$("pw").focus()},20)}
-$("pf").onsubmit=function(e){e.preventDefault();var p=$("pw").value.trim();if(!p)return;setPass(p);api("/api/library").then(function(j){$("pm").hidden=true;renderLib(j.items)}).catch(function(x){needPass(x.status===401?"That passcode didn't match.":x.message)})};
-function loadLib(){if(!DEMO&&!pass()){needPass();return}api("/api/library").then(function(j){renderLib(j.items)}).catch(function(x){if(x.status===401)needPass("Enter your passcode.");else say(x.message,true)})}
-function renderLib(items){items=items||[];$("lib").innerHTML=items.length?items.map(function(it){return '<button class="it" data-h="'+esc(it.handle)+'"><span class="av" style="background:var(--contrarian)"></span>'+esc(it.title||it.handle)+'<small>'+it.count+'</small></button>'}).join(""):'<div class="lib-empty">Decoded creators appear here.</div>'}
-$("lib").onclick=function(e){var b=e.target.closest("[data-h]");if(b){$("h").value=b.dataset.h;closeSide();start(false)}};
-[].forEach.call($("try").querySelectorAll("button"),function(b){b.onclick=function(){$("h").value=b.dataset.h;start(false)}});
+function api(path,body){return fetch(path,{method:body?"POST":"GET",credentials:"same-origin",headers:{"content-type":"application/json"},body:body?JSON.stringify(body):undefined})
+  .then(function(r){return r.json().catch(function(){return {error:r.statusText}}).then(function(j){if(!r.ok){var e=new Error(j.error||("HTTP "+r.status));e.status=r.status;if(r.status===401&&path.indexOf("/api/auth/")<0)showAuth();throw e}return j})})}
+var SETUP=new URLSearchParams(location.search).get("setup")||"";
+function showForm(id){["fCreate","fLogin","fNone"].forEach(function(f){$(f).hidden=f!==id});$("auth").hidden=false;var i=$("auth").querySelector("#"+id+" input");if(i)setTimeout(function(){i.focus()},30)}
+function showAuth(){api("/api/auth/status"+(SETUP?"?setup="+encodeURIComponent(SETUP):"")).then(function(s){if(s.signedIn){$("auth").hidden=true;boot();return}showForm(s.configured?"fLogin":s.canCreate?"fCreate":"fNone")}).catch(function(e){showForm("fNone");$("fNone").querySelector("p").textContent=e.message})}
+[].forEach.call(document.querySelectorAll(".eye"),function(b){b.onclick=function(){var i=$(b.dataset.for),s=i.type==="password";i.type=s?"text":"password";b.textContent=s?"Hide":"Show"}});
+function ruleCheck(){var a=$("np").value,b=$("cp").value,r=$("rule");if(a.length<8){r.textContent="At least 8 characters.";r.classList.remove("ok")}else if(b&&a!==b){r.textContent="Passwords don't match yet.";r.classList.remove("ok")}else{r.textContent=b?"Looks good.":"Now confirm it.";r.classList.toggle("ok",!!b)}}
+$("np").oninput=ruleCheck;$("cp").oninput=ruleCheck;
+$("fCreate").onsubmit=function(e){e.preventDefault();var a=$("np").value,b=$("cp").value;if(a.length<8){$("ce").textContent="Use at least 8 characters.";return}if(a!==b){$("ce").textContent="The passwords don't match.";return}
+  var btn=this.querySelector(".btn");btn.disabled=true;api("/api/auth/create",{password:a,setup:SETUP}).then(function(){if(SETUP)history.replaceState(null,"",location.pathname);$("auth").hidden=true;$("np").value=$("cp").value="";toast("Password created. You're signed in.");boot()}).catch(function(x){$("ce").textContent=x.message}).then(function(){btn.disabled=false})};
+$("fLogin").onsubmit=function(e){e.preventDefault();var btn=this.querySelector(".btn");btn.disabled=true;$("le").textContent="";api("/api/auth/login",{password:$("lp").value,remember:$("rem").checked}).then(function(){$("lp").value="";$("auth").hidden=true;boot()}).catch(function(x){$("le").textContent=x.message}).then(function(){btn.disabled=false})};
+$("signout").onclick=function(){api("/api/auth/logout",{}).then(function(){location.reload()})};
+var booted=false;function boot(){if(booted)return;booted=true;loadLib()}
+function ago(iso){if(!iso)return "";var m=(Date.now()-Date.parse(iso))/60000;return m<1?"just now":m<60?Math.round(m)+" min ago":m<1440?Math.round(m/60)+" h ago":Math.round(m/1440)+" d ago"}
+function avHTML(it){var t=esc((it.title||it.handle||"?").slice(0,2).toUpperCase());return it.avatar?'<span class="av" style="background:url(\''+esc(it.avatar)+'\') center/cover"></span>':'<span class="av">'+t+'</span>'}
+var LIB=[];
+function loadLib(){api("/api/library").then(function(j){LIB=j.items||[];renderLib()}).catch(function(x){if(x.status!==401)say(x.message,true)})}
+function renderLib(){$("lib").innerHTML=LIB.length?LIB.map(function(it){return '<div class="cr'+(D&&D.handle===it.handle?" on":"")+'" data-h="'+esc(it.handle)+'" role="button" tabindex="0">'+avHTML(it)+'<span class="nm">'+esc(it.title||it.handle)+'<small>'+it.count+' Shorts, '+ago(it.saved_at)+'</small></span><button class="x" data-rm="'+esc(it.handle)+'" aria-label="Remove '+esc(it.title||it.handle)+'">×</button></div>'}).join(""):'<div class="lib-empty">Creators you decode are saved here.</div>';
+  $("recent").innerHTML=LIB.length?'<div class="lab" style="width:100%">Recent</div>'+LIB.slice(0,4).map(function(it){return '<button data-h="'+esc(it.handle)+'">'+avHTML(it)+esc(it.title||it.handle)+'</button>'}).join(""):""}
+function openCreator(h){$("h").value=h;closeSide();start(false)}
+$("lib").onclick=function(e){var x=e.target.closest("[data-rm]");if(x){e.stopPropagation();var h=x.dataset.rm;if(!confirm("Remove "+h+" and its shortlist from your library?"))return;api("/api/forget",{handle:h}).then(function(){toast("Removed "+h+".");loadLib()});return}var c=e.target.closest("[data-h]");if(c)openCreator(c.dataset.h)};
+$("lib").onkeydown=function(e){if(e.key==="Enter"){var c=e.target.closest("[data-h]");if(c)openCreator(c.dataset.h)}};
+$("recent").onclick=function(e){var b=e.target.closest("[data-h]");if(b)openCreator(b.dataset.h)};
+function renderSL(){$("slFor").textContent=D.handle?"for "+D.handle:"";$("sl").innerHTML=D.saved.length?D.saved.map(function(c){return '<div class="sli" data-t="'+esc(c.text)+'" title="Click to copy"><span>\u201C'+esc(c.text)+'\u201D <b>'+c.score+'</b></span><button class="x" data-unsave="'+esc(c.text)+'" aria-label="Remove from shortlist">×</button></div>'}).join(""):'<div class="lib-empty">'+(D.handle?"Shortlist hooks to keep them here.":"Decode a creator first.")+'</div>'}
+function loadSL(){if(!D.handle)return;var X=D;api("/api/shortlist?handle="+encodeURIComponent(D.handle)).then(function(j){if(X!==D)return;D.saved=j.items||[];D.saved.forEach(function(c){if(!D.hooks.some(function(h){return h.text===c.text}))D.hooks.push({text:c.text,score:c.score,hook_type:c.hook_type,bars:c.bars||{hook:0,fit:0,lift_odds:0},ms:c.ms||0})});renderSL();renderHooks()}).catch(function(){})}
+function saveSL(action,hook){return api("/api/shortlist",{handle:D.handle,action:action,hook:hook,text:hook.text}).then(function(j){D.saved=j.items||[];renderSL();renderHooks()})}
+$("sl").onclick=function(e){var x=e.target.closest("[data-unsave]");if(x){saveSL("remove",{text:x.dataset.unsave});return}var r=e.target.closest("[data-t]");if(r){copy(r.dataset.t);toast("Hook copied.")}};
 
 /* ---------- ui shell ---------- */
 var root=document.documentElement;function theme(){return root.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}
 try{var th=localStorage.getItem("cd-theme");if(th)root.setAttribute("data-theme",th)}catch(e){}
 $("theme").onclick=function(){var n=theme()==="dark"?"light":"dark";root.setAttribute("data-theme",n);try{localStorage.setItem("cd-theme",n)}catch(e){}};
 var U={watch:false,thr:.6,filter:null,review:false,out:false,sort:"views"};
-$("watch").onclick=function(){U.watch=!U.watch;this.setAttribute("aria-pressed",U.watch);$("watchT").style.background=U.watch?"var(--ink)":"";toast(U.watch?"Watch mode on. Your next decode replays at watch speed.":"Watch mode off.")};
+
 $("menu").onclick=function(){$("side").classList.add("open");$("scrim").classList.add("open")};
 function closeSide(){$("side").classList.remove("open")}
-[].forEach.call(document.querySelectorAll("[data-go]"),function(b){b.onclick=function(){var t=$(b.dataset.go);closeSide();closeAll();t.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"})}});
-if("IntersectionObserver" in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){[].forEach.call(document.querySelectorAll("[data-go]"),function(b){b.classList.toggle("on",b.dataset.go===e.target.id)})}})},{rootMargin:"-40% 0px -55% 0px"});["top","s1","s2","s3","s4"].forEach(function(i){io.observe($(i))})}
-if(DEMO){$("demoBadge").hidden=false;$("raceLink").onclick=function(e){e.preventDefault();toast("Model Race runs on your own deployed app.")}}
+function jump(id){var t=$(id);if(!t||t.offsetParent===null){toast("Decode a creator first.");return}closeSide();t.scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"});t.classList.remove("hl-card");void t.offsetWidth;t.classList.add("hl-card");
+  [].forEach.call(document.querySelectorAll("[data-go]"),function(b){b.classList.toggle("on",b.dataset.go===id)})}
+[].forEach.call(document.querySelectorAll("[data-go]"),function(b){b.onclick=function(){jump(b.dataset.go)}});
+if("IntersectionObserver" in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)[].forEach.call(document.querySelectorAll("[data-go]"),function(b){b.classList.toggle("on",b.dataset.go===e.target.id)})})},{rootMargin:"-45% 0px -50% 0px"});["strip","s1","s2","s3","s4"].forEach(function(i){io.observe($(i))})}
 function say(t,err){$("mode").textContent=t||"";$("mode").classList.toggle("err",!!err)}
 
 /* ---------- state ---------- */
@@ -433,7 +468,7 @@ function pattern(){var d=dec().filter(function(v){return v.hook}),t=HOOKS.map(fu
   return {channel:(D.channel&&D.channel.title)||D.handle,top_hooks:t.length?t:["result"],examples:d.slice().sort(function(a,b){return b.views-a.views}).slice(0,5).map(function(v){return v.title})}}
 function judge(l){return api("/api/judge",{hooks:l,pattern:pattern()}).then(function(j){D.cost+=j.cost_usd||0;D.jms+=j.latency_ms||0;D.jn++;var rs=(j.results||[]).map(function(r){r.ms=j.latency_ms;return r});var t=rs.slice().sort(function(a,b){return b.score-a.score})[0];if(t)log(t.hook_type,"Jev scored "+rs.length+(rs.length>1?" hooks":" hook"),j.latency_ms+" ms, best "+t.score);return rs})}
 var live=null;
-function card(c,rank,preview){var sv=D.saved.indexOf(c)>=0;return '<div class="hc" style="--hc:'+col(c.hook_type)+';--s:'+c.score+(preview?";border-style:dashed":"")+'">'+(rank===1?'<span class="rib">Film this next</span>':'')+'<div class="ring"><b>'+c.score+'</b></div><div class="k"><strong>'+(preview?"Live":"#"+rank)+'</strong><span class="dot" style="background:'+col(c.hook_type)+'"></span>'+esc(hn(c.hook_type))+', judged in '+Math.round(c.ms)+' ms</div><div class="q">\u201C'+esc(c.text)+'\u201D</div>'+
+function card(c,rank,preview){var sv=D.saved.some(function(s){return s.text===c.text});return '<div class="hc" style="--hc:'+col(c.hook_type)+';--s:'+c.score+(preview?";border-style:dashed":"")+'">'+(rank===1?'<span class="rib">Film this next</span>':'')+'<div class="ring"><b>'+c.score+'</b></div><div class="k"><strong>'+(preview?"Live":"#"+rank)+'</strong><span class="dot" style="background:'+col(c.hook_type)+'"></span>'+esc(hn(c.hook_type))+', judged in '+Math.round(c.ms)+' ms</div><div class="q">\u201C'+esc(c.text)+'\u201D</div>'+
   '<div class="m3"><span>Hook<i style="--w:'+Math.round(c.bars.hook*100)+'%"></i></span><span>Fit<i style="--w:'+Math.round(c.bars.fit*100)+'%"></i></span><span>Lift odds<i style="--w:'+Math.round(c.bars.lift_odds*100)+'%"></i></span></div>'+
   '<div class="act">'+(preview?'<button data-a="add">Add to list</button>':'<button data-a="copy" data-t="'+esc(c.text)+'">Copy</button><button data-a="save" data-i="'+D.hooks.indexOf(c)+'" aria-pressed="'+sv+'">'+(sv?"Shortlisted":"Shortlist")+'</button>')+'</div></div>'}
 function renderHooks(){var l=D.hooks.slice().sort(function(a,b){return b.score-a.score});$("hl").innerHTML=(live?card(live,0,true):"")+(l.length?l.map(function(c,i){return card(c,i+1)}).join(""):(live?"":'<div class="gal"><div class="none">Type a hook below or click Draft 5.</div></div>'));
@@ -441,7 +476,7 @@ function renderHooks(){var l=D.hooks.slice().sort(function(a,b){return b.score-a
 $("hl").onclick=function(e){var b=e.target.closest("button[data-a]");if(!b)return;var a=b.dataset.a;
   if(a==="add"&&live){D.hooks.push(live);live=null;$("hookIn").value="";renderHooks()}
   if(a==="copy"){copy(b.dataset.t);toast("Hook copied.")}
-  if(a==="save"){var c=D.hooks[+b.dataset.i],k=D.saved.indexOf(c);if(k>=0)D.saved.splice(k,1);else D.saved.push(c);renderHooks()}};
+  if(a==="save"){var c=D.hooks[+b.dataset.i],on=D.saved.some(function(s){return s.text===c.text});saveSL(on?"remove":"add",{text:c.text,score:c.score,hook_type:c.hook_type,bars:c.bars,ms:c.ms}).then(function(){toast(on?"Removed from shortlist.":"Added to shortlist.")}).catch(function(x){say(x.message,true)})}};
 $("draft").onclick=function(){if(!dec().length){say("Decode a creator first, then draft hooks.",true);return}var b=this;b.disabled=true;b.textContent="Drafting...";
   api("/api/draft",{pattern:pattern()}).then(function(j){return judge((j.hooks||[]).filter(function(t){return t&&!D.hooks.some(function(h){return h.text===t})}))}).then(function(rs){rs.forEach(function(r){D.hooks.push(r)});renderHooks()})
   .catch(function(e){say("Draft failed: "+e.message,true)}).then(function(){b.disabled=false;b.textContent="Draft 5"})};
@@ -478,14 +513,15 @@ $("chf").onsubmit=function(e){e.preventDefault();ask($("chi").value);$("chi").va
 /* ---------- decode ---------- */
 function setCreator(){var c=D.channel||{};document.body.classList.add("has-data");$("av").style.background=c.avatar?"url('"+c.avatar+"') center/cover":"var(--contrarian)";$("av").textContent=c.avatar?"":(c.title||D.handle).slice(0,2).toUpperCase();
   $("cname").textContent=c.title||D.handle;$("cmeta").textContent=D.handle+", "+D.videos.length+" Shorts"}
-function reset(){D=fresh();U.filter=null;U.review=false;U.out=false;live=null;F4={};$("log").innerHTML="";renderHooks();["fTop","fCombo","fBlind"].forEach(function(i){$(i).textContent="Waiting"})}
-function start(fr){var h=($("h").value||"").trim();if(!h){$("h").focus();return}if(!DEMO&&!pass()){needPass();return}if(D.running)return;$("run").disabled=true;$("wErr").textContent="";say("Pulling Shorts from YouTube...");
+function resetChat(){var c=$("chb");while(c.children.length>2)c.removeChild(c.lastChild)}
+function reset(){if(D.handle)resetChat();D=fresh();U.filter=null;U.review=false;U.out=false;live=null;F4={};$("log").innerHTML="";renderHooks();["fTop","fCombo","fBlind"].forEach(function(i){$(i).textContent="Waiting"})}
+function start(fr){var h=($("h").value||"").trim();if(!h){$("h").focus();return}if(D.running)return;$("run").disabled=true;$("wErr").textContent="";say("Pulling Shorts from YouTube...");
   api("/api/ingest?handle="+encodeURIComponent(h)+(fr?"&fresh=1":"")).then(function(j){reset();D.handle=j.handle;D.channel=j.channel||{title:j.handle};D.cached=!!j.cached;D.videos=(j.records||[]).map(toV);
     if(!D.videos.length){$("run").disabled=false;var m="No Shorts found for "+j.handle+". Try a creator who posts Shorts.";$("wErr").textContent=m;say(m,true);return}
-    setCreator();clearWall();showGallery(false);fillWall();$("rerun").hidden=true;
-    if(j.cached){var by={};(j.results||[]).forEach(function(r){by[r.id]=r});D.videos.forEach(function(v){if(by[v.id])apply(v,by[v.id],0)});D.decoded=dec().length;D.qpc=(j.stats&&j.stats.qpc)||0;D.results=j.results||[];
+    setCreator();clearWall();showGallery(false);fillWall();$("rerun").hidden=true;$("slow").hidden=true;renderLib();loadSL();
+    if(j.cached){var by={};(j.results||[]).forEach(function(r){by[r.id]=r});D.videos.forEach(function(v){if(by[v.id])apply(v,by[v.id],0)});D.decoded=dec().length;D.qpc=(j.stats&&j.stats.qpc)||0;D.results=j.results||[];D.stats=j.stats||{};
       say("Loaded "+j.handle+" from your library with 0 Jev calls.");log(null,"Loaded "+j.handle,"0 Jev calls");done(true);return}
-    say("Decoding "+D.videos.length+" Shorts with Jev...");run()}).catch(function(e){$("run").disabled=false;if(e.status===401){needPass("Wrong passcode.");return}$("wErr").textContent=e.message;say(e.message,true)})}
+    say("Decoding "+D.videos.length+" Shorts with Jev...");run()}).catch(function(e){$("run").disabled=false;if(e.status===401)return;$("wErr").textContent=e.message;say(e.message,true)})}
 function run(){var b=[];for(var i=0;i<D.videos.length;i+=BATCH)b.push(D.videos.slice(i,i+BATCH));var n=0,X=D;X.running=true;X.t0=performance.now();document.body.classList.add("running");["st1","st2"].forEach(function(i){$(i).textContent="Decoding"});
   function now(){return(performance.now()-X.t0)/1000}
   function lane(l){if(n>=b.length)return Promise.resolve();var bt=b[n++],c={lane:l,s:now(),t:null,lat:0};X.calls.push(c);
@@ -494,24 +530,23 @@ function run(){var b=[];for(var i=0;i<D.videos.length;i+=BATCH)b.push(D.videos.s
     .catch(function(e){var t=now();X.ev.push({t:t,f:function(){c.t=t;c.err=true;say("A Jev call failed: "+e.message,true)}})}).then(function(){return lane(l)})}
   var ls=[];for(var l=0;l<LANES;l++)ls.push(lane(l));
   Promise.all(ls).then(function(){var t=now();X.ev.push({t:t,f:function(){X.running=false;X.end=X.vt;document.body.classList.remove("running");say("Decoded "+X.decoded+" Shorts in "+X.end.toFixed(1)+" s for $"+X.dcost.toFixed(4)+".");
-    api("/api/save",{handle:X.handle,channel:X.channel,records:X.videos.map(function(v){return v.rec}),results:X.results,stats:{qpc:X.qpc,calls:X.calls.length,cost_usd:X.dcost}}).then(loadLib).catch(function(){});
+    api("/api/save",{handle:X.handle,channel:X.channel,records:X.videos.map(function(v){return v.rec}),results:X.results,stats:{qpc:X.qpc,calls:X.calls.length,cost_usd:X.dcost,duration_s:X.end}}).then(loadLib).catch(function(){});
     setTimeout(function(){if(X===D)done(false)},U.watch?1500:900)}})})}
-function done(cached){$("rerun").hidden=false;$("run").disabled=false;$("run").textContent="Decode";refresh();renderChips();showGallery(true);["st1","st2"].forEach(function(i){$(i).textContent="Done"});
+function done(cached){$("rerun").hidden=false;$("slow").hidden=false;U.watch=false;$("run").disabled=false;$("run").textContent="Decode";refresh();renderChips();showGallery(true);["st1","st2"].forEach(function(i){$(i).textContent="Done"});
   if(!cached&&!D.hooks.length)$("draft").click()}
-$("run").onclick=function(){start(false)};$("rerun").onclick=function(){$("h").value=D.handle;start(true)};$("h").onkeydown=function(e){if(e.key==="Enter")start(false)};
+$("run").onclick=function(){start(false)};$("rerun").onclick=function(){U.watch=false;$("h").value=D.handle;start(true)};$("slow").onclick=function(){U.watch=true;$("h").value=D.handle;toast("Replaying at watch speed. Timings shown are real.");start(true)};$("h").onkeydown=function(e){if(e.key==="Enter")start(false)};
 
 /* ---------- counters + loop ---------- */
 function tc(t){var s=Math.floor(t)%60,m=Math.floor(t/60),f=Math.floor((t%1)*100);function p(n){return(n<10?"0":"")+n}return p(m)+":"+p(s)+'<span>.'+p(f)+"</span>"}
-var lastTC="";function counters(){var t=tc(D.cached?0:D.vt);if(t!==lastTC){$("tc").innerHTML=t;lastTC=t}var N=D.videos.length,d=D.decoded,dur=Math.max(.001,D.end||D.vt);
-  $("runS").textContent=D.cached?"From library, $0":d?Math.round(d/dur)+" per sec, $"+D.dcost.toFixed(4)+(U.watch&&D.running?" (watch speed)":""):"Waiting";
+var lastTC="";function counters(){var t=tc(D.cached?((D.stats&&D.stats.duration_s)||0):D.vt);if(t!==lastTC){$("tc").innerHTML=t;lastTC=t}var N=D.videos.length,d=D.decoded,dur=Math.max(.001,D.end||D.vt);
+  $("runS").textContent=D.cached?"Loaded from library, 0 Jev calls":d?Math.round(d/dur)+" per sec, $"+D.dcost.toFixed(4)+(U.watch&&D.running?" (watch speed)":""):"Waiting";
   $("k1").textContent=D.calls.length;$("k2").textContent=(d*(D.qpc?D.qpc/BATCH:4)).toLocaleString();$("k6").textContent=d&&D.dcost?"$"+(D.dcost/d).toFixed(6):"$0"}
 var last=performance.now(),lp=0;
 function tick(now){fr++;var dt=Math.min(.05,(now-last)/1000);last=now;
   if(D.running||D.ev.length){D.vt+=dt*(U.watch?.2:1);if(!U.watch){var real=(performance.now()-D.t0)/1000;if(D.vt<real-.05)D.vt=real}D.ev.sort(function(a,b){return a.t-b.t});while(D.ev.length&&D.ev[0].t<=D.vt)D.ev.shift().f()}
   stepWall(dt);if(now-lp>250){if(D.running){refresh();renderChips()}lp=now}drawLanes();drawMix();drawPlot();counters();requestAnimationFrame(tick)}
 window.addEventListener("resize",function(){sizeAll()});
-sizeAll();fillWall();renderChips();renderHooks();loadLib();requestAnimationFrame(function(t){last=t;tick(t)});
-if(DEMO){say("Demo mode: sample data with realistic Jev timings. Pick a creator above to try it.")}
+sizeAll();fillWall();renderChips();renderHooks();renderSL();showAuth();requestAnimationFrame(function(t){last=t;tick(t)});
 })();
 </script>
 </body>

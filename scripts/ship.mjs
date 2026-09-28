@@ -1,28 +1,32 @@
-// npm run ship: creates the table in the cloud database, uploads your two secrets
-// from .dev.vars, and deploys the Worker.
+// npm run ship: creates the tables in the cloud database, deploys the app,
+// uploads your YouTube key, and prints a one-time link to create your password.
 import { execSync } from "node:child_process";
+import crypto from "node:crypto";
 import fs from "node:fs";
 
 const DB = "content-decoder";
 if (!fs.existsSync(".dev.vars")) { console.error("Missing .dev.vars. Run npm run setup first."); process.exit(1); }
-const vars = Object.fromEntries(
-  fs.readFileSync(".dev.vars", "utf8").split("\n")
-    .map((l) => l.trim()).filter((l) => l && !l.startsWith("#") && l.includes("="))
-    .map((l) => [l.slice(0, l.indexOf("=")).trim(), l.slice(l.indexOf("=") + 1).trim()])
-);
-for (const k of ["YOUTUBE_API_KEY", "DASHBOARD_PASSCODE"]) {
-  if (!vars[k] || /paste-your|choose-a/.test(vars[k])) { console.error(`Set ${k} in .dev.vars first.`); process.exit(1); }
-}
+const key = (fs.readFileSync(".dev.vars", "utf8").match(/^YOUTUBE_API_KEY=(.+)$/m) || [])[1]?.trim();
+if (!key || /paste-your/i.test(key)) { console.error("Add your YouTube API key with npm run setup first."); process.exit(1); }
 
-console.log("\n1/3  Creating the table in the cloud database...");
+console.log("\n1/3  Creating the tables in the cloud database (answer Y if asked)...");
 execSync(`npx wrangler d1 migrations apply ${DB} --remote`, { stdio: "inherit" });
 
 console.log("\n2/3  Deploying...");
-execSync("npx wrangler deploy", { stdio: "inherit" });
+const out = execSync("npx wrangler deploy", { encoding: "utf8", stdio: ["inherit", "pipe", "inherit"] });
+process.stdout.write(out);
+const url = (out.match(/https:\/\/[^\s]+\.workers\.dev/) || [])[0];
 
-// Secrets go on after the first deploy, so the Worker already exists.
 console.log("\n3/3  Uploading secrets...");
-for (const k of ["YOUTUBE_API_KEY", "DASHBOARD_PASSCODE"]) {
-  execSync(`npx wrangler secret put ${k}`, { input: vars[k] + "\n", stdio: ["pipe", "inherit", "inherit"] });
+const token = crypto.randomBytes(16).toString("hex");
+for (const [k, v] of [["YOUTUBE_API_KEY", key], ["SETUP_TOKEN", token]]) {
+  execSync(`npx wrangler secret put ${k}`, { input: v + "\n", stdio: ["pipe", "inherit", "inherit"] });
 }
-console.log("\nDone. Open the workers.dev URL above and enter your passcode.\n");
+
+console.log("\nDone.");
+if (url) {
+  console.log(`\nYour app:  ${url}`);
+  console.log(`\nFirst time? Create your password with this one-time link (keep it private):\n${url}/?setup=${token}\n`);
+} else {
+  console.log(`\nOpen your workers.dev URL above. First time? Add ?setup=${token} to it to create your password.\n`);
+}

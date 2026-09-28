@@ -30,22 +30,18 @@ if (toml.includes("REPLACE_WITH_YOUR_D1_DATABASE_ID")) {
 console.log("\n2/3  Creating the table locally (answer Y if asked)...");
 run(`npx wrangler d1 migrations apply ${DB} --local`);
 
-console.log("\n3/3  Your secrets");
-const read = () => fs.existsSync(".dev.vars") ? Object.fromEntries(fs.readFileSync(".dev.vars", "utf8").split("\n").filter((l) => l.includes("=") && !l.trim().startsWith("#")).map((l) => [l.slice(0, l.indexOf("=")).trim(), l.slice(l.indexOf("=") + 1).trim()])) : {};
-const vars = read();
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-async function ask(label, bad) {
-  // Keep asking until the answer is real. An empty answer is never saved.
-  for (let i = 0; i < 5; i++) {
-    const v = (await rl.question(label)).trim();
-    if (v && !bad.test(v)) return v;
-    console.log("     That can't be empty. Try again.");
+console.log("\n3/3  Your YouTube API key");
+const vars = fs.existsSync(".dev.vars") ? Object.fromEntries(fs.readFileSync(".dev.vars", "utf8").split("\n").filter((l) => l.includes("=") && !l.trim().startsWith("#")).map((l) => [l.slice(0, l.indexOf("=")).trim(), l.slice(l.indexOf("=") + 1).trim()])) : {};
+if (!vars.YOUTUBE_API_KEY || /paste-your/i.test(vars.YOUTUBE_API_KEY)) {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  let v = "";
+  for (let i = 0; i < 5 && !v; i++) {
+    v = (await rl.question("     Paste your YouTube Data API key: ")).trim();
+    if (!v || /paste-your/i.test(v)) { v = ""; console.log("     That can't be empty. Try again."); }
   }
-  console.error("\nNo value entered. Run npm run setup again, or edit .dev.vars by hand."); process.exit(1);
-}
-if (!vars.YOUTUBE_API_KEY || /paste-your/i.test(vars.YOUTUBE_API_KEY)) vars.YOUTUBE_API_KEY = await ask("     Paste your YouTube Data API key: ", /paste-your/i);
-if (!vars.DASHBOARD_PASSCODE || /choose-a/i.test(vars.DASHBOARD_PASSCODE)) vars.DASHBOARD_PASSCODE = await ask("     Choose a dashboard passcode: ", /choose-a/i);
-rl.close();
-fs.writeFileSync(".dev.vars", `YOUTUBE_API_KEY=${vars.YOUTUBE_API_KEY}\nDASHBOARD_PASSCODE=${vars.DASHBOARD_PASSCODE}\n`);
-console.log("     Saved to .dev.vars (never commit this file).");
-console.log("\nSetup done. Next: npm run dev\n");
+  rl.close();
+  if (!v) { console.error("\nNo key entered. Run npm run setup again."); process.exit(1); }
+  vars.YOUTUBE_API_KEY = v;
+} else console.log("     Already saved in .dev.vars.");
+fs.writeFileSync(".dev.vars", `YOUTUBE_API_KEY=${vars.YOUTUBE_API_KEY}\n`);
+console.log("\nSetup done. Next: npm run dev, then create your dashboard password in the browser.\n");

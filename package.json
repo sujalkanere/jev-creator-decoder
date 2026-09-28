@@ -6,7 +6,8 @@
   "scripts": {
     "setup": "node scripts/setup.mjs",
     "dev": "wrangler dev",
-    "ship": "node scripts/ship.mjs"
+    "ship": "node scripts/ship.mjs",
+    "reset-password": "node scripts/reset-password.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
