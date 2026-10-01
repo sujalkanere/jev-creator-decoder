@@ -35,6 +35,21 @@
         "Decent",
         "Scroll-stopping"
       ]
+    },
+    "topic": {
+      "type": "choice",
+      "instructions": "What primary topic does the video in `{v}` cover?",
+      "criteria": {
+        "education": "Teaches a skill, method, fact, or explanation",
+        "personal_story": "Focuses on the creator's own experience or journey",
+        "opinion": "Argues for a viewpoint or reaction",
+        "product": "Reviews, demonstrates, or recommends a product or service",
+        "entertainment": "Primarily aims to amuse, surprise, or entertain"
+      }
+    },
+    "promises_number": {
+      "type": "noul",
+      "instructions": "Does the title in `{v}.title` promise a specific number?"
     }
   }
 }

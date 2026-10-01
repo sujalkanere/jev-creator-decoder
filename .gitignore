@@ -1,4 +1,8 @@
 node_modules/
 .wrangler/
-.dev.vars
+# Your keys. Never commit these; .env.example is the template.
+.env
+.env.*
+!.env.example
+.dev.vars*
 .DS_Store

@@ -240,6 +240,13 @@ body:not(.has-data) .stage .stats,body:not(.has-data) .stage .pf{opacity:.45}
 @keyframes shimmer{60%,100%{transform:translateX(100%)}}
 @keyframes band{0%,30%{opacity:0}50%,80%{opacity:.9}100%{opacity:0}}
 .gal:not([hidden]){animation:fadein .35s ease-out}@keyframes fadein{from{opacity:0}}
+/* bubble plot zoom controls */
+#plot{touch-action:pan-y}
+.zoomc{position:absolute;right:8px;bottom:8px;z-index:2;display:flex;align-items:center;gap:2px;padding:3px;border-radius:10px;background:color-mix(in srgb,var(--card) 88%,transparent);border:1px solid var(--line);box-shadow:0 4px 12px -6px rgba(0,0,0,.2)}
+.zoomc button{min-width:26px;height:24px;border:0;border-radius:7px;background:none;color:var(--ink);font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:0 6px}
+.zoomc button:hover{background:var(--sunk)}.zoomc button[data-z="reset"]{font-size:11.5px;font-weight:500}
+.zoomc span{font-size:11px;color:var(--fnt);padding:0 5px 0 3px;min-width:32px;text-align:right}
+body:not(.has-data) .zoomc{display:none}
 /* hover card, shared by canvases and anything with data-tip */
 .hov{position:fixed;left:0;top:0;z-index:95;pointer-events:none;background:var(--ink);color:var(--on);font-size:12px;line-height:1.45;padding:8px 10px;border-radius:9px;max-width:270px;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transition:opacity .12s}
 .hov.show{opacity:1}.hov b{font-weight:600}.hov .m{opacity:.7}
@@ -342,7 +349,8 @@ body:not(.has-data) .stage .stats,body:not(.has-data) .stage .pf{opacity:.45}
 
   <section class="span4 card stage" id="s2"><div class="ph"><h2>Find what outperforms</h2><span class="st" id="st2">Waiting</span></div>
     <div class="stats"><div><b id="k4">0</b><span>Outperformers</span></div><div><b id="k5">0</b><span>Median views</span></div><div><b id="k6">$0</b><span>Jev cost per video</span></div></div>
-    <div class="vis" id="vis2"><div class="zone"><span>Outperform zone, 2x median and up</span></div><canvas id="plot" aria-label="Views by video age, sized by likes"></canvas><div class="tip2" id="tip"></div></div>
+    <div class="vis" id="vis2"><div class="zone"><span>Outperform zone, 2x median and up</span></div><canvas id="plot" aria-label="Views by video age, sized by likes. Drag a bubble to move it; it springs back when you let go."></canvas><div class="tip2" id="tip"></div>
+      <div class="zoomc" id="zoomc"><button data-z="in" aria-label="Zoom in" data-tip="Zoom in. You can also pinch, use Ctrl + scroll, or double-click empty space.">+</button><button data-z="out" aria-label="Zoom out" data-tip="Zoom out">&minus;</button><button data-z="reset" data-tip="Back to the full view">Reset</button><span id="zlv">1.0x</span></div></div>
     <div class="pf" style="display:block;padding:10px 0 12px"><div class="ul" id="ul"><div class="ur" style="height:20px;color:var(--fnt);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;cursor:default"><span>Hook</span><span style="text-align:right">Usage</span><span></span><span>Lift</span><span></span></div></div></div>
   </section>
 
@@ -520,15 +528,56 @@ var MB=null,MBW=1;
 HOV.mix=function(mx){if(!MB||!dec().length)return null;var m=Math.floor(mx/MBW);if(m<0||m>11)return null;var b=MB[m],d=864e5*30.4,f=function(t){return new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric"})};
   var h='<b>'+f(Date.now()-(12-m)*d)+' to '+f(Date.now()-(11-m)*d)+'</b><hr>';if(!b.n)return h+'<span class="m">No Shorts posted in this window.</span>';
   var all=med(dec().map(function(v){return v.views}))||1,mv=med(b.v);return h+trow("Shorts",b.n)+trow("Median views",fmt(mv)+" ("+(mv/all).toFixed(1)+"x channel)")+'<hr>'+mixLine(b.by)};
-var pts=[];function drawPlot(){var x=PL.x,W=PL.w,H=PL.h;x.clearRect(0,0,W,H);var fnt=css("--fnt"),c={};HOOKS.forEach(function(h){c[h[0]]=css("--"+h[0])});var d=dec().filter(function(v){return v.views>0});pts=[];
+/* ---------- bubble plot: zoom, pan, and grab-and-release bubbles ---------- */
+// View: Z is the zoom level, (VX,VY) the top-left of the view in unzoomed canvas px.
+// DRG holds each dragged bubble's offset from home in screen px; a spring pulls it back on release.
+var pts=[],Z=1,VX=0,VY=0,zAnim=null,DRG={},grab=null,lastPT=0,zoneEl=$("vis2").querySelector(".zone");
+// Zoomed in, the view may run a little past the edges so bubbles on the border aren't cut in half.
+function clampV(z,vx,vy){var W=PL.w,H=PL.h,m=28*(1-1/z)/z;return [Math.max(-m,Math.min(W-W/z+m,vx)),Math.max(-m,Math.min(H-H/z+m,vy))]}
+// Keep the point under (sx,sy) still while zooming to nz. Animated for buttons and double-click.
+function zoomAt(sx,sy,nz,animate){nz=Math.max(1,Math.min(8,nz));var bx=VX+sx/Z,by=VY+sy/Z,v=clampV(nz,bx-sx/nz,by-sy/nz);
+  if(animate&&!reduce)zAnim={t0:performance.now(),a:[Z,VX,VY],b:[nz,v[0],v[1]]};else{zAnim=null;Z=nz;VX=v[0];VY=v[1]}$("plot").style.touchAction=nz>1?"none":"pan-y"}
+function resetView(){Z=1;VX=VY=0;zAnim=null;DRG={};grab=null;$("plot").style.touchAction="pan-y"}
+function springStep(){var now=performance.now(),dt=Math.min(.05,(now-lastPT)/1000||0);lastPT=now;
+  if(zAnim){var t=Math.min(1,(now-zAnim.t0)/260),e=1-Math.pow(1-t,3);Z=zAnim.a[0]+(zAnim.b[0]-zAnim.a[0])*e;VX=zAnim.a[1]+(zAnim.b[1]-zAnim.a[1])*e;VY=zAnim.a[2]+(zAnim.b[2]-zAnim.a[2])*e;if(t>=1)zAnim=null}
+  Object.keys(DRG).forEach(function(k){if(grab&&String(grab.i)===k)return;var s=DRG[k];s.vx+=(-160*s.dx-16*s.vx)*dt;s.vy+=(-160*s.dy-16*s.vy)*dt;s.dx+=s.vx*dt;s.dy+=s.vy*dt;
+    if(Math.abs(s.dx)+Math.abs(s.dy)<.3&&Math.abs(s.vx)+Math.abs(s.vy)<3)delete DRG[k]})}
+function drawPlot(){springStep();var x=PL.x,W=PL.w,H=PL.h;x.clearRect(0,0,W,H);var fnt=css("--fnt"),c={};HOOKS.forEach(function(h){c[h[0]]=css("--"+h[0])});var d=dec().filter(function(v){return v.views>0});pts=[];
+  var zt=H*.36,zTop=-VY*Z,zH=zt*Z;zoneEl.style.top=zTop+"px";zoneEl.style.height=zH+"px";zoneEl.firstChild.style.top=Math.max(8,Math.min(8-zTop,zH-18))+"px";$("zlv").textContent=Z.toFixed(1)+"x";
   if(!d.length){x.fillStyle=fnt;x.font="12.5px "+F;x.fillText("Bubbles appear as Jev decodes.",14,H/2+20);return}
   var m=med(d.map(function(v){return v.views})),lv=d.map(function(v){return Math.log(v.views)}),lo=Math.min.apply(null,lv)-.2,hi=Math.max.apply(null,lv)+.2,am=Math.max.apply(null,d.map(function(v){return v.age}))*1.04,lm=Math.max.apply(null,d.map(function(v){return v.likes}).concat([1]));
-  var zt=H*.36,B=10;function PY(v){return H-B-((Math.log(v)-lo)/(hi-lo))*(H-B-8)}var yT=PY(m*2);
-  d.forEach(function(v){var p=reduce||D.cached||!D.running&&D.end&&D.vt-v.at>1?1:Math.min(1,(D.vt-v.at)/.8),tx=12+(v.age/am)*(W-24),xx=-10+(tx+10)*(1-Math.pow(1-p,3)),y0=PY(v.views),yy=y0<=yT?y0*(zt/Math.max(1,yT)):zt+(y0-yT)*((H-B-zt)/Math.max(1,H-B-yT)),o=v.views>=m*2&&v.hook,r=o?3+8*Math.sqrt(v.likes/lm):2.2;
-    x.beginPath();x.arc(xx,yy,r,0,7);if(o){x.fillStyle=c[v.hook];x.globalAlpha=.85;x.fill();x.globalAlpha=1}else{x.fillStyle=fnt;x.globalAlpha=.35;x.fill();x.globalAlpha=1}pts.push([xx,yy,v,Math.max(r,5)])})}
-function hit(e){var r=$("plot").getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,b=null,bd=1e9;pts.forEach(function(p){var q=(p[0]-mx)*(p[0]-mx)+(p[1]-my)*(p[1]-my);if(q<bd&&q<p[3]*p[3]+36){bd=q;b=p}});return {b:b,mx:mx,my:my}}
-$("plot").onmousemove=function(e){var h=hit(e),t=$("tip");if(!h.b){t.style.display="none";return}t.style.display="block";t.style.left=Math.min(h.mx+12,this.clientWidth-230)+"px";t.style.top=(h.my+12)+"px";t.textContent=h.b[2].title+", "+fmt(h.b[2].views)+" views"};
-$("plot").onmouseleave=function(){$("tip").style.display="none"};$("plot").onclick=function(e){var h=hit(e);if(h.b)openD(h.b[2].i,topList())};
+  var B=10,held=null;function PY(v){return H-B-((Math.log(v)-lo)/(hi-lo))*(H-B-8)}var yT=PY(m*2);
+  function dot(sx,sy,r,o,v){x.beginPath();x.arc(sx,sy,r,0,7);x.fillStyle=o?c[v.hook]:fnt;x.globalAlpha=o?.85:.35;x.fill();x.globalAlpha=1}
+  d.forEach(function(v){var p=reduce||D.cached||!D.running&&D.end&&D.vt-v.at>1?1:Math.min(1,(D.vt-v.at)/.8),tx=12+(v.age/am)*(W-24),xx=-10+(tx+10)*(1-Math.pow(1-p,3)),y0=PY(v.views),yy=y0<=yT?y0*(zt/Math.max(1,yT)):zt+(y0-yT)*((H-B-zt)/Math.max(1,H-B-yT)),o=v.views>=m*2&&v.hook,r=(o?3+8*Math.sqrt(v.likes/lm):2.2)*Math.pow(Z,.4);
+    var s=DRG[v.i],sx=(xx-VX)*Z+(s?s.dx:0),sy=(yy-VY)*Z+(s?s.dy:0);pts.push([sx,sy,v,Math.max(r,5),o]);
+    if(grab&&grab.i===v.i)held=[sx,sy,r,o,v];else dot(sx,sy,r,o,v)});
+  // The bubble in your hand draws last, on top, with a ring.
+  if(held){dot(held[0],held[1],held[2],held[3],held[4]);x.beginPath();x.arc(held[0],held[1],held[2]+3,0,7);x.strokeStyle=css("--ink");x.lineWidth=2;x.stroke();x.lineWidth=1}}
+function hitAt(mx,my){var b=null,bd=1e9;pts.forEach(function(p){var q=(p[0]-mx)*(p[0]-mx)+(p[1]-my)*(p[1]-my);if(q<bd&&q<p[3]*p[3]+36){bd=q;b=p}});return b}
+(function(){var cv=$("plot"),ptrs={},pinch=null,pan=null,moved=false;
+  function lp(e){var r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]}
+  function tip(p){var b=hitAt(p[0],p[1]),t=$("tip");cv.style.cursor=b?"grab":Z>1?"move":"default";if(!b){t.style.display="none";return}
+    t.style.display="block";t.style.left=Math.min(p[0]+12,cv.clientWidth-230)+"px";t.style.top=(p[1]+12)+"px";t.textContent=b[2].title+", "+fmt(b[2].views)+" views"}
+  cv.onpointerdown=function(e){var p=lp(e);ptrs[e.pointerId]=p;try{cv.setPointerCapture(e.pointerId)}catch(_){}moved=false;$("tip").style.display="none";var ids=Object.keys(ptrs);
+    if(ids.length===2){grab=null;pan=null;var a=ptrs[ids[0]],c2=ptrs[ids[1]];pinch={d:Math.hypot(a[0]-c2[0],a[1]-c2[1]),z:Z};return}
+    var b=hitAt(p[0],p[1]);if(b){var s=DRG[b[2].i]||(DRG[b[2].i]={dx:0,dy:0,vx:0,vy:0});grab={i:b[2].i,v:b[2],ox:p[0]-s.dx,oy:p[1]-s.dy,sx:p[0],sy:p[1]};cv.style.cursor="grabbing"}
+    else if(Z>1){zAnim=null;pan={x:p[0],y:p[1],vx:VX,vy:VY}}};
+  cv.onpointermove=function(e){var p=lp(e);if(ptrs[e.pointerId])ptrs[e.pointerId]=p;var ids=Object.keys(ptrs);
+    if(pinch&&ids.length===2){var a=ptrs[ids[0]],c2=ptrs[ids[1]];zoomAt((a[0]+c2[0])/2,(a[1]+c2[1])/2,pinch.z*Math.hypot(a[0]-c2[0],a[1]-c2[1])/Math.max(1,pinch.d));moved=true;return}
+    if(grab){var s=DRG[grab.i];s.dx=p[0]-grab.ox;s.dy=p[1]-grab.oy;s.vx=s.vy=0;if(Math.abs(p[0]-grab.sx)+Math.abs(p[1]-grab.sy)>4)moved=true;return}
+    if(pan){var v=clampV(Z,pan.vx-(p[0]-pan.x)/Z,pan.vy-(p[1]-pan.y)/Z);VX=v[0];VY=v[1];if(Math.abs(p[0]-pan.x)+Math.abs(p[1]-pan.y)>4)moved=true;return}
+    if(e.pointerType==="mouse")tip(p)};
+  function up(e){delete ptrs[e.pointerId];if(Object.keys(ptrs).length<2)pinch=null;pan=null;
+    if(grab){var g=grab;grab=null;if(reduce)delete DRG[g.i];cv.style.cursor="grab";if(!moved&&e.type==="pointerup")openD(g.v.i,topList())}}
+  cv.onpointerup=up;cv.onpointercancel=up;cv.onpointerleave=function(){if(!grab)$("tip").style.display="none"};
+  cv.ondblclick=function(e){var p=lp(e);if(!hitAt(p[0],p[1]))zoomAt(p[0],p[1],Z*2,true)};
+  // Plain scrolling still scrolls the page; Ctrl/Cmd + scroll (and trackpad pinch) zooms.
+  cv.addEventListener("wheel",function(e){if(!(e.ctrlKey||e.metaKey))return;e.preventDefault();var p=lp(e);zoomAt(p[0],p[1],Z*Math.exp(-e.deltaY*.01))},{passive:false});
+  $("zoomc").onclick=function(e){var b=e.target.closest("[data-z]");if(!b)return;var z=b.dataset.z;if(z==="reset"){zoomAt(0,0,1,true);return}
+    // Zooming in heads for the outperformers on screen, since they're what the chart is about.
+    var cx=PL.w/2,cy=PL.h/2,op=pts.filter(function(p){return p[4]&&p[0]>=0&&p[0]<=PL.w&&p[1]>=0&&p[1]<=PL.h});if(z==="in"&&op.length){cx=op.reduce(function(a,p){return a+p[0]},0)/op.length;cy=op.reduce(function(a,p){return a+p[1]},0)/op.length}
+    zoomAt(cx,cy,z==="in"?Z*1.6:Z/1.6,true)};
+})();
 
 /* ---------- patterns + formula ---------- */
 var ur={};HOOKS.forEach(function(h){var d=document.createElement("div");d.className="ur";d.tabIndex=0;d.setAttribute("role","button");d.dataset.k=h[0];d.innerHTML='<span class="nm">'+h[1]+'</span><i class="u" style="background:var(--'+h[0]+')"></i><em>0%</em><i class="l" style="background:var(--'+h[0]+')"></i><b>0.0x</b>';$("ul").appendChild(d);ur[h[0]]=d});
@@ -670,7 +719,7 @@ $("chf").onsubmit=function(e){e.preventDefault();ask($("chi").value);$("chi").va
 function setCreator(){var c=D.channel||{};document.body.classList.add("has-data");$("av").style.background=c.avatar?"url('"+c.avatar+"') center/cover":"var(--contrarian)";$("av").textContent=c.avatar?"":(c.title||D.handle).slice(0,2).toUpperCase();
   $("cname").textContent=c.title||D.handle;$("cmeta").textContent=D.handle+", "+D.videos.length+" Shorts"}
 function resetChat(){var c=$("chb");while(c.children.length>2)c.removeChild(c.lastChild)}
-function reset(){if(D.handle)resetChat();D=fresh();U.filter=null;U.review=false;U.out=false;live=null;F4={};sugN=0;$("log").innerHTML="";renderHooks();renderSug();["fTop","fCombo","fBlind"].forEach(function(i){$(i).textContent="Waiting"})}
+function reset(){if(D.handle)resetChat();D=fresh();U.filter=null;U.review=false;U.out=false;live=null;F4={};sugN=0;resetView();$("log").innerHTML="";renderHooks();renderSug();["fTop","fCombo","fBlind"].forEach(function(i){$(i).textContent="Waiting"})}
 function start(fr){var h=($("h").value||"").trim();if(!h){$("h").focus();return}if(D.running)return;$("run").disabled=true;$("run").textContent="Pulling...";$("wErr").textContent="";say("Pulling Shorts from YouTube...");pulling(true);
   api("/api/ingest?handle="+encodeURIComponent(h)+(fr?"&fresh=1":"")).then(function(j){pulling(false);reset();D.handle=j.handle;D.channel=j.channel||{title:j.handle};D.cached=!!j.cached;D.videos=(j.records||[]).map(toV);
     if(!D.videos.length){$("run").disabled=false;$("run").textContent="Decode";var m="No Shorts found for "+j.handle+". Try a creator who posts Shorts.";$("wErr").textContent=m;say(m,true);return}

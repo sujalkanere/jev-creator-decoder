@@ -8,6 +8,9 @@ compatibility_date = "2026-05-01"
 directory = "./public"
 
 # Workers AI binding. Jev runs here as the model "typesafe/jev".
+# Workers AI has no local version: even in npm run dev, every AI call runs on Cloudflare,
+# through a temporary Worker on your workers.dev subdomain (npm run setup registers one).
+# remote = true only says this out loud; wrangler runs AI remotely with or without it.
 [ai]
 binding = "AI"
 remote = true

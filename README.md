@@ -2,19 +2,20 @@
 
 Decode any YouTube creator's Shorts with **Jev**, TypeSafe AI's System One model. Type a handle, watch Jev label every video live, find which hooks actually drive views, score new hooks before you film, and ask questions about the results.
 
-Runs on Cloudflare's free tier. Built for a NextWork project.
+Runs on Cloudflare's free tier, plus $5 of TypeSafe credit for Jev. Built for a NextWork project.
 
 ## What you need
-- Node.js 20 or newer
-- A free Cloudflare account, with a workers.dev subdomain registered (Workers and Pages in the dashboard)
+- Node.js 22 or newer
+- A free Cloudflare account
 - A free YouTube Data API v3 key from Google Cloud
+- A TypeSafe API key. TypeSafe asks you to add $5 of credit before you can create one.
 
 ## Setup
 ```bash
 npm install
-npx wrangler login
-npm run setup      # creates the database, then asks for your YouTube API key
+npm run setup      # logs you in, creates the database, registers your workers.dev subdomain, asks for your YouTube and TypeSafe keys
 ```
+Jev runs on TypeSafe's API with your TypeSafe key. The Llama models (and Jev's fallback) run on Workers AI, which has no local version, so `npm run dev` runs your Worker and database on your machine but sends those calls to Cloudflare. That connection runs through your workers.dev subdomain, which is why setup registers one.
 Then:
 ```bash
 npm run dev        # open http://localhost:8787
@@ -23,7 +24,7 @@ The first time you open it, create your dashboard password.
 
 ## Deploy
 ```bash
-npm run ship       # cloud database, deploy, then your YouTube key
+npm run ship       # cloud database, deploy, then your YouTube and TypeSafe keys
 ```
 Ship prints your app URL and a **one-time setup link**. Open the setup link to create the password for your deployed app. Anyone else who opens the URL sees a sign-in screen, never a way to create one.
 
@@ -42,7 +43,7 @@ Ship prints your app URL and a **one-time setup link**. Open the setup link to c
 6. The Hook Lab: Llama 3.1 8B drafts hooks, Jev scores them with the questions in `judge.json`.
 7. Ask the Decoder: Jev routes each question, Llama 3.3 70B writes the answer from your decoded data only, and Jev fact-checks it with the questions in `chat.json`.
 
-Google Cloud only supplies the YouTube API key. Cloudflare hosts the Worker, runs every model, and stores decodes in D1. The app reads public data only, so there is no YouTube login. It decodes titles and descriptions, not spoken scripts, because YouTube's captions API requires the video owner's login.
+Google Cloud only supplies the YouTube API key. TypeSafe runs Jev. Cloudflare hosts the Worker, runs the Llama models (and Jev as a fallback), and stores decodes in D1. The app reads public data only, so there is no YouTube login. It decodes titles and descriptions, not spoken scripts, because YouTube's captions API requires the video owner's login.
 
 ## The sidebar
 - **Creators:** everyone you've decoded, with their avatar. Click to reload instantly with 0 Jev calls, or remove them.
@@ -73,25 +74,27 @@ Question types: `choice` picks one option and returns confidence, `noul` returns
 ## Models
 | Job | Model |
 |---|---|
-| Decoding, Hook Lab scoring, question routing, fact-checking | Jev (`typesafe/jev`) |
+| Decoding, Hook Lab scoring, question routing, fact-checking | Jev, on TypeSafe's API (`typesafe/jev` on Workers AI as the fallback) |
 | Draft 5, Model Race | `@cf/meta/llama-3.1-8b-instruct-fp8-fast` |
 | Ask the Decoder answers | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` |
 
-All three run on Workers AI and share the free 10,000 Neurons per day.
+The two Llama models run on Workers AI and share the free 10,000 Neurons per day. Jev on Workers AI is paid from AI Gateway credits instead, which is why the app calls it on TypeSafe's API with your key.
 
 ## Costs
-- Jev: $0.042 per 1M input tokens, output free. A 200-video decode costs well under $0.01.
-- Workers, D1, and Workers AI: free plan limits. Going over a limit returns errors until the daily reset, it never bills you.
+- Jev: $0.042 per 1M input tokens, output free, paid from your TypeSafe credit ($5 to start). A 200-video decode costs well under $0.01.
+- Workers, D1, and the Llama models on Workers AI: free plan limits. Going over a limit returns errors until the daily reset, it never bills you.
 - YouTube Data API: 10,000 free quota units per day.
 
 ## Troubleshooting
 | Problem | Fix |
 |---|---|
-| `npm install` fails on `sharp` (Linux with a system libvips, like Arch) | `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install` |
-| `You need to register a workers.dev subdomain` | Open the link in the error, pick a free subdomain, run `npm run dev` again. Do not press `l` for local mode: Workers AI has no local version. |
+| `npm install` fails on `sharp: Attempting to build from source` (macOS with Homebrew `vips`, or Linux with a system libvips) | macOS/Linux: `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install`. Windows PowerShell: `$env:SHARP_IGNORE_GLOBAL_LIBVIPS=1; npm install` |
+| `You need to register a workers.dev subdomain` | Run `npm run setup` again; it registers one. Do not press `l` for local mode: Workers AI has no local version, so every AI feature fails with `Binding AI needs to be run remotely`. |
+| Keys in `.env` seem ignored (`npm run dev` prints `Using secrets defined in .dev.vars`) | An old `.dev.vars` file wins over `.env`. Run `npm run setup`; it moves your keys into `.env`. |
+| Wrangler logs in to the wrong account | Remove any `CLOUDFLARE_API_TOKEN` or `CLOUDFLARE_ACCOUNT_ID` lines from `.env`. Wrangler reads `.env` too, so those override `npx wrangler login`. |
 | Forgot your password | `npm run reset-password` |
 | Deployed app says it isn't set up yet | Open the one-time setup link that `npm run ship` printed |
-| Jev access or billing error | Confirm your account can call `typesafe/jev` on Workers AI. |
+| `Insufficient AI Gateway credits` or `Jev unavailable: TypeSafe API (401 ...)` | Your TypeSafe key is missing or wrong, so Jev fell back to Workers AI, which needs paid credits. Check `TYPESAFE_API_KEY` in `.env` (or run `npm run setup` again), confirm your TypeSafe account has credit, then restart `npm run dev`. |
 | `quotaExceeded` from YouTube | The quota resets at midnight Pacific time. |
 | `No public channel found` | Include the `@` and check the channel is public. |
 | `No Shorts found` | The creator may post long-form only. Try another handle. |

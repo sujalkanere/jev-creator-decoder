@@ -1,8 +1,11 @@
 import type { AdapterResult, VideoRecord } from "./adapter";
 
 const API = "https://www.googleapis.com/youtube/v3";
-const MAX_SHORTS = 200;      // cap for the lab
-const MAX_PAGES = 8;         // scan up to 400 recent uploads to find Shorts
+const MAX_SHORTS = 600;      // cap for the lab
+// Each page of 50 uploads costs 2 calls (list + details), plus 1–2 to find the channel.
+// 23 pages keeps a pull at 48 calls or fewer, under the Workers Free plan's 50 per request,
+// and scans up to 1,150 recent uploads.
+const MAX_PAGES = 23;
 const SHORT_MAX_S = 180;     // no official "is Short" flag, so filter by duration
 
 // Quota: channels.list, playlistItems.list and videos.list cost 1 unit each.
@@ -36,7 +39,7 @@ export function parseInput(raw: string): { handle?: string; channelId?: string; 
 }
 
 export async function fetchShorts(input: string, key: string): Promise<AdapterResult> {
-  if (!key || /paste-your/i.test(key)) throw new Error("Add your YouTube API key to .dev.vars, then restart npm run dev.");
+  if (!key || /paste-your/i.test(key)) throw new Error("Add your YouTube API key to .env, then restart npm run dev.");
   const p = parseInput(input);
   if (!p.handle && !p.channelId && !p.videoId) throw new Error("Enter a handle like @creator, a channel link, or a video link.");
   let units = 0;
@@ -55,23 +58,20 @@ export async function fetchShorts(input: string, key: string): Promise<AdapterRe
   const handle = String(channel.snippet.customUrl || p.handle || "@" + channel.id).toLowerCase();
   const uploads = channel.contentDetails.relatedPlaylists.uploads;
 
-  // 2. Page through uploads, 50 at a time
-  const ids: string[] = [];
+  // 2. Page through uploads 50 at a time, fetching each page's details right away,
+  //    so the pull stops as soon as it has enough Shorts.
+  const records: VideoRecord[] = [];
   let pageToken = "";
-  for (let p = 0; p < MAX_PAGES; p++) {
+  for (let p = 0; p < MAX_PAGES && records.length < MAX_SHORTS; p++) {
     const params: Record<string, string> = { part: "contentDetails", playlistId: uploads, maxResults: "50" };
     if (pageToken) params.pageToken = pageToken;
     const page = await yt("playlistItems", params, key);
     units++;
-    for (const it of page.items || []) ids.push(it.contentDetails.videoId);
+    const batch = (page.items || []).map((it: any) => it.contentDetails.videoId);
     pageToken = page.nextPageToken || "";
-    if (!pageToken) break;
-  }
 
-  // 3. Details in batches of 50 IDs, keep Shorts only
-  const records: VideoRecord[] = [];
-  for (let i = 0; i < ids.length && records.length < MAX_SHORTS; i += 50) {
-    const batch = ids.slice(i, i + 50);
+    // 3. Details for this page, keep Shorts only
+    if (!batch.length) break;
     const vids = await yt("videos", { part: "snippet,statistics,contentDetails", id: batch.join(",") }, key);
     units++;
     for (const v of vids.items || []) {
@@ -93,6 +93,7 @@ export async function fetchShorts(input: string, key: string): Promise<AdapterRe
       });
       if (records.length >= MAX_SHORTS) break;
     }
+    if (!pageToken) break;
   }
 
   const th = channel.snippet.thumbnails || {};

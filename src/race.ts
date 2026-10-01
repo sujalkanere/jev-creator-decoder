@@ -17,7 +17,7 @@ export async function raceJev(env: any, videos: VideoRecord[]) {
 
 // Challenger side. Every provider gets the same prompt, one video per call, the way most people
 // use a chat model to classify. A provider appears in the race once its API key is set.
-// Model ids can be overridden per provider in .dev.vars. Prices are list prices in USD per 1M
+// Model ids can be overridden per provider in .env. Prices are list prices in USD per 1M
 // tokens [input, output], keyed by model id; a model missing from its table shows cost as unknown.
 type Reply = { text: string; inTok: number; outTok: number; cost?: number };
 interface Challenger {
@@ -103,7 +103,7 @@ export function listChallengers(env: any) {
 export async function raceLlmOne(env: any, v: VideoRecord, id = "llama") {
   const c = CHALLENGERS[id];
   if (!c) throw new Error(`Unknown model "${id}".`);
-  if (c.keyVar && !env[c.keyVar]) throw new Error(`Add ${c.keyVar} to .dev.vars to race ${c.label}.`);
+  if (c.keyVar && !env[c.keyVar]) throw new Error(`Add ${c.keyVar} to .env to race ${c.label}.`);
   const model = modelFor(env, c);
   const hookOptions = Object.keys((schema as any).per_video.hook.criteria);
   const prompt =

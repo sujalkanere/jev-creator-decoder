@@ -15,7 +15,7 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
 **What you will build:** the NextWork Content Decoder, a dashboard you run on your own Cloudflare account. Enter any YouTube creator, and Jev labels every Short by hook type, structure, call to action, and hook strength. The dashboard shows which hooks actually drive views, scores new hook ideas before you film, exports a client brief, and answers questions about the results.
 **Difficulty:** Intermediate
 **Time:** about 60 minutes, plus about 20 for the Secret Mission
-**Cost:** free. Every service used has a free tier with no credit card.
+**Cost:** $5, one time. TypeSafe asks you to add $5 of credit before you can create an API key, and your Jev usage comes out of that credit (a 200-video decode costs well under $0.01). Cloudflare and YouTube are free with no credit card.
 **Star of the project:** Jev. Every step should make Jev's speed, low cost, and decision quality visible, and point to the on-screen number that proves each claim.
 
 ## Verified facts (use exactly)
@@ -25,6 +25,7 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
 - All questions in one call are answered in parallel, so adding questions barely changes the time a call takes. Typical call time is 70 to 500 ms.
 - Price: $0.042 per 1 million input tokens. Output is free.
 - On Cloudflare Workers AI the model id is `typesafe/jev`, called as `env.AI.run('typesafe/jev', { state, questions })`.
+- In this app, Jev runs on TypeSafe's own API (`https://api.typesafe.ai/v1/systemone`) with the learner's TypeSafe API key, and Workers AI is the fallback. On Workers AI, Jev is paid from AI Gateway credits, not the free daily Neurons, so a new Cloudflare account calling it there gets `Insufficient AI Gateway credits`. That is why the TypeSafe key is required.
 
 **How this app uses Jev**
 - One Jev call decodes 10 videos. Every question in `schema.json` is repeated once per video, and the dashboard runs 4 calls at a time.
@@ -35,8 +36,9 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
 - `@cf/meta/llama-3.1-8b-instruct-fp8-fast`: drafts hooks (Draft 5) and is the opponent in the Model Race.
 - `@cf/meta/llama-3.3-70b-instruct-fp8-fast`: writes answers in Ask the Decoder (Secret Mission).
 
-**Free tiers**
-- Cloudflare Workers Free plan: no card. Workers AI includes 10,000 Neurons per day, shared by all models. Going over a free limit returns errors until the daily reset. It never bills you.
+**Free tiers and credit**
+- TypeSafe: add $5 of credit in your TypeSafe account before you can create an API key. Jev usage is deducted from that credit at $0.042 per 1 million input tokens.
+- Cloudflare Workers Free plan: no card. Workers AI includes 10,000 Neurons per day, shared by the Llama models. Going over a free limit returns errors until the daily reset. It never bills you.
 - YouTube Data API v3: free key, 10,000 quota units per day. The app uses `channels.list`, `playlistItems.list`, and `videos.list` at 1 unit each, about 10 to 20 units per creator. It never uses `search.list`.
 
 **Which videos get decoded**
@@ -44,49 +46,50 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
 - Jev decodes titles and descriptions, not spoken words, because YouTube's captions API needs the video owner's login.
 
 **Accounts and roles**
-- Google Cloud is only used to create the YouTube API key. Cloudflare hosts the app, runs every model, and stores decodes in a D1 database.
+- Google Cloud is only used to create the YouTube API key. TypeSafe runs Jev. Cloudflare hosts the app, runs the Llama models (and Jev as a fallback), and stores decodes in a D1 database.
 - The dashboard is protected by a password the learner creates in the browser. Only a salted hash is stored in their D1 database, sign-in uses a secure session cookie, and 10 wrong attempts lock sign-in for 15 minutes. On the deployed app, the password can only be created through a one-time setup link printed by `npm run ship`, so a stranger who finds the URL can never claim it.
 
 ## What the learner needs before starting
 - A computer with a terminal (macOS, Linux, or Windows with PowerShell or WSL)
-- Node.js 20 or newer (nodejs.org) and Git (git-scm.com)
+- Node.js 22 or newer (nodejs.org) and Git (git-scm.com)
 - A code editor such as VS Code
-- A Google account and an email for a free Cloudflare account
+- A Google account, an email for a free Cloudflare account, and a TypeSafe account with $5 of credit
 
 ## Step 1: Set up and meet Jev (~15 min)
 **Goal:** get the Content Decoder running on your computer and understand how Jev thinks.
 
-1. **Check your tools.** Run `node --version` (needs 20 or newer) and `git --version`. If either is missing, install it, then continue.
+1. **Check your tools.** Run `node --version` (needs 22 or newer) and `git --version`. If either is missing, install it, then continue.
 2. **Get a YouTube API key.** In Google Cloud Console: create a project, go to APIs & Services, enable **YouTube Data API v3**, then Credentials, Create credentials, API key. Restrict the key to YouTube Data API v3. Copy it somewhere safe.
-3. **Create a free Cloudflare account** at dash.cloudflare.com. Then open **Compute, Workers & Pages**. Under **Account details** on the right, check that you have a **Subdomain** (like `yourname.workers.dev`). If not, set one. Explain why: Jev runs on Cloudflare's servers, and the local dev server needs this subdomain to connect to it.
-4. **Clone the repository:**
+3. **Get a TypeSafe API key.** Sign in to your TypeSafe account and add $5 of credit; TypeSafe won't let you create an API key until you do. Then create an API key and copy it somewhere safe. Explain why: Jev runs on TypeSafe's API with this key, and every decode is paid from this credit (well under $0.01 for 200 videos).
+4. **Create a free Cloudflare account** at dash.cloudflare.com. You don't need to change any settings there; setup handles the rest.
+5. **Clone the repository:**
    ```bash
    git clone https://github.com/Nik-1019/Jev-Creator-Decoder-NextWork.git
    cd Jev-Creator-Decoder-NextWork
    ```
-5. **Install the packages:**
+6. **Install the packages:**
    ```bash
    npm install
    ```
-   Linux users: if this fails with an error mentioning `sharp`, run `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install` instead.
-6. **Log in to Cloudflare from the terminal:**
+   If this fails with `sharp: Attempting to build from source` (it happens when your computer already has the `vips` image library, for example from Homebrew on macOS or a Linux package), run `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install` instead. On Windows PowerShell: `$env:SHARP_IGNORE_GLOBAL_LIBVIPS=1; npm install`.
+7. **Log in to Cloudflare from the terminal:**
    ```bash
    npx wrangler login
    ```
    A browser tab opens. Click Allow. When the terminal says you're logged in, continue.
-7. **Run setup:**
+8. **Run setup:**
    ```bash
    npm run setup
    ```
-   Setup creates your D1 database, connects it, creates the database tables (answer **Y** when asked), then asks you to paste your YouTube API key. It saves the key to `.dev.vars`, a file that stays on your computer and is never committed.
-8. **Start the app:**
+   Setup creates your D1 database, connects it, and checks that your Cloudflare account has a **workers.dev subdomain** (like `yourname.workers.dev`). If it doesn't, setup suggests one: press Enter to accept or type your own. Explain why: Workers AI has no local version, so even on your computer the Llama models (and Jev's fallback) run on Cloudflare, and the dev server reaches them through a temporary Worker on that subdomain. Setup then creates the database tables (answer **Y** when asked) and asks you to paste your YouTube API key, then your TypeSafe API key. It saves both keys to `.env`, a file that stays on your computer and is never committed (it's listed in `.gitignore`).
+9. **Start the app:**
    ```bash
    npm run dev
    ```
    When you see `Ready on http://localhost:8787`, press `b` to open it in your browser.
-9. **Create your dashboard password.** Enter a new password (at least 8 characters) and confirm it. Explain how it is stored: only a salted hash, never the password itself.
-10. **Tour the Jev code.** Open `src/jev.ts` in your editor. Walk through `buildVideoQuestions`: it takes each question in `schema.json` and repeats it once per video, with keys like `v3_hook`, so one call can decide 10 videos. Then `classifyBatch` sends one call and splits the answers back per video.
-11. **Predict:** how many questions will one Jev call ask? (10 videos x 4 questions = 40.) You'll check your answer in Step 2.
+10. **Create your dashboard password.** Enter a new password (at least 8 characters) and confirm it. Explain how it is stored: only a salted hash, never the password itself.
+11. **Tour the Jev code.** Open `src/jev.ts` in your editor. Walk through `buildVideoQuestions`: it takes each question in `schema.json` and repeats it once per video, with keys like `v3_hook`, so one call can decide 10 videos. Then `classifyBatch` sends one call and splits the answers back per video.
+12. **Predict:** how many questions will one Jev call ask? (10 videos x 4 questions = 40.) You'll check your answer in Step 2.
 
 📸 Screenshot: the welcome screen of your running Content Decoder.
 
@@ -133,7 +136,7 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
    ```bash
    npm run ship
    ```
-   This creates the tables in your cloud database, deploys the app, uploads your YouTube key, and prints your app URL plus a **one-time setup link**.
+   This creates the tables in your cloud database, deploys the app, uploads your YouTube and TypeSafe keys, and prints your app URL plus a **one-time setup link**.
 5. **Open the setup link** and create the password for your deployed app. Keep the link private. Anyone else who opens your app URL only sees a sign-in screen.
 6. **Decode a creator** on your live app, then click them under **Creators** in the sidebar to reload them instantly with 0 Jev calls. Your deployed app has its own database, separate from your local one.
 
@@ -156,8 +159,10 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
 6. **Lesson:** decide before you spend, block what the data can't answer, check the writer's work, and use the smallest model that does the job.
 
 ## Troubleshooting (include as a section)
-- `npm install` fails with an error about `sharp` (Linux with a system libvips): run `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install`.
-- `You need to register a workers.dev subdomain`: set a subdomain under Workers & Pages, Account details. If the onboarding link shows a 404, use that page instead. Do not press `l` for local mode, because Jev only runs remotely.
+- `npm install` fails with `sharp: Attempting to build from source` (macOS with Homebrew `vips`, or Linux with a system libvips): run `SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install`. Windows PowerShell: `$env:SHARP_IGNORE_GLOBAL_LIBVIPS=1; npm install`.
+- `You need to register a workers.dev subdomain`: run `npm run setup` again; it registers one for you. Do not press `l` for local mode: Jev only runs remotely, so every AI feature would fail with `Binding AI needs to be run remotely`.
+- `Insufficient AI Gateway credits` or `Jev unavailable: TypeSafe API (401 ...)`: your TypeSafe key is missing or wrong, so Jev fell back to Workers AI, which needs paid credits. Check `TYPESAFE_API_KEY` in `.env` (or run `npm run setup` again), confirm your TypeSafe account has credit, then restart `npm run dev`.
+- Keys in `.env` seem ignored (`npm run dev` prints `Using secrets defined in .dev.vars`): an old `.dev.vars` file wins over `.env`. Run `npm run setup`; it moves your keys into `.env`.
 - `wrangler: command not found`: run `npm install` first.
 - Forgot your password: run `npm run reset-password`, choose local or deployed, then create a new one.
 - The deployed app says it isn't set up yet: open the one-time setup link that `npm run ship` printed.

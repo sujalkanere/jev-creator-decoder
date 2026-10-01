@@ -10,9 +10,12 @@
     "reset-password": "node scripts/reset-password.mjs"
   },
   "devDependencies": {
-    "wrangler": "^4.0.0"
+    "wrangler": "4.145.0"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.128.0"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

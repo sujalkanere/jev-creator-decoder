@@ -19,11 +19,11 @@
     },
     "fit": {
       "type": "noul",
-      "instructions": "Does `{h}` match the voice and topics of the titles in `winning_pattern.examples`?"
+      "instructions": "Would `{h}` sound natural beside the creator titles in `winning_pattern.examples`?"
     },
     "lift_odds": {
       "type": "noul",
-      "instructions": "Given that `winning_pattern.top_hooks` are the hook types that outperform for this creator, is `{h}` likely to outperform their typical video?"
+      "instructions": "Given the outperforming hook types in `winning_pattern.top_hooks`, is `{h}` likely to beat this creator's typical video?"
     }
   }
 }
