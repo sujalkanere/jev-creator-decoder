@@ -1,5 +1,7 @@
 import chat from "../chat.json";
 import { JEV_PRICE_PER_M_INPUT, runJev } from "./jev";
+import { CHALLENGERS, modelFor } from "./race";
+import { setting } from "./settings";
 
 export const ANSWER_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 const A_IN = 0.293, A_OUT = 2.253; // USD per 1M tokens, Workers AI list price
@@ -73,18 +75,29 @@ export async function askDecoder(env: any, question: string, payload: any) {
     };
   }
 
-  // 2. The chat model writes, using only the summary.
+  // 2. The chat model writes, using only the summary. Llama 3.3 70B by default; Settings can pick
+  // Claude, OpenAI, or OpenRouter instead once that key is set.
+  const SYSTEM = "You are a content strategist. Answer in under 110 words, then give one recommendation starting with 'Next:'. Use only numbers that appear in the DATA. If the DATA can't support a claim, say so.";
+  const USER = `DATA: ${JSON.stringify(data)}\n\nQUESTION: ${q}`;
+  // If the picked model's key was removed, fall back to the default rather than failing the chat.
+  const pick = setting(env, "CHAT_MODEL"), picked = pick !== "default" ? CHALLENGERS[pick] : undefined;
+  const c = picked && (!picked.keyVar || env[picked.keyVar]) ? picked : undefined;
   t0 = Date.now();
-  const res: any = await env.AI.run(ANSWER_MODEL, {
-    messages: [
-      { role: "system", content: "You are a content strategist. Answer in under 110 words, then give one recommendation starting with 'Next:'. Use only numbers that appear in the DATA. If the DATA can't support a claim, say so." },
-      { role: "user", content: `DATA: ${JSON.stringify(data)}\n\nQUESTION: ${q}` },
-    ],
-    max_tokens: 300,
-  });
+  let answer: string, answerCost: number | null, answer_model: string;
+  if (c) {
+    const model = modelFor(env, c);
+    const r = await c.call(env, model, `${SYSTEM}\n\n${USER}`);
+    const p = c.prices?.[model];
+    answer = r.text.trim();
+    answerCost = r.cost ?? (p ? (r.inTok * p[0] + r.outTok * p[1]) / 1e6 : null);
+    answer_model = model;
+  } else {
+    const res: any = await env.AI.run(ANSWER_MODEL, { messages: [{ role: "system", content: SYSTEM }, { role: "user", content: USER }], max_tokens: 300 });
+    answer = String(res?.response || "").trim();
+    answerCost = (Number(res?.usage?.prompt_tokens ?? 0) * A_IN + Number(res?.usage?.completion_tokens ?? 0) * A_OUT) / 1e6;
+    answer_model = "Llama 3.3 70B";
+  }
   steps.answer_ms = Date.now() - t0;
-  const answer = String(res?.response || "").trim();
-  const aIn = Number(res?.usage?.prompt_tokens ?? 0), aOut = Number(res?.usage?.completion_tokens ?? 0);
 
   // 3. Jev fact-checks the answer before it is shown.
   t0 = Date.now();
@@ -102,10 +115,10 @@ export async function askDecoder(env: any, question: string, payload: any) {
       ? { kind: "top", rows: data.top_videos.map((v: any) => ({ label: v.title, value: v.views, hook: v.hook })) }
       : { kind: "lift", rows: data.by_hook.map((h: any) => ({ label: h.hook, value: h.lift, share: h.share_pct })) };
   return {
-    blocked: false, topic, answerable, answer, steps, viz,
+    blocked: false, topic, answerable, answer, answer_model, steps, viz,
     grounded, grounded_ok: grounded >= 0.6,
     actionable: Math.max(0, Math.min(1, Number(act.score ?? 0) / levels)),
     chart: CHART[topic] || "formula",
-    cost_usd: (jevTokens * JEV_PRICE_PER_M_INPUT + aIn * A_IN + aOut * A_OUT) / 1e6,
+    cost_usd: (jevTokens * JEV_PRICE_PER_M_INPUT) / 1e6 + (answerCost ?? 0),
   };
 }

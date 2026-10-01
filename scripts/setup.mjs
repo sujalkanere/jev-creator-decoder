@@ -2,6 +2,7 @@
 // makes sure your account has a workers.dev subdomain, creates the table locally,
 // and asks for your YouTube and TypeSafe keys.
 import { execSync } from "node:child_process";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import readline from "node:readline/promises";
 
@@ -110,5 +111,13 @@ await saveKey("YOUTUBE_API_KEY", "Paste your YouTube Data API key");
 // so the app calls Jev on TypeSafe's own API with this key. Workers AI is only the fallback.
 console.log("\n5/5  Your TypeSafe API key (from your TypeSafe dashboard, after adding credit)");
 await saveKey("TYPESAFE_API_KEY", "Paste your TypeSafe API key");
+
+// Encrypts API keys saved from the dashboard's Settings page. Made once and kept: changing it
+// makes keys already saved in Settings unreadable (the app then falls back to .env).
+const cur = fs.readFileSync(".env", "utf8");
+if (!/^SETTINGS_SECRET=\S+/m.test(cur)) {
+  fs.writeFileSync(".env", (cur && !cur.endsWith("\n") ? cur + "\n" : cur) + `SETTINGS_SECRET=${crypto.randomBytes(32).toString("hex")}\n`);
+  console.log("\nCreated SETTINGS_SECRET in .env (encrypts keys you save in Settings).");
+}
 
 console.log("\nSetup done. Next: npm run dev, then create your dashboard password in the browser.\n");

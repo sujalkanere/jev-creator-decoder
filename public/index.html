@@ -10,9 +10,9 @@
 <style>
 
 :root{--bg:#F4F1EB;--card:#FFFFFF;--sunk:#F7F4EF;--line:#E7E1D7;--ink:#1A1917;--mut:#6B665E;--fnt:#A39D92;--on:#fff;
---curiosity:#C9941A;--recognition:#2A93A8;--result:#3A955A;--contrarian:#C94A78;--story:#D46E3F;--warn:#D98A00;box-sizing:border-box}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#161513;--card:#201E1B;--sunk:#1A1917;--line:rgba(255,248,235,.09);--ink:#F3EFE7;--mut:#A8A196;--fnt:#6E685E;--on:#161513;--curiosity:#F2C14E;--recognition:#5CC8DB;--result:#6BD28E;--contrarian:#F07AA6;--story:#F59A6B;--warn:#FFB020}}
-:root[data-theme=dark]{--bg:#161513;--card:#201E1B;--sunk:#1A1917;--line:rgba(255,248,235,.09);--ink:#F3EFE7;--mut:#A8A196;--fnt:#6E685E;--on:#161513;--curiosity:#F2C14E;--recognition:#5CC8DB;--result:#6BD28E;--contrarian:#F07AA6;--story:#F59A6B;--warn:#FFB020}
+--curiosity:#C9941A;--recognition:#2A93A8;--result:#3A955A;--contrarian:#C94A78;--story:#D46E3F;--warn:#D98A00;--best:#2E8B4E;box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#161513;--card:#201E1B;--sunk:#1A1917;--line:rgba(255,248,235,.09);--ink:#F3EFE7;--mut:#A8A196;--fnt:#6E685E;--on:#161513;--curiosity:#F2C14E;--recognition:#5CC8DB;--result:#6BD28E;--contrarian:#F07AA6;--story:#F59A6B;--warn:#FFB020;--best:#6BD28E}}
+:root[data-theme=dark]{--bg:#161513;--card:#201E1B;--sunk:#1A1917;--line:rgba(255,248,235,.09);--ink:#F3EFE7;--mut:#A8A196;--fnt:#6E685E;--on:#161513;--curiosity:#F2C14E;--recognition:#5CC8DB;--result:#6BD28E;--contrarian:#F07AA6;--story:#F59A6B;--warn:#FFB020;--best:#6BD28E}
 *,*::before,*::after{box-sizing:inherit}
 body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg);color:var(--ink);font:14px/1.45 Geist,system-ui,sans-serif;font-feature-settings:"tnum"}
 .app{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
@@ -306,9 +306,23 @@ body:not(.has-data) .zoomc{display:none}
 .vrow{display:flex;gap:10px;align-items:center;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;text-align:left;border-radius:10px;padding:6px;margin-top:6px;cursor:pointer}.vrow:hover{background:var(--sunk)}
 .vrow span{width:30px;height:48px;border-radius:6px;flex:none}.vrow div{flex:1;min-width:0;font-size:12.5px;line-height:1.3}.vrow small{display:block;color:var(--mut)}
 .hacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:18px}.hacts .btn{height:36px}
+/* settings */
+.sx{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:10px}
+.sx h4{margin:0 0 2px;font-size:14.5px}.sx>p{margin:0 0 10px;font-size:12.5px;color:var(--mut)}
+.kr{padding:10px 0;border-top:1px solid var(--line)}.kr:first-of-type{border-top:0;padding-top:4px}
+.kh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}.kh b{font-size:13.5px}.kh small{display:block;color:var(--mut);font-size:12px;font-weight:400;margin-top:1px}
+.chipst{font-size:11.5px;border-radius:999px;padding:2px 9px;border:1px solid var(--line);color:var(--mut);white-space:nowrap}.chipst.saved{border-color:var(--best);color:var(--best)}.chipst.env{color:var(--ink)}.chipst.bad{border-color:var(--warn);color:var(--warn)}
+.kf{display:flex;gap:6px;margin-top:8px}.kf input,.sx select,.sx input[type=text],.sx input[type=password]{flex:1;min-width:0;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;padding:0 10px}
+.kf .ghost,.sx .btn{height:34px;font-size:12.5px}
+.sxr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:6px 12px;align-items:center;margin-top:8px;font-size:13px}.sxr small{display:block;color:var(--mut);font-size:11.5px}
+.cm{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-top:6px;cursor:pointer;font-size:13px}.cm input{accent-color:var(--ink)}.cm small{display:block;color:var(--mut);font-size:11.5px}.cm.off{opacity:.5;cursor:not-allowed}
+.sxa{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.sx.dz{border-color:color-mix(in srgb,var(--contrarian) 45%,var(--line))}.sx.dz .ghost.red{color:var(--contrarian);border-color:color-mix(in srgb,var(--contrarian) 45%,var(--line))}
+.snote{font-size:12.5px;padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--warn) 14%,var(--card));margin-top:10px}
 /* newest draft round: tinted and tagged until the next Draft */
 .newp{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--hc,var(--ink));color:#fff;border-radius:999px;padding:1px 7px;margin:0 6px;vertical-align:1px}
 .hc.new,.lr.new{border-color:var(--hc);background:color-mix(in srgb,var(--hc) 7%,var(--card))}
+.hc.best,.lr.best{border:2px solid var(--best);background:color-mix(in srgb,var(--best) 10%,var(--card))}.newp.best{background:var(--best);color:var(--on)}
 /* your hooks list */
 .hlb{height:28px;font-size:12px;padding:0 10px}
 .lseg{display:flex;gap:6px;margin:14px 0 6px}.lseg button{height:30px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--mut);font:inherit;font-size:12.5px;padding:0 12px;cursor:pointer}.lseg button[aria-pressed=true]{background:var(--ink);color:var(--on);border-color:var(--ink)}
@@ -357,6 +371,7 @@ body:not(.has-data) .zoomc{display:none}
   </nav>
   <div class="sb-foot">
     <a class="it" href="race.html"><i>⚑</i>Model Race</a>
+    <button class="it" id="openSet"><i>⚙</i>Settings</button>
     <button class="it" id="theme"><i>◐</i>Theme</button>
     <button class="it" id="signout"><i>⎋</i>Sign out</button>
   </div>
@@ -409,7 +424,7 @@ body:not(.has-data) .zoomc{display:none}
 
   <section class="span4 card stage" id="s3"><div class="ph"><h2>Score new hooks</h2><div style="display:flex;align-items:center;gap:10px"><span class="st" id="st3">Waiting</span><button class="ghost hlb" id="hlist">View list</button></div></div>
     <div class="stats"><div><b id="k7">0</b><span>Scored</span></div><div><b id="k8">0 ms</b><span>Avg judgment</span></div><div><b id="k9">0</b><span>Shortlisted</span></div></div>
-    <div class="vis" id="vis3"><div class="hl" id="hl"><div class="gal"><div class="none">Decode a creator, then type a hook below or click Draft 5.</div></div></div></div>
+    <div class="vis" id="vis3"><div class="hl" id="hl"><div class="gal"><div class="none">Decode a creator, then type a hook below or click Draft.</div></div></div></div>
     <div class="pf" style="display:block"><div class="sug" id="sug"></div><div class="hin" style="padding:0;width:100%"><input id="hookIn" placeholder="Type a hook to score it live" aria-label="Type a hook"><button class="btn" id="draft">Draft 5</button></div></div>
   </section>
 
@@ -424,7 +439,7 @@ body:not(.has-data) .zoomc{display:none}
 
 <button class="fab" id="fab">Ask the Decoder</button>
 <div class="chat" id="chat" hidden aria-label="Ask the Decoder"><div class="chh">Ask the Decoder<button class="ghost" id="cx" style="height:28px">Close</button></div>
-  <div class="chb" id="chb"><div class="a1">Ask about this creator. Jev checks if your data can answer it, Llama 3.3 70B writes, then Jev checks every number.</div>
+  <div class="chb" id="chb"><div class="a1" id="chIntro">Ask about this creator. Jev checks if your data can answer it, Llama 3.3 70B writes, then Jev checks every number.</div>
   <div class="fchips"><button class="chip" data-q="Which hooks should I use more?">Which hooks should I use more?</button><button class="chip" data-q="How has their strategy changed lately?">How has their strategy changed?</button><button class="chip" data-q="What's the weather in Tokyo?">Off-topic test</button></div></div>
   <form class="chf" id="chf"><input id="chi" placeholder="Ask about this creator" aria-label="Your question"><button class="btn">Ask</button></form></div>
 
@@ -486,7 +501,7 @@ $("fCreate").onsubmit=function(e){e.preventDefault();var a=$("np").value,b=$("cp
   var btn=this.querySelector(".btn");btn.disabled=true;api("/api/auth/create",{password:a,setup:SETUP}).then(function(){if(SETUP)history.replaceState(null,"",location.pathname);$("auth").hidden=true;$("np").value=$("cp").value="";toast("Password created. You're signed in.");boot()}).catch(function(x){$("ce").textContent=x.message}).then(function(){btn.disabled=false})};
 $("fLogin").onsubmit=function(e){e.preventDefault();var btn=this.querySelector(".btn");btn.disabled=true;$("le").textContent="";api("/api/auth/login",{password:$("lp").value,remember:$("rem").checked}).then(function(){$("lp").value="";$("auth").hidden=true;boot()}).catch(function(x){$("le").textContent=x.message}).then(function(){btn.disabled=false})};
 $("signout").onclick=function(){api("/api/auth/logout",{}).then(function(){location.reload()})};
-var booted=false;function boot(){if(booted)return;booted=true;loadLib()}
+var booted=false;function boot(){if(booted)return;booted=true;loadLib();loadSet();if(location.hash==="#settings"){history.replaceState(null,"",location.pathname+location.search);openS()}}
 function ago(iso){if(!iso)return "";var m=(Date.now()-Date.parse(iso))/60000;return m<1?"just now":m<60?Math.round(m)+" min ago":m<1440?Math.round(m/60)+" h ago":Math.round(m/1440)+" d ago"}
 function avHTML(it){var t=esc((it.title||it.handle||"?").slice(0,2).toUpperCase());return it.avatar?'<span class="av" style="background:url(\''+esc(it.avatar)+'\') center/cover"></span>':'<span class="av">'+t+'</span>'}
 var LIB=[];
@@ -561,7 +576,7 @@ function renderChips(){var c={};HOOKS.forEach(function(h){c[h[0]]=0});var d=dec(
   '<button class="chip" data-f="review" aria-pressed="'+U.review+'" style="border-style:dashed"><span class="dot" style="background:var(--warn)"></span>Needs review <b>'+flagged().length+'</b></button><button class="chip" data-f="out" aria-pressed="'+U.out+'">Outperformers</button>'}
 $("fchips").onclick=function(e){var b=e.target.closest("[data-f]");if(!b)return;var f=b.dataset.f;if(f==="review")U.review=!U.review;else if(f==="out")U.out=!U.out;else U.filter=U.filter===f?null:f;renderChips();renderGallery()};
 $("sort").onchange=function(){U.sort=this.value;renderGallery()};
-$("thr").oninput=function(){U.thr=+this.value;$("thrV").textContent=U.thr.toFixed(2);rows.forEach(function(r){r.forEach(function(t){t.k=null})});refresh();renderChips();renderGallery()};
+$("thr").oninput=function(){thrTouched=true;U.thr=+this.value;$("thrV").textContent=U.thr.toFixed(2);rows.forEach(function(r){r.forEach(function(t){t.k=null})});refresh();renderChips();renderGallery()};
 function galleryList(){var d=dec(),m=med(d.map(function(v){return v.views}))||1;var l=d.filter(function(v){return(!U.filter||v.hook===U.filter)&&(!U.review||v.conf<U.thr)&&(!U.out||v.views>=m*2)});
   l.sort(function(a,b){return U.sort==="new"?a.age-b.age:b.views-a.views});return l}
 function renderGallery(){var g=$("gal");if(g.hidden)return;var l=galleryList();g.innerHTML=l.length?l.map(function(v){var rv=v.conf<U.thr;return '<button class="tile on'+(rv?" rv":"")+'" data-v="'+v.i+'" aria-label="'+esc(v.title)+'" style="background:'+bg(v)+';--hc:'+col(v.hook)+'"><div class="band">'+(rv?"Review":hn(v.hook))+'</div></button>'}).join(""):'<div class="none">No videos match these filters.</div>'}
@@ -675,7 +690,7 @@ function block(k,a){if(!a)return "";var tip=(DEF[k]||"Jev\u2019s answer to the \
   else{var n=+a.noul||0;h+='<span>'+(n>=.5?"Yes":"No")+'</span></div>';b='<div class="pr win"><span>Probability</span><i style="--w:'+Math.round(n*100)+'%"></i><span>'+Math.round(n*100)+'%</span></div>'}return h+b+'</div>'}
 function openD(i,l){openDr(l,i,rD)}
 // The drawer shows either videos (rD) or scored hooks (rH); dl holds the list it steps through.
-function openDr(l,i,render){dl=l&&l.length?l:[i];di=Math.max(0,dl.indexOf(i));dR=render;$("drawer").classList.toggle("solo",render===rB||render===rL);lBack=false;dR();$("drawer").classList.add("open");$("drawer").setAttribute("aria-hidden","false");$("scrim").classList.add("open");$("dx").focus()}
+function openDr(l,i,render){dl=l&&l.length?l:[i];di=Math.max(0,dl.indexOf(i));dR=render;$("drawer").classList.toggle("solo",render===rB||render===rL||render===rS);lBack=false;dR();$("drawer").classList.add("open");$("drawer").setAttribute("aria-hidden","false");$("scrim").classList.add("open");$("dx").focus()}
 function closeAll(){$("drawer").classList.remove("open");$("drawer").setAttribute("aria-hidden","true");$("scrim").classList.remove("open");closeSide()}
 function rD(){var v=D.videos[dl[di]];if(!v)return;var all=med(dec().map(function(x){return x.views}))||1,a=v.ans||{};$("dpos").textContent=(di+1)+" of "+dl.length;
   $("db").innerHTML='<div class="dv"><div class="dtop"><a class="dthumb" href="'+esc(v.rec.url)+'" target="_blank" rel="noopener" aria-label="Watch on YouTube" title="Watch on YouTube" style="background:'+bg(v)+'"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></span></a><div><h3>'+esc(v.title)+(v.conf<U.thr?'<span class="flag">Needs review</span>':'')+'</h3><div class="sub">Posted '+new Date(v.rec.posted_at).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})+'</div>'+
@@ -706,13 +721,16 @@ function judge(l){return api("/api/judge",{hooks:l,pattern:pattern()}).then(func
 var live=null;
 // _enter / _pop are one-shot animation flags: renderHooks clears them after drawing, so later redraws stay still.
 function isNew(c){return D.latest.indexOf(c.text)>=0}
-function draftLabel(){return D.hooks.length?"Draft 5 more":"Draft 5"}
-function card(c,rank,preview){var sv=D.saved.some(function(s){return s.text===c.text});var nw=!preview&&isNew(c);return '<div class="hc'+(nw?" new":"")+(c._enter?" enter":"")+(c._pop?" pop":"")+'" style="--hc:'+col(c.hook_type)+';--s:'+c.score+';--d:'+(c._d||0)+'ms'+(preview?";border-style:dashed":"")+'" data-h="'+(preview?"live":D.hooks.indexOf(c))+'" tabindex="0" role="button" aria-label="Open details for this hook"><span class="more">Details ›</span>'+(rank===1?'<span class="rib">Film this next</span>':'')+'<div class="ring"><b>'+c.score+'</b></div><div class="k"><strong>'+(preview?"Live":"#"+rank)+'</strong>'+(nw?'<span class="newp">New</span>':'')+'<span class="dot" style="background:'+col(c.hook_type)+'"></span>'+esc(hn(c.hook_type))+', judged in '+Math.round(c.ms)+' ms</div><div class="q">\u201C'+esc(c.text)+'\u201D</div>'+
+// Rank within the latest draft round (1 = highest score), so the best new idea is obvious.
+function newRank(c){var l=D.hooks.filter(isNew).sort(function(a,b){return b.score-a.score});return l.indexOf(c)+1}
+function newPill(c,st){var r=newRank(c);return '<span class="newp'+(r===1?" best":"")+'"'+(st||"")+(r===1?' title="Highest score in the latest draft round"':'')+'>New #'+r+'</span>'}
+function draftLabel(){var n=SET?SET.DRAFT_COUNT:5;return "Draft "+n+(D.hooks.length?" more":"")}
+function card(c,rank,preview){var sv=D.saved.some(function(s){return s.text===c.text});var nw=!preview&&isNew(c);return '<div class="hc'+(nw?" new":"")+(nw&&newRank(c)===1?" best":"")+(c._enter?" enter":"")+(c._pop?" pop":"")+'" style="--hc:'+col(c.hook_type)+';--s:'+c.score+';--d:'+(c._d||0)+'ms'+(preview?";border-style:dashed":"")+'" data-h="'+(preview?"live":D.hooks.indexOf(c))+'" tabindex="0" role="button" aria-label="Open details for this hook"><span class="more">Details ›</span>'+(rank===1?'<span class="rib">Film this next</span>':'')+'<div class="ring"><b>'+c.score+'</b></div><div class="k"><strong>'+(preview?"Live":"#"+rank)+'</strong>'+(nw?newPill(c):'')+'<span class="dot" style="background:'+col(c.hook_type)+'"></span>'+esc(hn(c.hook_type))+', judged in '+Math.round(c.ms)+' ms</div><div class="q">\u201C'+esc(c.text)+'\u201D</div>'+
   '<div class="m3"><span>Hook<i style="--w:'+Math.round(c.bars.hook*100)+'%"></i></span><span>Fit<i style="--w:'+Math.round(c.bars.fit*100)+'%"></i></span><span>Lift odds<i style="--w:'+Math.round(c.bars.lift_odds*100)+'%"></i></span></div>'+
   '<div class="act">'+(preview?'<button data-a="add">Add to list</button>':'<button data-a="copy" data-t="'+esc(c.text)+'">Copy</button><button data-a="save" data-i="'+D.hooks.indexOf(c)+'" aria-pressed="'+sv+'">'+(sv?"Shortlisted":"Shortlist")+'</button>')+'</div></div>'}
 function pcard(p){return '<div class="hc pend'+(p._enter?" enter":"")+'" style="--d:'+(p._d||0)+'ms"><div class="ring"><b></b></div><div class="k"><strong>Scoring</strong>Jev is judging this hook</div><div class="q">“'+esc(p.text)+'”</div></div>'}
 function renderHooks(){var l=D.hooks.slice().sort(function(a,b){return b.score-a.score}),pd=D.pending||[];
-  $("hl").innerHTML=(live?card(live,0,true):"")+pd.map(pcard).join("")+(l.length?l.map(function(c,i){return card(c,i+1)}).join(""):(live||pd.length?"":'<div class="gal"><div class="none">Type a hook below or click Draft 5.</div></div>'));
+  $("hl").innerHTML=(live?card(live,0,true):"")+pd.map(pcard).join("")+(l.length?l.map(function(c,i){return card(c,i+1)}).join(""):(live||pd.length?"":'<div class="gal"><div class="none">Type a hook below or click Draft.</div></div>'));
   l.concat(pd,live?[live]:[]).forEach(function(c){c._enter=c._pop=false});
   $("k7").textContent=D.hooks.length;$("k8").textContent=D.jn?Math.round(D.jms/D.jn)+" ms":"0 ms";$("k9").textContent=D.saved.length;$("st3").textContent=D.hooks.length?D.hooks.length+" scored":"Waiting";$("hlist").textContent="View list ("+listItems().length+")";if(!$("draft").disabled)$("draft").textContent=draftLabel()}
 function hIdx(el){return el.dataset.h==="live"?-1:+el.dataset.h}
@@ -749,7 +767,7 @@ function rH(){var c=hookAt(),isLive=dl[di]===-1;if(!c)return;
     '<div class="hacts">'+(lBack?'<button class="ghost back" data-ha="back">\u2039 Back to list</button>':'')+(isLive?'<button class="btn" data-ha="add">Add to list</button>':'')+'<button class="'+(isLive?"ghost":"btn")+'" data-ha="save">'+(sv?"Shortlisted ✓":"Shortlist")+'</button><button class="ghost" data-ha="copy">Copy</button><button class="ghost" data-ha="vary">Edit and rescore</button></div>'}
 // Adding or shortlisting the live preview moves it into the ranked list, and the drawer follows it there.
 function adoptLive(){var c=live;D.hooks.push(c);live=null;$("hookIn").value="";renderHooks();openH(D.hooks.length-1);return c}
-$("db").onclick=function(e){if(dR===rL&&listClick(e))return;if(e.target.closest("[data-ha=back]")){openL();return}if(e.target.closest("[data-ba=copy]")){copy(snapText());toast("Creator snapshot copied.");return}var v=e.target.closest("[data-vv]");if(v){openD(+v.dataset.vv,topList());return}var b=e.target.closest("[data-ha]");if(!b||dR!==rH)return;var c=hookAt();if(!c)return;var isLive=dl[di]===-1;
+$("db").onclick=function(e){if(dR===rL&&listClick(e))return;if(dR===rS&&setClick(e))return;if(e.target.closest("[data-ha=back]")){openL();return}if(e.target.closest("[data-ba=copy]")){copy(snapText());toast("Creator snapshot copied.");return}var v=e.target.closest("[data-vv]");if(v){openD(+v.dataset.vv,topList());return}var b=e.target.closest("[data-ha]");if(!b||dR!==rH)return;var c=hookAt();if(!c)return;var isLive=dl[di]===-1;
   if(b.dataset.ha==="add"&&isLive){var t=adoptLive().text;openL(t);toast("Added to your hooks.")}
   if(b.dataset.ha==="save"){if(isLive)c=adoptLive();toggleSave(c)}
   if(b.dataset.ha==="copy"){copy(c.text);toast("Hook copied.")}
@@ -771,26 +789,73 @@ $("draft").onclick=function(){if(!dec().length){say("Decode a creator first, the
   api("/api/draft",{pattern:pattern()}).then(function(j){var l=(j.hooks||[]).filter(function(t){return t&&!D.hooks.some(function(h){return h.text===t})});if(X!==D||!l.length)return [];
     // Show the drafts right away, one after another, while Jev scores them.
     X.pending=l.map(function(t,i){return {text:t,_enter:true,_d:i*120}});b.textContent="Scoring...";$("hl").scrollTop=0;renderHooks();return judge(l)})
-  .then(function(rs){if(X!==D)return;X.pending=[];X.latest=rs.map(function(r){return r.text});rs.forEach(function(r){r._pop=true;D.hooks.push(r)});renderHooks();if(rs.length)toast(rs.length+" new hook"+(rs.length>1?"s":"")+" added, marked New.")})
+  .then(function(rs){if(X!==D)return;X.pending=[];X.latest=rs.map(function(r){return r.text});rs.forEach(function(r){r._pop=true;D.hooks.push(r)});renderHooks();if(rs.length)toast(rs.length+" new hook"+(rs.length>1?"s":"")+" added. Best new one is marked in green.")})
   .catch(function(e){X.pending=[];if(X===D)renderHooks();say("Draft failed: "+e.message,true)}).then(function(){b.disabled=false;b.textContent=draftLabel();busy("s3",false)})};
 var lt,seq=0;$("hookIn").oninput=function(){clearTimeout(lt);var t=this.value.trim();if(t.length<6){live=null;renderHooks();return}
   lt=setTimeout(function(){if(!dec().length){say("Decode a creator first, then score hooks.",true);return}var my=++seq;busy("s3",true);judge([t]).then(function(rs){if(my===seq&&rs[0]){live=rs[0];renderHooks()}}).catch(function(e){say("Scoring failed: "+e.message,true)}).then(function(){busy("s3",false)})},350)};
 
 /* ---------- export ---------- */
 function copy(t){if(navigator.clipboard)navigator.clipboard.writeText(t).catch(function(){});else{var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(e){}a.remove()}}
+/* ---------- settings: keys, chat model, race models, defaults, data ---------- */
+// Keys are saved encrypted on the server and never come back: the page only gets set/source/last 4.
+var SET=null,thrTouched=false;
+var KEYS=[["YOUTUBE_API_KEY","YouTube Data API","Fetches each creator's Shorts. Required."],["TYPESAFE_API_KEY","TypeSafe","Runs Jev. Required."],
+  ["ANTHROPIC_API_KEY","Anthropic","Claude in Model Race and Ask the Decoder."],["OPENAI_API_KEY","OpenAI","GPT in Model Race and Ask the Decoder."],["OPENROUTER_API_KEY","OpenRouter","Any OpenRouter model in Model Race and Ask the Decoder."]];
+var MKEYS=[["ANTHROPIC_MODEL","Anthropic model"],["OPENAI_MODEL","OpenAI model"],["OPENROUTER_MODEL","OpenRouter model"]];
+function applySet(j){SET=j;if(!thrTouched){U.thr=j.REVIEW_THRESHOLD;$("thr").value=U.thr;$("thrV").textContent=U.thr.toFixed(2)}
+  if(!$("draft").disabled)$("draft").textContent=draftLabel();var cm=(j.chat_models||[]).filter(function(m){return m.id===j.CHAT_MODEL})[0];
+  $("chIntro").textContent="Ask about this creator. Jev checks if your data can answer it, "+(cm?cm.label:"Llama 3.3 70B")+" writes, then Jev checks every number."}
+function loadSet(){return api("/api/settings").then(applySet).catch(function(){})}
+function saveSet(body,msg){return api("/api/settings",body).then(function(j){applySet(j);if(dR===rS)rS();toast(msg||"Settings saved.")}).catch(function(e){toast(e.message)})}
+function openS(){closeSide();openDr([0],0,rS);if(!SET)loadSet().then(function(){if(dR===rS)rS()})}
+function rS(){$("dpos").textContent="Settings";var j=SET;if(!j){$("db").innerHTML='<p class="bfe">Loading settings…</p>';return}
+  var keyRow=function(k){var m=j.keys[k[0]]||{},st=m.unreadable&&!m.set?'<span class="chipst bad">Saved key unreadable, paste it again</span>':m.source==="app"?'<span class="chipst saved">Saved here ••••'+esc(m.hint)+'</span>':m.source==="env"?'<span class="chipst env">From .env ••••'+esc(m.hint)+'</span>':'<span class="chipst">Not set</span>';
+    return '<div class="kr"><div class="kh"><b>'+k[1]+'<small>'+k[2]+'</small></b>'+st+'</div><form class="kf" data-key="'+k[0]+'"><input type="password" autocomplete="off" spellcheck="false" placeholder="'+(m.set?"Paste a new key to replace it":"Paste your key")+'" aria-label="'+k[1]+' key"'+(j.can_save_keys?'':' disabled')+'><button class="ghost"'+(j.can_save_keys?'':' disabled')+'>Save</button>'+(m.source==="app"||m.unreadable?'<button type="button" class="ghost" data-sclear="'+k[0]+'">Remove</button>':'')+'</form></div>'};
+  var cms=(j.chat_models||[]).map(function(m){var on=m.id===j.CHAT_MODEL;return '<label class="cm'+(m.ready?'':' off')+'"><input type="radio" name="chatm" value="'+esc(m.id)+'"'+(on?' checked':'')+(m.ready?'':' disabled')+'><div><b>'+esc(m.label)+'</b><small>'+esc(m.provider)+(m.ready?'':' · add its key above first')+'</small></div></label>'}).join("");
+  var mods=MKEYS.map(function(k){var m=j.models[k[0]]||{};return '<label class="sxr"><span>'+k[1]+'<small>Default '+esc(j.model_defaults[k[0]])+(m.env?', .env has '+esc(m.env):'')+'</small></span><input type="text" name="'+k[0]+'" value="'+esc(m.value)+'" placeholder="'+esc(m.env||j.model_defaults[k[0]])+'" spellcheck="false" autocomplete="off"></label>'}).join("");
+  var dc='';for(var n=3;n<=10;n++)dc+='<option'+(n===j.DRAFT_COUNT?' selected':'')+'>'+n+'</option>';
+  $("db").innerHTML='<div class="bfh"><div class="sub">Only you can see this page</div><h3>Settings</h3></div>'+
+    '<div class="sx"><h4>API keys</h4><p>Saved encrypted in your app’s database and never shown again, only the last 4 characters. A key saved here wins over the one in .env.</p>'+
+    (j.can_save_keys?'':'<div class="snote">Saving keys here needs SETTINGS_SECRET. Run <b>npm run setup</b> (local) or <b>npm run ship</b> (deployed) once to create it.</div>')+KEYS.map(keyRow).join("")+'</div>'+
+    '<div class="sx"><h4>Ask the Decoder model</h4><p>Which model writes chat answers. Jev still decides if a question is answerable and fact-checks every answer.</p>'+(j.chat_fallback?'<div class="snote" style="margin:0 0 6px">You picked '+esc(j.chat_fallback)+', but its key is gone, so chat uses Llama 3.3 70B until you add the key back.</div>':'')+'<form data-sform="chat">'+cms+'</form></div>'+
+    '<div class="sx"><h4>Model Race models</h4><p>Which model each provider races with. Leave blank for the default.</p><form data-sform="models">'+mods+'<div class="sxa"><button class="btn">Save models</button></div></form></div>'+
+    '<div class="sx"><h4>Defaults</h4><p>Applied every time you open the dashboard.</p><form data-sform="defaults">'+
+      '<label class="sxr"><span>Needs-review threshold<small>Videos where Jev is less confident than this are flagged</small></span><span style="display:flex;gap:8px;align-items:center"><input type="range" name="REVIEW_THRESHOLD" min="0.3" max="0.95" step="0.05" value="'+j.REVIEW_THRESHOLD+'" style="flex:1" oninput="this.nextSibling.textContent=(+this.value).toFixed(2)"><b>'+j.REVIEW_THRESHOLD.toFixed(2)+'</b></span></label>'+
+      '<label class="sxr"><span>Hooks per Draft<small>How many ideas each Draft click writes</small></span><select name="DRAFT_COUNT">'+dc+'</select></label>'+
+      '<div class="sxa"><button class="btn">Save defaults</button></div></form></div>'+
+    '<div class="sx"><h4>Password</h4><p>Changing it signs out every other device.</p><form data-sform="pw">'+
+      '<label class="sxr"><span>Current password</span><input type="password" name="current" autocomplete="current-password" required></label>'+
+      '<label class="sxr"><span>New password<small>At least 8 characters</small></span><input type="password" name="password" autocomplete="new-password" minlength="8" required></label>'+
+      '<label class="sxr"><span>Repeat new password</span><input type="password" name="again" autocomplete="new-password" minlength="8" required></label>'+
+      '<div class="sxa"><button class="btn">Change password</button></div></form></div>'+
+    '<div class="sx dz"><h4>Data</h4><p>These can’t be undone.</p><div class="sxa"><button class="ghost red" data-sdata="clear-shortlist">Clear all shortlists</button><button class="ghost red" data-sdata="forget-all">Forget all saved creators</button></div></div>'}
+function setClick(e){var c=e.target.closest("[data-sclear]");if(c){e.preventDefault();saveSet({clear:[c.dataset.sclear]},"Key removed.");return true}
+  var d=e.target.closest("[data-sdata]");if(d){var all=d.dataset.sdata==="forget-all";if(!confirm(all?"Forget every saved creator and their shortlists? You’ll need to decode them again.":"Remove every shortlisted hook for every creator?"))return true;
+    api("/api/data/"+d.dataset.sdata,{}).then(function(){if(all){LIB=[];renderLib();reset()}else{D.saved=[];renderSL();renderHooks()}toast(all?"All saved creators forgotten.":"All shortlists cleared.")}).catch(function(x){toast(x.message)});return true}
+  return false}
+function setSubmit(e){var f=e.target;if(dR!==rS)return;e.preventDefault();
+  if(f.dataset.key){var v=f.querySelector("input").value.trim();if(!v)return;var o={};o[f.dataset.key]=v;saveSet({set:o},"Key saved.");return}
+  var t=f.dataset.sform,fd=new FormData(f);
+  if(t==="models"){var set={},clear=[];MKEYS.forEach(function(k){var v=String(fd.get(k[0])||"").trim();if(v)set[k[0]]=v;else clear.push(k[0])});saveSet({set:set,clear:clear},"Models saved.")}
+  if(t==="defaults"){thrTouched=false;saveSet({set:{REVIEW_THRESHOLD:String(fd.get("REVIEW_THRESHOLD")),DRAFT_COUNT:String(fd.get("DRAFT_COUNT"))}},"Defaults saved.")}
+  if(t==="pw"){if(fd.get("password")!==fd.get("again")){toast("The new passwords don’t match.");return}
+    api("/api/auth/change",{current:fd.get("current"),password:fd.get("password")}).then(function(){f.reset();toast("Password changed. Other devices are signed out.")}).catch(function(x){toast(x.message)})}}
+$("db").addEventListener("submit",setSubmit);
+$("db").addEventListener("change",function(e){if(dR===rS&&e.target.name==="chatm")saveSet({set:{CHAT_MODEL:e.target.value}},"Chat model saved.")});
+$("openSet").onclick=openS;
 /* ---------- your hooks: every scored hook in one place ---------- */
 // Shortlisted hooks are saved per creator, so they show here even after a reload clears the in-memory list.
 var lf="all",lHi=null,lBack=false;
 function listItems(){var l=D.hooks.slice();D.saved.forEach(function(s){if(!l.some(function(h){return h.text===s.text}))l.push(s)});return l.sort(function(a,b){return b.score-a.score})}
 function openL(hi){lHi=hi||null;openDr([0],0,rL)}
 function rL(){var all=listItems(),sv=function(c){return D.saved.some(function(s){return s.text===c.text})},l=lf==="saved"?all.filter(sv):all;$("dpos").textContent="Your hooks";
-  var row=function(c){var k=D.hooks.indexOf(c),on=sv(c),b=c.bars||{};var nw=isNew(c);return '<div class="lr'+(nw?" new":"")+(k<0?" nod":"")+(c.text===lHi?" glow":"")+'" style="--hc:'+col(c.hook_type)+';--s:'+c.score+'"'+(k<0?'':' data-li="'+k+'" tabindex="0" role="button" aria-label="Open details for this hook"')+'><span class="lk">#'+(all.indexOf(c)+1)+'</span><div class="ring"><b>'+c.score+'</b></div>'+
-    '<div class="lt">'+(nw?'<span class="newp" style="margin-left:0">New</span>':'')+'\u201c'+esc(c.text)+'\u201d<small><span class="dot" style="background:'+col(c.hook_type)+';display:inline-block;margin-right:5px"></span>'+esc(hn(c.hook_type))+' hook \u00b7 Hook '+Math.round((b.hook||0)*100)+'% \u00b7 Fit '+Math.round((b.fit||0)*100)+'% \u00b7 Lift odds '+Math.round((b.lift_odds||0)*100)+'%'+(k<0?' \u00b7 saved earlier':'')+'</small></div>'+
+  var row=function(c){var k=D.hooks.indexOf(c),on=sv(c),b=c.bars||{};var nw=isNew(c);return '<div class="lr'+(nw?" new":"")+(nw&&newRank(c)===1?" best":"")+(k<0?" nod":"")+(c.text===lHi?" glow":"")+'" style="--hc:'+col(c.hook_type)+';--s:'+c.score+'"'+(k<0?'':' data-li="'+k+'" tabindex="0" role="button" aria-label="Open details for this hook"')+'><span class="lk">#'+(all.indexOf(c)+1)+'</span><div class="ring"><b>'+c.score+'</b></div>'+
+    '<div class="lt">'+(nw?newPill(c,' style="margin-left:0"'):'')+'\u201c'+esc(c.text)+'\u201d<small><span class="dot" style="background:'+col(c.hook_type)+';display:inline-block;margin-right:5px"></span>'+esc(hn(c.hook_type))+' hook \u00b7 Hook '+Math.round((b.hook||0)*100)+'% \u00b7 Fit '+Math.round((b.fit||0)*100)+'% \u00b7 Lift odds '+Math.round((b.lift_odds||0)*100)+'%'+(k<0?' \u00b7 saved earlier':'')+'</small></div>'+
     '<div class="la"><button class="ghost" data-la="save" data-t="'+esc(c.text)+'" aria-pressed="'+on+'">'+(on?"Shortlisted \u2713":"Shortlist")+'</button><button class="ghost" data-la="copy" data-t="'+esc(c.text)+'">Copy</button></div></div>'};
   $("db").innerHTML='<div class="bfh"><div class="sub">'+esc(D.handle||"No creator yet")+'</div><h3>Your hooks</h3></div>'+
     '<p class="sub" style="margin:6px 0 0">Every hook you add or draft, ranked by Jev\u2019s score. Click one for the full breakdown. Shortlisted hooks are saved for this creator; the rest clear when you reload.</p>'+
     '<div class="lseg" role="group" aria-label="Filter"><button data-lf="all" aria-pressed="'+(lf==="all")+'">All '+all.length+'</button><button data-lf="saved" aria-pressed="'+(lf==="saved")+'">Shortlisted '+all.filter(sv).length+'</button></div>'+
-    (l.length?l.map(row).join(""):'<p class="bfe" style="margin-top:14px">'+(lf==="saved"?"Nothing shortlisted yet. Click Shortlist on a hook to keep it.":"No hooks yet. Type one in Score new hooks, or click Draft 5.")+'</p>')+
+    (l.length?l.map(row).join(""):'<p class="bfe" style="margin-top:14px">'+(lf==="saved"?"Nothing shortlisted yet. Click Shortlist on a hook to keep it.":"No hooks yet. Type one in Score new hooks, or click Draft.")+'</p>')+
     (l.length?'<div class="hacts"><button class="ghost" data-la="copyall">Copy '+(lf==="saved"?"shortlist":"all")+' as text</button></div>':'');
   var g=$("db").querySelector(".glow");if(g){g.scrollIntoView({block:"center"});lHi=null}}
 function listClick(e){var f=e.target.closest("[data-lf]");if(f){lf=f.dataset.lf;rL();return true}
@@ -834,7 +899,7 @@ function vizHTML(v){if(!v||!v.rows||!v.rows.length)return "";if(v.kind==="lift")
 function ask(q){q=(q||"").trim();if(!q)return;if(!dec().length){toast("Decode a creator first.");return}bub("q1",esc(q));var w=bub("a1","Jev is routing your question...");
   api("/api/ask",{handle:D.handle,question:q}).then(function(r){D.cost+=r.cost_usd||0;var st=r.steps||{},tg='<span class="tag">'+esc(hn(r.topic))+'</span>';
     if(r.blocked){w.innerHTML=tg+'<span class="tag" style="color:var(--warn);border-color:var(--warn)">Blocked by Jev</span><p style="margin:6px 0 0">'+esc(r.answer)+'</p><div class="note">Routed in '+(st.route_ms||0)+' ms. No chat model call.</div>';log(null,"Jev blocked a question",(st.route_ms||0)+" ms","“"+esc(q)+"”<hr>Jev routed it as "+esc(hn(r.topic))+", so the chat model never ran.");return}
-    w.innerHTML=tg+(r.grounded_ok?'<span class="tag ok">Grounded</span>':'<span class="tag" style="color:var(--warn);border-color:var(--warn)">Check this</span>')+'<p style="margin:6px 0">'+esc(r.answer)+'</p>'+vizHTML(r.viz)+'<div class="note">Route '+(st.route_ms||0)+' ms, answer '+(st.answer_ms||0)+' ms, check '+(st.check_ms||0)+' ms</div>';log(null,"Jev routed and checked an answer",(r.grounded_ok?"grounded":"flagged"),"“"+esc(q)+"”<hr>"+trow("Jev route",(st.route_ms||0)+" ms")+trow("Chat answer",(st.answer_ms||0)+" ms")+trow("Jev check",(st.check_ms||0)+" ms")+trow("Grounded",Math.round((+r.grounded||0)*100)+"%"))})
+    w.innerHTML=tg+(r.grounded_ok?'<span class="tag ok">Grounded</span>':'<span class="tag" style="color:var(--warn);border-color:var(--warn)">Check this</span>')+'<p style="margin:6px 0">'+esc(r.answer)+'</p>'+vizHTML(r.viz)+'<div class="note">Route '+(st.route_ms||0)+' ms, answer'+(r.answer_model?' ('+esc(r.answer_model)+')':'')+' '+(st.answer_ms||0)+' ms, check '+(st.check_ms||0)+' ms</div>';log(null,"Jev routed and checked an answer",(r.grounded_ok?"grounded":"flagged"),"“"+esc(q)+"”<hr>"+trow("Jev route",(st.route_ms||0)+" ms")+trow("Chat answer",(st.answer_ms||0)+" ms")+trow("Jev check",(st.check_ms||0)+" ms")+trow("Grounded",Math.round((+r.grounded||0)*100)+"%"))})
   .catch(function(e){w.innerHTML='<span class="err">'+esc(e.message)+'</span>'})}
 $("chf").onsubmit=function(e){e.preventDefault();ask($("chi").value);$("chi").value=""};$("chb").onclick=function(e){var b=e.target.closest("[data-q]");if(b)ask(b.dataset.q)};
 

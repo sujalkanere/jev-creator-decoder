@@ -226,7 +226,7 @@ body:not(.has-data) .stage .stats,body:not(.has-data) .stage .pf{opacity:.45}
 .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .lane{padding:0 0 12px}
 .lh2{display:flex;justify-content:space-between;align-items:flex-end;padding:16px 18px}
-.lh2 h2{margin:2px 0 0;font-size:15px}.clock{font-size:34px;font-weight:600;letter-spacing:-.04em;line-height:1}
+.lh2 h2{margin:4px 0 0;font-size:15px;height:34px;display:flex;align-items:center}.clock{font-size:34px;font-weight:600;letter-spacing:-.04em;line-height:1}
 .lane.done .clock{color:var(--result)}
 .lk{display:grid;grid-template-columns:repeat(3,1fr);padding:0 18px 12px}.lk b{display:block;font-size:17px}.lk span{font-size:12px;color:var(--mut)}
 .rows{display:flex;flex-direction:column;gap:6px;padding:0 12px}
@@ -250,7 +250,7 @@ body:not(.has-data) .stage .stats,body:not(.has-data) .stage .pf{opacity:.45}
   <div class="rtop"><div class="logo"><b>NextWork</b> <span>Model Race</span></div>
     <select id="who" aria-label="Saved creator"><option value="">Pick a saved creator</option></select><button class="btn" id="go" style="height:40px">Start</button>
     <a class="ghost" href="./" style="display:inline-flex;align-items:center;text-decoration:none">Back to dashboard</a><button class="ghost" id="theme" aria-label="Switch theme">◐</button></div>
-  <section class="card intro"><h1>Jev vs a chat model</h1><p>The same 10 videos and the same question. Jev answers all 10 in one call. The challenger (<b id="chName">Llama 3.1 8B</b>) gets one call per video, the way most people use a chat model. Pick a challenger on the right; more appear when you add their API keys to <code>.env</code>. Every number here comes from this run only.</p><p class="err" id="err"></p></section>
+  <section class="card intro"><h1>Jev vs a chat model</h1><p>The same 10 videos and the same question. Jev answers all 10 in one call. The challenger (<b id="chName">Llama 3.1 8B</b>) gets one call per video, the way most people use a chat model. Pick a challenger on the right; more appear when you add their API keys in <a href="index.html#settings">Settings</a>. Every number here comes from this run only.</p><p class="err" id="err"></p></section>
   <div class="rgrid">
     <section class="card lane" id="jevLane"><div class="lh2"><div><div class="lab">Jev</div><h2>typesafe/jev</h2></div><div class="clock" id="jevClock">0 ms</div></div><div class="lk"><div><b id="jevCalls">0</b><span>calls</span></div><div><b id="jevCost">$0</b><span>cost</span></div><div><b id="jevFail">0</b><span>unusable</span></div></div><div class="rows" id="jevRows"><div class="empty-lane">Pick a creator and press Start.</div></div></section>
     <section class="card lane" id="llmLane"><div class="lh2"><div><div class="lab">Challenger</div><select class="msel" id="model" aria-label="Challenger model"><option value="llama">Llama 3.1 8B</option></select></div><div class="clock" id="llmClock">0 ms</div></div><div class="lk"><div><b id="llmCalls">0</b><span>calls</span></div><div><b id="llmCost">$0</b><span>cost, est.</span></div><div><b id="llmFail">0</b><span>unusable</span></div></div><div class="rows" id="llmRows"><div class="empty-lane">Waiting for the start.</div></div></section>
@@ -269,7 +269,7 @@ api("/api/library").then(function(j){var s=$("who");(j.items||[]).forEach(functi
 var MODELS=[];function curM(){var id=$("model").value;return MODELS.filter(function(m){return m.id===id})[0]||{id:"llama",label:"Llama 3.1 8B",provider:"Cloudflare Workers AI"}}
 function showM(){$("chName").textContent=curM().label}
 api("/api/race/models").then(function(j){MODELS=j.models||[];var s=$("model"),saved="";try{saved=localStorage.getItem("race-model")||""}catch(e){}
-  s.innerHTML=MODELS.map(function(m){return '<option value="'+esc(m.id)+'"'+(m.ready?"":" disabled")+'>'+esc(m.label)+(m.ready?"":" (add "+esc(m.needs)+")")+'</option>'}).join("");
+  s.innerHTML=MODELS.map(function(m){return '<option value="'+esc(m.id)+'"'+(m.ready?"":" disabled")+'>'+esc(m.label)+(m.ready?"":" (add its key in Settings)")+'</option>'}).join("");
   if(MODELS.some(function(m){return m.ready&&m.id===saved}))s.value=saved;showM()}).catch(function(){});
 $("model").onchange=function(){try{localStorage.setItem("race-model",this.value)}catch(e){}showM()};
 function row(v){return '<div class="rr" data-id="'+esc(v.id)+'"><span class="th" style="background-image:url(\''+esc(v.thumbnail)+'\')"></span><span class="tt">'+esc(v.title)+'<span class="raw"></span></span><span class="lb">Waiting</span></div>'}

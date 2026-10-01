@@ -14,6 +14,14 @@ const tsKey = (vars.match(/^TYPESAFE_API_KEY=(.+)$/m) || [])[1]?.trim();
 if (!tsKey || /paste-your/i.test(tsKey)) { console.error("Add your TypeSafe API key with npm run setup first."); process.exit(1); }
 // Optional: each is uploaded only if you've set it in .env. They add Model Race challengers.
 const OPTIONAL = ["ANTHROPIC_API_KEY", "OPENAI_API_KEY", "OPENROUTER_API_KEY", "ANTHROPIC_MODEL", "OPENAI_MODEL", "OPENROUTER_MODEL"];
+// Encrypts keys saved in Settings. Kept in .env so every ship uploads the same one; a new one
+// would make keys already saved in Settings unreadable.
+let secret = (vars.match(/^SETTINGS_SECRET=(\S+)$/m) || [])[1];
+if (!secret) {
+  secret = crypto.randomBytes(32).toString("hex");
+  fs.writeFileSync(".env", (vars.endsWith("\n") ? vars : vars + "\n") + `SETTINGS_SECRET=${secret}\n`);
+  console.log("Created SETTINGS_SECRET in .env (encrypts keys you save in Settings).");
+}
 const optional = OPTIONAL.map((k) => [k, (vars.match(new RegExp(`^${k}=(.+)$`, "m")) || [])[1]?.trim()]).filter(([, v]) => v && !/paste-your/i.test(v));
 
 console.log("\n1/3  Creating the tables in the cloud database (answer Y if asked)...");
@@ -26,7 +34,7 @@ const url = (out.match(/https:\/\/[^\s]+\.workers\.dev/) || [])[0];
 
 console.log("\n3/3  Uploading secrets...");
 const token = crypto.randomBytes(16).toString("hex");
-for (const [k, v] of [["YOUTUBE_API_KEY", key], ["TYPESAFE_API_KEY", tsKey], ["SETUP_TOKEN", token], ...optional]) {
+for (const [k, v] of [["YOUTUBE_API_KEY", key], ["TYPESAFE_API_KEY", tsKey], ["SETUP_TOKEN", token], ["SETTINGS_SECRET", secret], ...optional]) {
   execSync(`npx wrangler secret put ${k}`, { input: v + "\n", stdio: ["pipe", "inherit", "inherit"] });
 }
 

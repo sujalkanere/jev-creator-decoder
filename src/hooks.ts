@@ -10,23 +10,24 @@ export interface WinningPattern {
 }
 
 // Chat model drafts. Jev judges.
-export async function draftHooks(env: any, pattern: WinningPattern, topic?: string): Promise<string[]> {
+export async function draftHooks(env: any, pattern: WinningPattern, topic?: string, count = 5): Promise<string[]> {
+  const n = Math.max(3, Math.min(10, Math.round(count) || 5)); // set in Settings, 3 to 10
   const prompt =
-    `Write 5 hooks for short-form videos by ${pattern.channel || "this creator"}` +
+    `Write ${n} hooks for short-form videos by ${pattern.channel || "this creator"}` +
     (topic ? ` about ${topic}` : "") +
     `. Their best hook types are: ${pattern.top_hooks.join(", ")}. ` +
     `Their top titles: ${pattern.examples.slice(0, 5).join(" | ")}. ` +
-    `Each hook must be under 12 words. Return only a JSON array of 5 strings.`;
-  const res: any = await env.AI.run(LLM_MODEL, { messages: [{ role: "user", content: prompt }], max_tokens: 300 });
+    `Each hook must be under 12 words. Return only a JSON array of ${n} strings.`;
+  const res: any = await env.AI.run(LLM_MODEL, { messages: [{ role: "user", content: prompt }], max_tokens: 60 * n });
   // Workers AI hands back already-parsed JSON when the model replies with pure JSON.
-  if (Array.isArray(res?.response)) return res.response.map(String).filter(Boolean).slice(0, 5);
+  if (Array.isArray(res?.response)) return res.response.map(String).filter(Boolean).slice(0, n);
   const text = typeof res?.response === "string" ? res.response : JSON.stringify(res?.response ?? "");
   try {
     const m = text.match(/\[[\s\S]*\]/);
     const arr = JSON.parse(m ? m[0] : text);
-    if (Array.isArray(arr)) return arr.map(String).filter(Boolean).slice(0, 5);
+    if (Array.isArray(arr)) return arr.map(String).filter(Boolean).slice(0, n);
   } catch {}
-  return text.split("\n").map((l) => l.replace(/^[\s\d.\-*"]+|"$/g, "").trim()).filter(Boolean).slice(0, 5);
+  return text.split("\n").map((l) => l.replace(/^[\s\d.\-*"]+|"$/g, "").trim()).filter(Boolean).slice(0, n);
 }
 
 export async function judgeHooks(env: any, hooks: string[], pattern: WinningPattern) {

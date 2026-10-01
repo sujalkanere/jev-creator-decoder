@@ -106,6 +106,29 @@ export async function handleAuth(env: any, req: Request, path: string, body: any
     return json({ ok: true }, 200, { "set-cookie": await newSession(env, req, !!body.remember) });
   }
 
+  // From Settings: needs a signed-in session and the current password. Signs out every other
+  // device by dropping all sessions, then starts a fresh one here.
+  if (path === "/api/auth/change") {
+    if (!configured || !(await isSignedIn(env, req))) return json({ error: "Please sign in." }, 401);
+    const lockUntil = Number((await getSetting(env, "lock_until")) || 0);
+    if (lockUntil > Date.now()) return json({ error: `Too many attempts. Try again in ${Math.ceil((lockUntil - Date.now()) / 60000)} minutes.` }, 429);
+    const salt = (await getSetting(env, "pw_salt"))!, want = (await getSetting(env, "pw_hash"))!;
+    if (!sameHex(await pbkdf2(String(body.current || ""), salt), want)) {
+      const fails = Number((await getSetting(env, "fail_count")) || 0) + 1;
+      if (fails >= MAX_FAILS) { await setSetting(env, "lock_until", String(Date.now() + LOCK_MS)); await setSetting(env, "fail_count", "0"); return json({ error: "Too many attempts. Try again in 15 minutes." }, 429); }
+      await setSetting(env, "fail_count", String(fails));
+      return json({ error: "Your current password isn't right." }, 401);
+    }
+    const pw = String(body.password || "");
+    if (pw.length < 8) return json({ error: "Use at least 8 characters." }, 400);
+    const fresh = randHex(16);
+    await setSetting(env, "pw_salt", fresh);
+    await setSetting(env, "pw_hash", await pbkdf2(pw, fresh));
+    await setSetting(env, "fail_count", "0");
+    await env.DB.prepare("DELETE FROM sessions").run();
+    return json({ ok: true }, 200, { "set-cookie": await newSession(env, req, true) });
+  }
+
   if (path === "/api/auth/logout") {
     const t = readCookie(req);
     if (t) await env.DB.prepare("DELETE FROM sessions WHERE token_hash = ?").bind(await sha256(t)).run();

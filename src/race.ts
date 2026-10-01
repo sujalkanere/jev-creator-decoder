@@ -88,7 +88,7 @@ async function postJSON(url: string, key: string, body: unknown, who: string) {
   return j;
 }
 
-function modelFor(env: any, c: Challenger) {
+export function modelFor(env: any, c: Challenger) {
   return (c.modelVar && env[c.modelVar]) || c.model;
 }
 
@@ -103,7 +103,7 @@ export function listChallengers(env: any) {
 export async function raceLlmOne(env: any, v: VideoRecord, id = "llama") {
   const c = CHALLENGERS[id];
   if (!c) throw new Error(`Unknown model "${id}".`);
-  if (c.keyVar && !env[c.keyVar]) throw new Error(`Add ${c.keyVar} to .env to race ${c.label}.`);
+  if (c.keyVar && !env[c.keyVar]) throw new Error(`Add your ${c.provider} key in Settings to race ${c.label}.`);
   const model = modelFor(env, c);
   const hookOptions = Object.keys((schema as any).per_video.hook.criteria);
   const prompt =

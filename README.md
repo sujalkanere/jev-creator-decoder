@@ -49,7 +49,17 @@ Google Cloud only supplies the YouTube API key. TypeSafe runs Jev. Cloudflare ho
 - **Creators:** everyone you've decoded, with their avatar. Click to reload instantly with 0 Jev calls, or remove them.
 - **Shortlist:** the hooks you saved for the current creator. Click to copy.
 - **Jump to:** scrolls to a panel and highlights it.
-- **Model Race, Theme, Sign out.**
+- **Model Race, Settings, Theme, Sign out.**
+
+## Settings
+Open **Settings** in the sidebar (or the link on the Model Race page).
+- **API keys:** YouTube, TypeSafe, Anthropic, OpenAI, OpenRouter. Saved encrypted in your D1 database with `SETTINGS_SECRET` and never shown again, only the last 4 characters. A key saved here wins over `.env`; **Remove** falls back to `.env`.
+- **Ask the Decoder model:** Llama 3.3 70B (free) by default, or Claude, OpenAI, or OpenRouter once its key is set. Jev still routes and fact-checks every answer. If you remove that key, chat falls back to Llama.
+- **Model Race models:** which model each provider races with (same as the `*_MODEL` lines in `.env`).
+- **Defaults:** the needs-review threshold and how many hooks each Draft writes (3 to 10).
+- **Password** change (signs out other devices) and **Data:** clear all shortlists or forget all saved creators.
+
+`npm run setup` and `npm run ship` create `SETTINGS_SECRET` in `.env` once and reuse it. Don't change it: keys already saved in Settings would become unreadable (Settings tells you to paste them again).
 
 ## After a decode
 - **Gallery:** filter by hook, Needs review, or Outperformers, sort by views or date, click any video to see every Jev answer.

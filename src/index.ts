@@ -4,6 +4,7 @@ import { draftHooks, judgeHooks } from "./hooks";
 import { raceJev, raceLlmOne, listChallengers } from "./race";
 import { askDecoder } from "./ask";
 import { handleAuth, isSignedIn } from "./auth";
+import { withSettings, getSettings, updateSettings, setting } from "./settings";
 
 export interface Env {
   AI: any;
@@ -11,6 +12,7 @@ export interface Env {
   ASSETS: any;
   YOUTUBE_API_KEY: string;
   SETUP_TOKEN?: string;
+  SETTINGS_SECRET?: string; // encrypts API keys saved from the Settings page; npm run setup / ship create it
   TYPESAFE_API_KEY?: string; // optional: when set, Jev runs on TypeSafe's API first, with Workers AI as fallback
   // Optional Model Race challengers. Each appears in the race once its key is set.
   ANTHROPIC_API_KEY?: string;
@@ -42,8 +44,21 @@ export default {
 
     try {
       const body: any = req.method === "POST" ? await req.json() : {};
+      // Keys and models saved in Settings override .env for this request.
+      const raw = env;
+      env = await withSettings(raw);
 
       switch (url.pathname) {
+        case "/api/settings":
+          if (req.method === "POST") { await updateSettings(raw, body); env = await withSettings(raw); }
+          return json(await getSettings(env, raw));
+        case "/api/data/forget-all":
+          await env.DB.prepare("DELETE FROM decodes").run();
+          await env.DB.prepare("DELETE FROM shortlist").run();
+          return json({ ok: true });
+        case "/api/data/clear-shortlist":
+          await env.DB.prepare("DELETE FROM shortlist").run();
+          return json({ ok: true });
         case "/api/ingest": {
           const input = (url.searchParams.get("handle") || "").trim();
           if (!input) return json({ error: "Add a creator handle, channel link, or video link." }, 400);
@@ -115,7 +130,7 @@ export default {
           return json(await askDecoder(env, body.question, JSON.parse(saved.payload)));
         }
         case "/api/draft":
-          return json({ hooks: await draftHooks(env, body.pattern, body.topic) });
+          return json({ hooks: await draftHooks(env, body.pattern, body.topic, Number(setting(env, "DRAFT_COUNT"))) });
         case "/api/judge":
           return json(await judgeHooks(env, body.hooks || [], body.pattern));
         default:
