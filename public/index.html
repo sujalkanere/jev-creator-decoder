@@ -154,20 +154,48 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
 .hc .m3 i::after{content:"";position:absolute;inset:0;width:var(--w);background:var(--hc)}
 .lanes canvas,.mixc{width:100%;height:100%;display:block}
 .lanes{padding:10px 18px}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--card);border-left:1px solid var(--line);box-shadow:-20px 0 40px rgba(0,0,0,.12);transform:translateX(100%);transition:transform .25s;z-index:60;display:flex;flex-direction:column}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(var(--dw,420px),100%);background:var(--card);border-left:1px solid var(--line);box-shadow:-20px 0 40px rgba(0,0,0,.12);transform:translateX(100%);transition:transform .25s,width .25s;z-index:60;display:flex;flex-direction:column}
+.drawer.drag{transition:none;user-select:none}
+.drawer.wide{--dw:min(1080px,calc(100vw - 64px))}
+.dgrip{position:absolute;left:-4px;top:0;bottom:0;width:8px;cursor:col-resize;z-index:1}.dgrip::after{content:"";position:absolute;left:3px;top:50%;height:44px;width:2px;margin-top:-22px;border-radius:2px;background:var(--line);opacity:0;transition:opacity .15s}.dgrip:hover::after,.drawer.drag .dgrip::after{opacity:1;background:var(--mut)}
+.dexp{width:36px;padding:0;display:grid;place-items:center}.dexp svg{width:15px;height:15px}
+@media (max-width:640px){.dgrip,.dexp{display:none}}
 .drawer.open{transform:none}
 .dh{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);gap:8px}
-.db{overflow-y:auto;padding:16px}
-.dthumb{height:200px;border-radius:12px;background-size:cover;background-position:center}
+.db{overflow-y:auto;padding:16px;flex:1;min-height:0;container-type:inline-size}
+.dthumb{display:grid;place-items:center;aspect-ratio:16/9;max-height:440px;border-radius:12px;background-size:cover;background-position:center;position:relative;overflow:hidden}
+.dthumb::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .15s}.dthumb:hover::before{background:rgba(0,0,0,.18)}
+.dthumb span{position:relative;width:52px;height:52px;border-radius:50%;background:rgba(20,18,15,.6);color:#fff;display:grid;place-items:center;opacity:0;transform:scale(.9);transition:opacity .15s,transform .15s}.dthumb span svg{width:24px;height:24px;margin-left:3px}
+.dthumb:hover span,.dthumb:focus-visible span{opacity:1;transform:none}.dthumb:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.ansg{margin-bottom:16px}
+@media (hover:none){.dthumb span{opacity:1;transform:none}}
+.ansg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:8px}.ansg .ans{margin-top:0}
+/* wide panel: video pinned on the left, Jev's answers stacked on the right, everything a size up */
+@container (min-width:720px){
+.dv{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px;align-items:start}
+.dtop{position:sticky;top:0}.dtop h3{font-size:clamp(17px,2.4cqi,24px);margin-top:16px;line-height:1.3}.dtop .sub{font-size:13.5px}
+.dstats{gap:8px}.dstats div{padding:12px 14px}.dstats b{font-size:clamp(16px,2.2cqi,22px)}.dstats span{font-size:12.5px}
+.dv .ansg{grid-template-columns:1fr;gap:10px}
+.dv .ans{padding:14px 16px;border-radius:14px}.dv .ah{font-size:13px;margin-bottom:8px}.dv .ah b{font-size:15px}
+.dv .pr{font-size:13.5px;margin-top:7px;grid-template-columns:minmax(110px,32%) 1fr 44px;gap:12px}.dv .pr i{height:7px;border-radius:4px}
+.evg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 8px}}
 .db h3{margin:12px 0 2px;font-size:16px}
 .dstats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:12px 0}
 .dstats div{background:var(--sunk);border-radius:10px;padding:8px 10px}.dstats b{display:block}.dstats span{font-size:11.5px;color:var(--mut)}
-.ans{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px}
+.ans{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px}.ans:has(.tip:hover),.ans:has(.tip:focus){position:relative;z-index:6}
+.tip{display:inline-flex;align-items:center;gap:5px;cursor:help;outline:none;border-radius:4px}.tip:focus-visible{box-shadow:0 0 0 2px var(--ink)}
+.tip>svg{width:13px;height:13px;color:var(--fnt);flex:none;transition:color .15s}.tip:hover>svg,.tip:focus>svg{color:var(--ink)}
+.tipb{position:absolute;left:-4px;right:-4px;top:calc(100% + 2px);z-index:5;background:var(--ink);color:var(--on);border-radius:10px;padding:10px 12px;font-size:12.5px;font-weight:400;line-height:1.45;box-shadow:0 10px 24px rgba(0,0,0,.18);opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s,transform .15s,visibility .15s;pointer-events:none}
+.ah:has(.tip:hover) .tipb,.ah:has(.tip:focus) .tipb{opacity:1;visibility:visible;transform:none}
+.ansg>.ans:nth-last-child(-n+2) .tipb{top:auto;bottom:calc(100% + 6px);transform:translateY(4px)}
+.tipb em{display:block;font-style:normal;opacity:.7;margin-top:6px;font-size:11.5px}
+.ah{position:relative}.pr[title]{cursor:help}
+@media (prefers-reduced-motion:reduce){.tipb{transition:none}}
 .ah{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin-bottom:4px}.ah b{color:var(--ink);font-size:13px}
-.pr{display:grid;grid-template-columns:100px 1fr 36px;gap:8px;align-items:center;font-size:12px;color:var(--mut);margin-top:3px}
+.pr{display:grid;grid-template-columns:minmax(80px,30%) 1fr 36px;gap:8px;align-items:center;font-size:12px;color:var(--mut);margin-top:3px}
 .pr i{height:5px;border-radius:3px;background:var(--line);position:relative;overflow:hidden}.pr i::after{content:"";position:absolute;inset:0;width:var(--w);background:var(--c,var(--ink))}
 .pr.win{color:var(--ink);font-weight:600}
-.flag{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;background:var(--warn);color:#1A1917;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:2px}
+.flag{white-space:nowrap;display:inline-block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;background:var(--warn);color:#1A1917;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:2px}
 .scrim{position:fixed;inset:0;background:rgba(20,18,15,.3);opacity:0;pointer-events:none;transition:opacity .2s;z-index:55}.scrim.open{opacity:1;pointer-events:auto}
 .modal{position:fixed;inset:0;z-index:80;background:rgba(20,18,15,.45);display:grid;place-items:center;padding:20px}.modal[hidden]{display:none}
 .modal form{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;width:min(400px,100%)}
@@ -367,7 +395,7 @@ body:not(.has-data) .zoomc{display:none}
 </div>
 
 <div class="scrim" id="scrim"></div>
-<aside class="drawer" id="drawer" aria-label="Video details" aria-hidden="true"><div class="dh"><div style="display:flex;gap:6px"><button class="ghost" id="dp" aria-label="Previous">‹</button><button class="ghost" id="dn" aria-label="Next">›</button></div><span id="dpos" class="sub"></span><button class="ghost" id="dx">Close</button></div><div class="db" id="db"></div></aside>
+<aside class="drawer" id="drawer" aria-label="Video details" aria-hidden="true"><div class="dh"><div style="display:flex;gap:6px"><button class="ghost" id="dp" aria-label="Previous">‹</button><button class="ghost" id="dn" aria-label="Next">›</button></div><span id="dpos" class="sub"></span><div style="display:flex;gap:6px"><button class="ghost dexp" id="dw" aria-label="Expand panel" aria-pressed="false" title="Expand panel"></button><button class="ghost" id="dx">Close</button></div></div><div class="db" id="db"></div><div class="dgrip" id="dg" role="separator" aria-orientation="vertical" aria-label="Resize panel" title="Drag to resize, double-click to reset"></div></aside>
 
 <button class="fab" id="fab">Ask the Decoder</button>
 <div class="chat" id="chat" hidden aria-label="Ask the Decoder"><div class="chh">Ask the Decoder<button class="ghost" id="cx" style="height:28px">Close</button></div>
@@ -401,6 +429,22 @@ function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return
 function med(a){if(!a.length)return 0;a=a.slice().sort(function(x,y){return x-y});return a[Math.floor(a.length/2)]}
 function fmt(n){return n>=1e6?(n/1e6).toFixed(1)+"M":n>=1e3?Math.round(n/1e3)+"k":String(n||0)}
 function col(k){return HN[k]?"var(--"+k+")":"var(--fnt)"}
+// Plain-language definitions shown when hovering a card title in the drawer. Option definitions mirror schema.json and judge.json.
+var DEF={hook:"The opening technique the title uses to grab attention in the first second.",
+  topic:"What the video is mainly about.",
+  structure:"How the video is laid out from start to finish.",
+  promises_number:"Whether the title promises a specific number, like \u201c3 tips\u201d or \u201c$10k in 30 days\u201d.",
+  strength:"How likely the title is to stop someone mid-scroll.",
+  cta:"Call to action: whether the description asks viewers to do something, like follow, comment, or click a link.",
+  fit:"Whether this hook sounds like the creator\u2019s best-performing titles.",
+  lift_odds:"Odds this hook beats the creator\u2019s typical Short, given which hook types outperform on this channel."};
+var TDEF={choice:"Jev picked one option. Each bar is how likely that option was, and the confidence is for the top pick.",
+  score:"Jev rated it on a scale. Each bar is how likely that rating was.",
+  noul:"A yes or no question. The bar is Jev\u2019s probability that the answer is yes."};
+var OPT={hook:{curiosity:"Teases information without revealing it",recognition:"Makes a specific type of viewer feel seen",result:"Promises or shows a concrete outcome or number",contrarian:"Challenges common advice or a popular belief",story:"Opens a personal story or moment"},
+  structure:{opinion:"States a view or take",story:"Tells a personal story or moment",listicle:"A list of tips, steps, or examples",problem_solution:"Names a problem, then gives the fix",tutorial:"Shows how to do something step by step"},
+  topic:{education:"Teaches a skill, method, fact, or explanation",personal_story:"Focuses on the creator\u2019s own experience or journey",opinion:"Argues for a viewpoint or reaction",product:"Reviews, demonstrates, or recommends a product or service",entertainment:"Primarily aims to amuse, surprise, or entertain"},
+  strength:{Weak:"Easy to scroll past",Decent:"Gets attention, but not exceptional","Scroll-stopping":"Very likely to make viewers stop"}};
 function hn(k){return HN[k]||String(k||"Unlabeled").replace(/_/g," ")}
 function toast(t){var e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(e._t);e._t=setTimeout(function(){e.classList.remove("show")},1800)}
 
@@ -598,18 +642,34 @@ function topList(){return dec().slice().sort(function(a,b){return b.views-a.view
 
 /* ---------- drawer ---------- */
 var dl=[],di=0,dR=null;
-function pr(p,top,c){p=p||{};return Object.keys(p).sort(function(a,b){return p[b]-p[a]}).map(function(k){return '<div class="pr'+(k===top?" win":"")+'"><span>'+esc(hn(k))+'</span><i style="--w:'+Math.round(p[k]*100)+'%;--c:'+(c?col(k):"var(--ink)")+'"></i><span>'+Math.round(p[k]*100)+'%</span></div>'}).join("")}
-function block(k,a){if(!a)return "";var h='<div class="ans"><div class="ah"><b>'+esc(hn(k))+' <span style="font-weight:400;color:var(--fnt)">'+esc(a.type)+'</span></b>',b="";
-  if(a.type==="choice"){h+='<span>'+Math.round((a.confidence||0)*100)+'% confident</span></div>';b=pr(a.probabilities,a.choice,k==="hook")}
-  else if(a.type==="score"){var lg=a.legend||{},lab=lg[Math.round(a.score)]||a.score,pp={};Object.keys(a.probabilities||{}).forEach(function(i){pp[lg[i]||i]=a.probabilities[i]});h+='<span>'+esc(lab)+'</span></div>';b=pr(pp,lab)}
+function pr(p,top,c,d){p=p||{};d=d||{};return Object.keys(p).sort(function(a,b){return p[b]-p[a]}).map(function(k){return '<div class="pr'+(k===top?" win":"")+'"'+(d[k]?' title="'+esc(hn(k)+": "+d[k])+'"':'')+'><span>'+esc(hn(k))+'</span><i style="--w:'+Math.round(p[k]*100)+'%;--c:'+(c?col(k):"var(--ink)")+'"></i><span>'+Math.round(p[k]*100)+'%</span></div>'}).join("")}
+function block(k,a){if(!a)return "";var tip=(DEF[k]||"Jev\u2019s answer to the \u201c"+esc(hn(k))+"\u201d question in your schema.")+(TDEF[a.type]?'<em>'+esc(a.type)+': '+esc(TDEF[a.type])+'</em>':'');
+  var h='<div class="ans"><div class="ah"><b class="tip" tabindex="0" aria-describedby="tip-'+esc(k)+'">'+esc(hn(k))+' <span style="font-weight:400;color:var(--fnt)">'+esc(a.type)+'</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M8 7.2v4" stroke-linecap="round"/><circle cx="8" cy="4.9" r=".6" fill="currentColor" stroke="none"/></svg></b><span class="tipb" role="tooltip" id="tip-'+esc(k)+'">'+tip+'</span>',b="";
+  if(a.type==="choice"){h+='<span>'+Math.round((a.confidence||0)*100)+'% confident</span></div>';b=pr(a.probabilities,a.choice,k==="hook",OPT[k])}
+  else if(a.type==="score"){var lg=a.legend||{},lab=lg[Math.round(a.score)]||a.score,pp={};Object.keys(a.probabilities||{}).forEach(function(i){pp[lg[i]||i]=a.probabilities[i]});h+='<span>'+esc(lab)+'</span></div>';b=pr(pp,lab,false,OPT[k])}
   else{var n=+a.noul||0;h+='<span>'+(n>=.5?"Yes":"No")+'</span></div>';b='<div class="pr win"><span>Probability</span><i style="--w:'+Math.round(n*100)+'%"></i><span>'+Math.round(n*100)+'%</span></div>'}return h+b+'</div>'}
 function openD(i,l){openDr(l,i,rD)}
 // The drawer shows either videos (rD) or scored hooks (rH); dl holds the list it steps through.
 function openDr(l,i,render){dl=l&&l.length?l:[i];di=Math.max(0,dl.indexOf(i));dR=render;dR();$("drawer").classList.add("open");$("drawer").setAttribute("aria-hidden","false");$("scrim").classList.add("open");$("dx").focus()}
 function closeAll(){$("drawer").classList.remove("open");$("drawer").setAttribute("aria-hidden","true");$("scrim").classList.remove("open");closeSide()}
 function rD(){var v=D.videos[dl[di]];if(!v)return;var all=med(dec().map(function(x){return x.views}))||1,a=v.ans||{};$("dpos").textContent=(di+1)+" of "+dl.length;
-  $("db").innerHTML='<div class="dthumb" style="background:'+bg(v)+'"></div><h3>'+esc(v.title)+(v.conf<U.thr?'<span class="flag">Needs review</span>':'')+'</h3><div class="sub">Posted '+new Date(v.rec.posted_at).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})+'</div>'+
-  '<div class="dstats"><div><b>'+fmt(v.views)+'</b><span>views</span></div><div><b>'+(v.views/all).toFixed(1)+'x</b><span>vs median</span></div><div><b>'+Math.round(v.conf*100)+'%</b><span>lowest confidence</span></div></div>'+Object.keys(a).map(function(k){return block(k,a[k])}).join("")+'<p><a href="'+esc(v.rec.url)+'" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600">Open on YouTube</a></p>'}
+  $("db").innerHTML='<div class="dv"><div class="dtop"><a class="dthumb" href="'+esc(v.rec.url)+'" target="_blank" rel="noopener" aria-label="Watch on YouTube" title="Watch on YouTube" style="background:'+bg(v)+'"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></span></a><div><h3>'+esc(v.title)+(v.conf<U.thr?'<span class="flag">Needs review</span>':'')+'</h3><div class="sub">Posted '+new Date(v.rec.posted_at).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})+'</div>'+
+  '<div class="dstats"><div><b>'+fmt(v.views)+'</b><span>views</span></div><div><b>'+(v.views/all).toFixed(1)+'x</b><span>vs median</span></div><div><b>'+Math.round(v.conf*100)+'%</b><span>lowest confidence</span></div></div></div></div><div class="ansg">'+Object.keys(a).map(function(k){return block(k,a[k])}).join("")+'</div></div>'}
+// Panel width: drag the left edge, or toggle between the default and wide sizes. Content reflows through container queries on .db.
+var DW_MIN=360,DW_KEY="cd-drawer-w";
+function dwMax(){return Math.max(DW_MIN,innerWidth-64)}
+var dwCur=0,IC_EXP='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4v4M6 14H2v-4M14 2L9 7M2 14l5-5"/></svg>',IC_COL='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 7H9V3M3 9h4v4M9 7l5-5M7 9l-5 5"/></svg>';
+// w is a pixel width, "wide", or 0 for the default size.
+function setDW(w){var d=$("drawer"),wide=w==="wide";if(!wide&&w)w=Math.round(Math.min(dwMax(),Math.max(DW_MIN,w)));dwCur=w;
+  d.classList.toggle("wide",wide);if(!wide&&w)d.style.setProperty("--dw",w+"px");else d.style.removeProperty("--dw");
+  var big=wide||w>600,b=$("dw");b.setAttribute("aria-pressed",String(big));b.setAttribute("aria-label",big?"Collapse panel":"Expand panel");b.title=big?"Collapse panel":"Expand panel";b.innerHTML=big?IC_COL:IC_EXP;
+  try{if(w)localStorage.setItem(DW_KEY,String(w));else localStorage.removeItem(DW_KEY)}catch(e){}}
+try{setDW(localStorage.getItem(DW_KEY)==="wide"?"wide":+localStorage.getItem(DW_KEY)||0)}catch(e){setDW(0)}
+$("dw").onclick=function(){setDW(dwCur==="wide"||dwCur>600?0:"wide")};
+$("dg").ondblclick=function(){setDW(0)};
+$("dg").onpointerdown=function(e){e.preventDefault();var d=$("drawer");d.classList.add("drag");$("dg").setPointerCapture(e.pointerId);
+  $("dg").onpointermove=function(m){setDW(innerWidth-m.clientX)};
+  $("dg").onpointerup=$("dg").onpointercancel=function(){d.classList.remove("drag");$("dg").onpointermove=$("dg").onpointerup=$("dg").onpointercancel=null}};
 $("dx").onclick=closeAll;$("scrim").onclick=closeAll;$("dp").onclick=function(){if(di>0){di--;dR()}};$("dn").onclick=function(){if(di<dl.length-1){di++;dR()}};
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeAll();$("chat").hidden=true}if($("drawer").classList.contains("open")){if(e.key==="ArrowRight")$("dn").click();if(e.key==="ArrowLeft")$("dp").click()}});
 document.addEventListener("click",function(e){var t=e.target.closest(".tile[data-v]");if(t){var v=D.videos[+t.dataset.v];if(v)openD(v.i,galleryList().map(function(x){return x.i}))}});
@@ -651,13 +711,13 @@ function rH(){var c=hookAt(),isLive=dl[di]===-1;if(!c)return;
   var fix=weak==="hook"?"The line itself is the weak spot. Lead with something more specific or surprising.":weak==="fit"?"It doesn't sound like them yet. Borrow words and topics from their winning Shorts below.":
     pt.indexOf(k)>=0?"Lift odds are lowest. Make the payoff clearer, since "+hn(k)+" hooks already work here.":hn(k)+" isn't what outperforms here. Their winners lean on "+pt.map(hn).join(" and ")+" hooks.";
   var same=dec().filter(function(v){return v.hook===k}).sort(function(x,y){return y.views-x.views});
-  var ev=same.length?'<p class="sub" style="margin:0">'+same.length+' of their Shorts use '+esc(hn(k))+' hooks, at '+(D.lift[k]||0).toFixed(1)+'x the channel median.</p>'+same.slice(0,3).map(function(v){return '<button class="vrow" data-vv="'+v.i+'"><span style="background:'+bg(v)+'"></span><div>'+esc(v.title)+'<small>'+fmt(v.views)+' views, '+(v.views/all).toFixed(1)+'x median</small></div></button>'}).join(""):
+  var ev=same.length?'<p class="sub" style="margin:0">'+same.length+' of their Shorts use '+esc(hn(k))+' hooks, at '+(D.lift[k]||0).toFixed(1)+'x the channel median.</p>'+'<div class="evg">'+same.slice(0,3).map(function(v){return '<button class="vrow" data-vv="'+v.i+'"><span style="background:'+bg(v)+'"></span><div>'+esc(v.title)+'<small>'+fmt(v.views)+' views, '+(v.views/all).toFixed(1)+'x median</small></div></button>'}).join("")+'</div>':
     '<p class="sub" style="margin:0">They haven\'t posted a '+esc(hn(k))+' hook yet, so there\'s no track record. Untested can mean opportunity or risk.</p>';
   $("db").innerHTML='<div class="hhero" style="--hc:'+col(k)+';--s:'+c.score+'"><div class="ring"><b>'+c.score+'</b></div><div><div class="sub"><span class="dot" style="background:'+col(k)+';display:inline-block;margin-right:5px"></span>'+esc(hn(k))+' hook, '+(isLive?'would rank #'+rank+' of '+of:'#'+rank+' of '+of)+'</div><h3>“'+esc(c.text)+'”</h3></div></div>'+
     '<div class="verdict"><b>'+head+'</b>'+esc(fix)+'</div>'+
     '<div class="sec">How the score adds up</div>'+parts.map(function(p){var v=b[p[0]]||0;return '<div class="brk" style="--hc:'+col(k)+'"><span>'+p[1]+' <span style="color:var(--fnt)">×'+Math.round(p[2]*100)+'%</span></span><i style="--w:'+Math.round(v*100)+'%"></i><b>+'+Math.round(v*p[2]*100)+'</b><small>'+esc(p[3])+'</small></div>'}).join("")+
     '<div class="sec">'+esc(hn(k))+' on this channel</div>'+ev+
-    (a.type||a.strength?'<div class="sec">Jev\'s answers</div>'+block("hook",a.type)+block("strength",a.strength)+block("fit",a.fit)+block("lift_odds",a.lift_odds):"")+
+    (a.type||a.strength?'<div class="sec">Jev\'s answers</div>'+'<div class="ansg">'+block("hook",a.type)+block("strength",a.strength)+block("fit",a.fit)+block("lift_odds",a.lift_odds)+'</div>':"")+
     '<div class="hacts">'+(isLive?'<button class="btn" data-ha="add">Add to list</button>':'')+'<button class="'+(isLive?"ghost":"btn")+'" data-ha="save">'+(sv?"Shortlisted ✓":"Shortlist")+'</button><button class="ghost" data-ha="copy">Copy</button><button class="ghost" data-ha="vary">Edit and rescore</button></div>'}
 // Adding or shortlisting the live preview moves it into the ranked list, and the drawer follows it there.
 function adoptLive(){var c=live;D.hooks.push(c);live=null;$("hookIn").value="";renderHooks();openH(D.hooks.length-1);return c}
