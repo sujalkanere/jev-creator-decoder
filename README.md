@@ -55,7 +55,8 @@ Google Cloud only supplies the YouTube API key. TypeSafe runs Jev. Cloudflare ho
 - **Gallery:** filter by hook, Needs review, or Outperformers, sort by views or date, click any video to see every Jev answer.
 - **Usage vs lift:** click a hook row to filter the gallery to it.
 - **Hooks:** Copy or Shortlist any scored hook.
-- **Copy client brief:** Winning Formula, top videos with links, and your shortlisted hooks, ready to paste.
+- **Your hooks:** **View list** on the Score new hooks card (or **Your hooks** in the sidebar) shows every hook you added or drafted, ranked by score, with an All / Shortlisted filter. **Add to list** opens it with the new hook highlighted. Shortlisted hooks are saved per creator; the rest clear on reload.
+- **View creator snapshot:** opens a card in the side panel with the Winning Formula, top videos with links, and your shortlisted hooks. **Copy as text** inside it gives you a paste-ready version.
 - **Download CSV:** every video with its Jev labels, confidence, views, and lift.
 
 ## The files you edit
