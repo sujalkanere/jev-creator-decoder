@@ -325,12 +325,18 @@ body:not(.has-data) .zoomc{display:none}
 .hsp{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--mut);margin-bottom:12px}.hsp .bar{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}.hsp .bar i{display:block;height:100%;background:var(--ink);transition:width .3s}
 .hsv{border:1px solid var(--line);border-left:4px solid var(--best);border-radius:12px;padding:12px 14px;margin-bottom:12px}.hsv b{display:block;font-size:15px;line-height:1.4}.hsv p{margin:6px 0 0;font-size:13px;color:var(--mut)}.hsv small{display:block;margin-top:6px;font-size:12px;color:var(--fnt)}
 .hsn{font-size:12.5px;padding:9px 12px;border-radius:10px;background:color-mix(in srgb,var(--warn) 14%,var(--card));margin-bottom:10px}
-.hsc{display:grid;grid-template-columns:1fr;gap:12px}@container (min-width:760px){.hsc{grid-template-columns:1fr 1fr}}
+.hsc{display:grid;grid-template-columns:1fr;gap:12px}@container (min-width:760px){.hsc{grid-template-columns:1fr 1fr}.hsg{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:0;align-content:start}}
 .hsg{border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}.hsg h4{margin:0;font-size:14px}.hsg>.sub{margin:2px 0 8px;font-size:12px}
 .hsb{display:grid;grid-template-columns:96px 1fr 34px;gap:8px;align-items:center;font-size:12.5px;margin-top:4px}.hsb i{height:7px;border-radius:4px;background:var(--line);position:relative;overflow:hidden}.hsb i::after{content:"";position:absolute;inset:0;width:var(--w);background:var(--hc)}.hsb b{text-align:right;font-weight:600}
 .hss{font-size:12px;color:var(--mut);margin:8px 0 6px}
 .hsr{display:flex;gap:10px;align-items:center;width:100%;border:0;border-top:1px solid var(--line);background:none;color:var(--ink);font:inherit;text-align:left;padding:7px 0;cursor:pointer}.hsr:hover{background:var(--sunk)}
 .hsr>span:first-child{width:26px;height:40px;border-radius:5px;flex:none;background-size:cover;background-position:center}.hsr div{flex:1;min-width:0;font-size:12.5px;line-height:1.3}.hsr div small{display:block;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hsr{position:relative}.hsr.act{border-radius:10px;background:color-mix(in srgb,var(--recognition) 6%,transparent)}
+.hsr.act::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;
+  background:conic-gradient(from var(--ang),transparent 0deg 200deg,var(--curiosity) 260deg,var(--recognition) 310deg,var(--result) 345deg,transparent 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+  animation:orbit 1.1s linear infinite}
+@media (prefers-reduced-motion:reduce){.hsr.act::before{animation:none;background:linear-gradient(90deg,var(--curiosity),var(--recognition),var(--result))}}
 .txs{font-size:11px;border-radius:999px;padding:2px 8px;border:1px solid var(--line);color:var(--mut);white-space:nowrap;flex:none}.txs.ok{border-color:var(--best);color:var(--best)}.txs.none{border-color:var(--warn);color:var(--warn)}.txs.work{border-style:dashed}
 .dtx{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px}.dtx .kh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
 .dtx .tt{margin-top:8px;max-height:240px;overflow-y:auto;font-size:13px;line-height:1.55}.dtx mark{background:color-mix(in srgb,var(--best) 22%,transparent);color:inherit;border-radius:3px;padding:0 1px}.dtx .tt small{display:block;color:var(--fnt);font-size:11px;margin-bottom:4px}
@@ -942,11 +948,11 @@ function renderHS(){var el=$("hs");if(!el)return;var X=D,T=X.tx;$("txClear").hid
         '<small>Based on '+A.n+' top and '+B.n+' recent Shorts with transcripts'+(miss?' ('+miss+' missing: '+(A.miss.none+B.miss.none)+' No transcript, '+(A.miss.no_speech+B.miss.no_speech)+' No clear speech)':'')+'.</small></div>'}
     else h+='<div class="hsv" style="border-left-color:var(--warn)"><b>Not enough transcripts for a verdict.</b><p>Jev needs at least one transcribed Short in each group. '+(ok?ok+" of "+tot+" were transcribed.":"None were transcribed.")+'</p></div>'}
   var col2=function(title,ids,S,latest){var hooks=Object.keys(S.c).sort(function(a,b){return S.c[b]-S.c[a]}),st=Object.keys(S.sc).sort(function(a,b){return S.sc[b]-S.sc[a]}).slice(0,3);
-    return '<div class="hsg"><h4>'+title+'</h4><div class="sub">'+S.n+' of '+ids.length+' transcribed'+(latest?' · judged on hooks, not views':'')+'</div>'+
-      (hooks.length?hooks.map(function(k){return '<div class="hsb" style="--hc:'+col(k)+'"><span>'+esc(hn(k))+'</span><i style="--w:'+Math.round(S.c[k]/S.n*100)+'%"></i><b>'+S.c[k]+'</b></div>'}).join(""):'<div class="hss">No spoken hooks yet.</div>')+
-      (st.length?'<div class="hss">Structure: '+st.map(function(k){return esc(hn(k))+' '+S.sc[k]}).join(", ")+'</div>':'')+
+    return '<div class="hsg"><div><h4>'+title+'</h4><div class="sub">'+S.n+' of '+ids.length+' transcribed'+(latest?' · judged on hooks, not views':'')+'</div></div><div>'+
+      (hooks.length?hooks.map(function(k){return '<div class="hsb" style="--hc:'+col(k)+'"><span>'+esc(hn(k))+'</span><i style="--w:'+Math.round(S.c[k]/S.n*100)+'%"></i><b>'+S.c[k]+'</b></div>'}).join(""):'<div class="hss">No spoken hooks yet.</div>')+'</div><div>'+
+      (st.length?'<div class="hss">Structure: '+st.map(function(k){return esc(hn(k))+' '+S.sc[k]}).join(", ")+'</div>':'')+'</div><div>'+
       ids.map(function(i){var v=D.videos[i],t=txOf(v)||{},s=t.status||"none",cls=s==="ok"?"ok":(s==="none"||s==="no_speech")?"none":"work",f=latest&&X.cmp&&X.cmp.follows?X.cmp.follows[v.id]:null;
-        return '<button class="hsr" data-hv="'+i+'" data-hg="'+(latest?"latest":"top")+'"><span style="background-image:url(\''+esc(v.thumb||"")+'\')"></span><div>'+esc(v.title)+'<small>'+fmt(v.views)+' views'+(v.src==="transcript"&&v.hook?' · opens with '+esc(hn(v.hook)):'')+(f!=null?' · '+(f>=.5?'follows the pattern':'different hook')+' ('+Math.round(f*100)+'%)':'')+'</small></div><span class="txs '+cls+'"'+(t.why?' title="'+esc(t.why)+'"':'')+'>'+TXL[s]+'</span></button>'}).join("")+'</div>'};
+        return '<button class="hsr'+(s==="downloading"||s==="transcribing"?' act':'')+'" data-hv="'+i+'" data-hg="'+(latest?"latest":"top")+'"><span style="background-image:url(\''+esc(v.thumb||"")+'\')"></span><div>'+esc(v.title)+'<small>'+fmt(v.views)+' views'+(v.src==="transcript"&&v.hook?' · opens with '+esc(hn(v.hook)):'')+(f!=null?' · '+(f>=.5?'follows the pattern':'different hook')+' ('+Math.round(f*100)+'%)':'')+'</small></div><span class="txs '+cls+'"'+(t.why?' title="'+esc(t.why)+'"':'')+'>'+TXL[s]+'</span></button>'}).join("")+'</div></div>'};
   h+='<div class="hsc">'+col2("Top "+G.top.length+" by views",G.top,A,false)+col2("Latest "+G.latest.length,G.latest,B,true)+'</div>';
   el.innerHTML=h}
 $("hs").onclick=function(e){var r=e.target.closest("[data-hv]");if(!r)return;var g=D.grp[r.dataset.hg];openD(+r.dataset.hv,g)};
