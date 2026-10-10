@@ -1,5 +1,5 @@
 {
-  "_readme": "Questions Jev asks about every video. {v} is replaced with videos[i] so each question points at one video. Keep the hook option keys as they are: the dashboard colors depend on them. Add your own questions below.",
+  "_readme": "Questions Jev asks about every video. {v} is replaced with videos[i] so each question points at one video. Keep the hook option keys as they are: the dashboard colors depend on them. Add your own questions below. per_video_spoken gives the same questions new instructions for Shorts that have a transcript ({v}.opening is the first ~45 seconds of what is said, {v}.transcript all of it); the criteria stay the same.",
   "per_video": {
     "hook": {
       "type": "choice",
@@ -51,5 +51,13 @@
       "type": "noul",
       "instructions": "Does the title in `{v}.title` promise a specific number?"
     }
+  },
+  "per_video_spoken": {
+    "hook": "Which hook type does the speaker use in `{v}.opening`, the first ~45 seconds of what is said in the video? Use `{v}.title` only if the opening is unclear.",
+    "structure": "What structure does the video follow, based on what is said in `{v}.transcript`?",
+    "cta": "Does the speaker in `{v}.transcript`, or the description in `{v}.description`, ask the viewer to take an action, like follow, comment, or click a link?",
+    "strength": "How strong is the spoken opening `{v}.opening` as a hook for a short-form video?",
+    "topic": "What primary topic does the video cover, based on what is said in `{v}.transcript`?",
+    "promises_number": "Does the spoken opening `{v}.opening` or the title `{v}.title` promise a specific number?"
   }
 }

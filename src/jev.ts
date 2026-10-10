@@ -41,12 +41,15 @@ export async function runJev(env: any, input: { state: unknown; questions: Recor
 
 // Build one questions object for a batch: every schema question repeated per video.
 // Keys look like v3_hook. {v} in instructions becomes videos[3].
-export function buildVideoQuestions(count: number) {
+// spoken: the batch has transcripts, so use per_video_spoken's instructions (same keys and criteria).
+export function buildVideoQuestions(count: number, spoken = false) {
   const questions: Record<string, any> = {};
   const perVideo = (schema as any).per_video as Record<string, any>;
+  const spokenText = ((schema as any).per_video_spoken || {}) as Record<string, string>;
   for (let i = 0; i < count; i++) {
     for (const [key, q] of Object.entries(perVideo)) {
       const copy = JSON.parse(JSON.stringify(q));
+      if (spoken && spokenText[key]) copy.instructions = spokenText[key];
       copy.instructions = String(copy.instructions).split("{v}").join(`videos[${i}]`);
       questions[`v${i}_${key}`] = copy;
     }
@@ -66,8 +69,12 @@ function splitAnswers(answers: Record<string, any>, count: number) {
 
 export async function classifyBatch(env: any, videos: VideoRecord[], threshold = 0.6) {
   const batch = videos.slice(0, 10);
-  const state = { videos: batch.map((v) => ({ title: v.title, description: v.text })) };
-  const questions = buildVideoQuestions(batch.length);
+  // A batch is "spoken" when every Short in it has a transcript: Jev then reads what is said, not just the title.
+  const spoken = batch.every((v) => v.transcript);
+  const state = { videos: batch.map((v) => spoken
+    ? { title: v.title, description: v.text, opening: v.opening || "", transcript: v.transcript }
+    : { title: v.title, description: v.text }) };
+  const questions = buildVideoQuestions(batch.length, spoken);
 
   const t0 = Date.now();
   const res: any = await runJev(env, { state, questions });
@@ -80,7 +87,7 @@ export async function classifyBatch(env: any, videos: VideoRecord[], threshold =
     const a = perVideo[i];
     const choices = Object.values(a).filter((x: any) => x?.type === "choice") as any[];
     const minConf = choices.length ? Math.min(...choices.map((c) => Number(c.confidence ?? 1))) : 1;
-    return { id: v.id, answers: a, needs_review: minConf < threshold };
+    return { id: v.id, answers: a, needs_review: minConf < threshold, ...(spoken ? { source: "transcript" } : {}) };
   });
 
   return {

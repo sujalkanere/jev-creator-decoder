@@ -5,6 +5,8 @@ import { raceJev, raceLlmOne, listChallengers } from "./race";
 import { askDecoder } from "./ask";
 import { handleAuth, isSignedIn } from "./auth";
 import { withSettings, getSettings, updateSettings, setting } from "./settings";
+import { transcribe, cachedTranscripts, saveTranscript, clearTranscripts, isDailyLimit } from "./transcripts";
+import { compareGroups } from "./compare";
 
 export interface Env {
   AI: any;
@@ -43,7 +45,8 @@ export default {
     }
 
     try {
-      const body: any = req.method === "POST" ? await req.json() : {};
+      // /api/transcribe carries raw audio bytes; every other POST is JSON.
+      const body: any = req.method === "POST" && url.pathname !== "/api/transcribe" ? await req.json() : {};
       // Keys and models saved in Settings override .env for this request.
       const raw = env;
       env = await withSettings(raw);
@@ -52,9 +55,34 @@ export default {
         case "/api/settings":
           if (req.method === "POST") { await updateSettings(raw, body); env = await withSettings(raw); }
           return json(await getSettings(env, raw));
+        // Hook strategy check. The browser gets audio from the local helper and posts the bytes here;
+        // only the transcript text is kept.
+        case "/api/transcribe": {
+          const handle = String(url.searchParams.get("handle") || "").toLowerCase(), id = String(url.searchParams.get("id") || "");
+          if (!handle || !/^[\w-]{11}$/.test(id)) return json({ error: "Missing handle or video id" }, 400);
+          const audio = await req.arrayBuffer();
+          if (!audio.byteLength) return json({ error: "No audio received" }, 400);
+          try {
+            const t = await transcribe(env, audio, Number(url.searchParams.get("dur") || 0));
+            await saveTranscript(env, handle, id, t);
+            return json({ id, ...t });
+          } catch (err: any) {
+            if (isDailyLimit(err)) return json({ error: "Workers AI's free daily limit is used up. It resets at 00:00 UTC.", limit: true }, 429);
+            throw err;
+          }
+        }
+        case "/api/transcripts": {
+          const handle = String(url.searchParams.get("handle") || body.handle || "").toLowerCase();
+          if (!handle) return json({ error: "Missing handle" }, 400);
+          if (req.method === "POST" && body.action === "clear") { await clearTranscripts(env, handle); return json({ items: [] }); }
+          return json({ items: await cachedTranscripts(env, handle) });
+        }
+        case "/api/compare":
+          return json(await compareGroups(env, body.top || [], body.latest || []));
         case "/api/data/forget-all":
           await env.DB.prepare("DELETE FROM decodes").run();
           await env.DB.prepare("DELETE FROM shortlist").run();
+          await env.DB.prepare("DELETE FROM transcripts").run();
           return json({ ok: true });
         case "/api/data/clear-shortlist":
           await env.DB.prepare("DELETE FROM shortlist").run();
@@ -115,6 +143,7 @@ export default {
           const h = String(body.handle || "").toLowerCase();
           await env.DB.prepare("DELETE FROM decodes WHERE handle = ?").bind(h).run();
           await env.DB.prepare("DELETE FROM shortlist WHERE handle = ?").bind(h).run();
+          await env.DB.prepare("DELETE FROM transcripts WHERE handle = ?").bind(h).run();
           return json({ ok: true });
         }
         case "/api/race/jev":

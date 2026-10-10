@@ -1,7 +1,7 @@
 import type { AdapterResult, VideoRecord } from "./adapter";
 
 const API = "https://www.googleapis.com/youtube/v3";
-const MAX_SHORTS = 600;      // cap for the lab
+const MAX_SHORTS = 200;      // cap for the lab: the newest 200 Shorts
 // Each page of 50 uploads costs 2 calls (list + details), plus 1–2 to find the channel.
 // 23 pages keeps a pull at 48 calls or fewer, under the Workers Free plan's 50 per request,
 // and scans up to 1,150 recent uploads.
@@ -96,6 +96,8 @@ export async function fetchShorts(input: string, key: string): Promise<AdapterRe
     if (!pageToken) break;
   }
 
+  // The uploads playlist comes back newest first; sort anyway so the cap always keeps the latest Shorts.
+  records.sort((a, b) => b.posted_at.localeCompare(a.posted_at));
   const th = channel.snippet.thumbnails || {};
   const avatar = (th.medium || th.default || {}).url || "";
   return { channel: { id: channel.id, title: channel.snippet.title, handle, avatar }, records, quota_units: units };

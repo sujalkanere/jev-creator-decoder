@@ -1,0 +1,20 @@
+{
+  "_readme": "Questions Jev asks in the hook strategy check, comparing what the creator says in the opening of their top Shorts with their latest ones. top[] and latest[] each hold { title, opening }, where opening is the first ~45 seconds of what is said. {i} is replaced with each latest Short's index. Latest Shorts are judged on hook patterns, never on views: they haven't had time to build up views yet.",
+  "per_latest": {
+    "follows": {
+      "type": "noul",
+      "instructions": "Does `latest[{i}].opening` grab attention the same way most of the openings in `top` do? Judge only the hook pattern (how the first lines pull the viewer in), not the topic, wording, or views."
+    }
+  },
+  "overall": {
+    "closeness": {
+      "type": "score",
+      "instructions": "Taken together, how closely do the openings in `latest` follow the hook patterns of the openings in `top`? Judge only how the openings pull the viewer in, not the topics or the views.",
+      "criteria": [
+        "They open in clearly different ways from the top performers",
+        "Some follow the winning hook patterns and some don't",
+        "They mostly open the way the top performers do"
+      ]
+    }
+  }
+}

@@ -11,6 +11,8 @@ export interface VideoRecord {
   posted_at: string;     // ISO date
   thumbnail: string;     // image URL
   duration_s: number;
+  opening?: string;      // set only for the hook strategy check: what is said in the first ~45 s
+  transcript?: string;   // and everything that is said (Workers AI Whisper)
 }
 
 export interface AdapterResult {

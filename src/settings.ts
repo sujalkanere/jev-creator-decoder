@@ -6,7 +6,7 @@ import { CHALLENGERS, listChallengers } from "./race";
 
 export const SECRET_KEYS = ["YOUTUBE_API_KEY", "TYPESAFE_API_KEY", "ANTHROPIC_API_KEY", "OPENAI_API_KEY", "OPENROUTER_API_KEY"];
 const MODEL_KEYS = ["ANTHROPIC_MODEL", "OPENAI_MODEL", "OPENROUTER_MODEL"];
-export const DEFAULTS = { CHAT_MODEL: "default", REVIEW_THRESHOLD: "0.6", DRAFT_COUNT: "5" };
+export const DEFAULTS = { CHAT_MODEL: "default", REVIEW_THRESHOLD: "0.6", DRAFT_COUNT: "5", TRANSCRIPT_GROUP: "10" };
 const PLAIN_KEYS = [...MODEL_KEYS, ...Object.keys(DEFAULTS)];
 const PREFIX = "cfg:";
 
@@ -73,6 +73,7 @@ export async function getSettings(env: any, rawEnv: any) {
     chat_fallback: pickOk ? null : CHALLENGERS[pick]?.provider || pick,
     REVIEW_THRESHOLD: Number(setting(env, "REVIEW_THRESHOLD")),
     DRAFT_COUNT: Number(setting(env, "DRAFT_COUNT")),
+    TRANSCRIPT_GROUP: Number(setting(env, "TRANSCRIPT_GROUP")),
   };
 }
 
@@ -81,6 +82,7 @@ function check(k: string, v: string) {
   if (MODEL_KEYS.includes(k)) { if (v.length > 120 || !/^[\w.\-/:@]+$/.test(v)) throw new Error("Model ids use letters, numbers, and . - / : @ only."); return; }
   if (k === "CHAT_MODEL") { if (v !== "default" && !CHALLENGERS[v]) throw new Error("Unknown chat model."); return; }
   if (k === "REVIEW_THRESHOLD") { const n = Number(v); if (!(n >= 0.3 && n <= 0.95)) throw new Error("Threshold must be between 0.30 and 0.95."); return; }
+  if (k === "TRANSCRIPT_GROUP") { if (v !== "5" && v !== "10") throw new Error("Group size must be 5 or 10."); return; }
   if (k === "DRAFT_COUNT") { const n = Number(v); if (!Number.isInteger(n) || n < 3 || n > 10) throw new Error("Draft count must be 3 to 10."); return; }
   throw new Error(`Unknown setting ${k}.`);
 }

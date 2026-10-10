@@ -120,4 +120,19 @@ if (!/^SETTINGS_SECRET=\S+/m.test(cur)) {
   console.log("\nCreated SETTINGS_SECRET in .env (encrypts keys you save in Settings).");
 }
 
+// The hook strategy check runs yt-dlp through uv's uvx to download Shorts audio (npm run dev starts the helper).
+// Optional: without uv the dashboard still works, and those Shorts show "No transcript".
+console.log("\nTranscripts: checking for uv");
+const has = (cmd) => { try { execSync(cmd, { stdio: "pipe" }); return true; } catch { return false; } };
+if (!has("uvx --version")) {
+  console.log("     uv isn't installed. It's needed for the hook strategy check (transcripts). Install it, then open a new terminal:");
+  console.log(process.platform === "win32"
+    ? '       powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"'
+    : "       curl -LsSf https://astral.sh/uv/install.sh | sh");
+  console.log("     More options: https://docs.astral.sh/uv/getting-started/installation/");
+} else {
+  console.log("     uv found. Fetching yt-dlp once so the first transcript run is quick...");
+  console.log(has("uvx yt-dlp --version") ? "     yt-dlp ready." : "     Couldn't start yt-dlp through uvx. npm run dev will try again.");
+}
+
 console.log("\nSetup done. Next: npm run dev, then create your dashboard password in the browser.\n");

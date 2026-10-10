@@ -5,7 +5,8 @@
   "description": "Decode any YouTube creator's Shorts with Jev, TypeSafe AI's System One model, on Cloudflare Workers.",
   "scripts": {
     "setup": "node scripts/setup.mjs",
-    "dev": "wrangler dev",
+    "dev": "node scripts/dev.mjs",
+    "helper": "node scripts/helper.mjs",
     "ship": "node scripts/ship.mjs",
     "reset-password": "node scripts/reset-password.mjs"
   },

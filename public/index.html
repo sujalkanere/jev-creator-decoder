@@ -319,6 +319,22 @@ body:not(.has-data) .zoomc{display:none}
 .sxa{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
 .sx.dz{border-color:color-mix(in srgb,var(--contrarian) 45%,var(--line))}.sx.dz .ghost.red{color:var(--contrarian);border-color:color-mix(in srgb,var(--contrarian) 45%,var(--line))}
 .snote{font-size:12.5px;padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--warn) 14%,var(--card));margin-top:10px}
+/* hook strategy check */
+.hs{padding:14px 18px 18px;container-type:inline-size}
+.hs-empty{margin:0;color:var(--mut);font-size:13.5px;max-width:720px}
+.hsp{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--mut);margin-bottom:12px}.hsp .bar{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}.hsp .bar i{display:block;height:100%;background:var(--ink);transition:width .3s}
+.hsv{border:1px solid var(--line);border-left:4px solid var(--best);border-radius:12px;padding:12px 14px;margin-bottom:12px}.hsv b{display:block;font-size:15px;line-height:1.4}.hsv p{margin:6px 0 0;font-size:13px;color:var(--mut)}.hsv small{display:block;margin-top:6px;font-size:12px;color:var(--fnt)}
+.hsn{font-size:12.5px;padding:9px 12px;border-radius:10px;background:color-mix(in srgb,var(--warn) 14%,var(--card));margin-bottom:10px}
+.hsc{display:grid;grid-template-columns:1fr;gap:12px}@container (min-width:760px){.hsc{grid-template-columns:1fr 1fr}}
+.hsg{border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}.hsg h4{margin:0;font-size:14px}.hsg>.sub{margin:2px 0 8px;font-size:12px}
+.hsb{display:grid;grid-template-columns:96px 1fr 34px;gap:8px;align-items:center;font-size:12.5px;margin-top:4px}.hsb i{height:7px;border-radius:4px;background:var(--line);position:relative;overflow:hidden}.hsb i::after{content:"";position:absolute;inset:0;width:var(--w);background:var(--hc)}.hsb b{text-align:right;font-weight:600}
+.hss{font-size:12px;color:var(--mut);margin:8px 0 6px}
+.hsr{display:flex;gap:10px;align-items:center;width:100%;border:0;border-top:1px solid var(--line);background:none;color:var(--ink);font:inherit;text-align:left;padding:7px 0;cursor:pointer}.hsr:hover{background:var(--sunk)}
+.hsr>span:first-child{width:26px;height:40px;border-radius:5px;flex:none;background-size:cover;background-position:center}.hsr div{flex:1;min-width:0;font-size:12.5px;line-height:1.3}.hsr div small{display:block;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.txs{font-size:11px;border-radius:999px;padding:2px 8px;border:1px solid var(--line);color:var(--mut);white-space:nowrap;flex:none}.txs.ok{border-color:var(--best);color:var(--best)}.txs.none{border-color:var(--warn);color:var(--warn)}.txs.work{border-style:dashed}
+.dtx{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px}.dtx .kh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
+.dtx .tt{margin-top:8px;max-height:240px;overflow-y:auto;font-size:13px;line-height:1.55}.dtx mark{background:color-mix(in srgb,var(--best) 22%,transparent);color:inherit;border-radius:3px;padding:0 1px}.dtx .tt small{display:block;color:var(--fnt);font-size:11px;margin-bottom:4px}
+.dtx a{color:var(--ink);font-weight:600;font-size:12.5px}
 /* newest draft round: tinted and tagged until the next Draft */
 .newp{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--hc,var(--ink));color:#fff;border-radius:999px;padding:1px 7px;margin:0 6px;vertical-align:1px}
 .hc.new,.lr.new{border-color:var(--hc);background:color-mix(in srgb,var(--hc) 7%,var(--card))}
@@ -366,6 +382,7 @@ body:not(.has-data) .zoomc{display:none}
     <button class="it" data-go="s1"><i>▦</i>Decode the library</button>
     <button class="it" data-go="s2"><i>◔</i>Find what outperforms</button>
     <button class="it" data-go="s3"><i>✎</i>Score new hooks</button>
+    <button class="it" data-go="s6"><i>◎</i>Hook strategy check</button>
     <button class="it" data-go="s4"><i>⋯</i>Jev activity</button>
     <button class="it" id="goList"><i>☰</i>Your hooks</button>
   </nav>
@@ -426,6 +443,10 @@ body:not(.has-data) .zoomc{display:none}
     <div class="stats"><div><b id="k7">0</b><span>Scored</span></div><div><b id="k8">0 ms</b><span>Avg judgment</span></div><div><b id="k9">0</b><span>Shortlisted</span></div></div>
     <div class="vis" id="vis3"><div class="hl" id="hl"><div class="gal"><div class="none">Decode a creator, then type a hook below or click Draft.</div></div></div></div>
     <div class="pf" style="display:block"><div class="sug" id="sug"></div><div class="hin" style="padding:0;width:100%"><input id="hookIn" placeholder="Type a hook to score it live" aria-label="Type a hook"><button class="btn" id="draft">Draft 5</button></div></div>
+  </section>
+
+  <section class="span12 card" id="s6"><div class="ph"><h2>Hook strategy check</h2><div style="display:flex;align-items:center;gap:10px"><span class="st" id="st6">Waiting</span><button class="ghost hlb" id="txClear" hidden>Clear cached transcripts</button></div></div>
+    <div class="hs" id="hs"></div>
   </section>
 
   <section class="span4 card" id="s4"><div class="ph"><h2>Every Jev call</h2><span class="st" id="qpc">0 questions per call</span></div><div class="lanes" style="height:150px"><canvas id="lanes" aria-label="Jev calls across four lanes"></canvas></div></section>
@@ -552,9 +573,9 @@ Object.keys(TIPS).forEach(function(k){$(k).parentNode.dataset.tip=esc(TIPS[k])})
 (function(){var h="";for(var i=0;i<18;i++)h+='<i style="--i:'+i+';--hc:var(--'+HOOKS[i%HOOKS.length][0]+')"><b></b></i>';$("pullRow").innerHTML=h})();
 
 /* ---------- state ---------- */
-var D;function fresh(){return {pending:[],drafted:false,handle:"",channel:null,videos:[],cached:false,running:false,vt:0,t0:0,end:0,calls:[],ev:[],decoded:0,qpc:0,q:0,cost:0,dcost:0,results:[],hooks:[],jms:0,jn:0,lift:{},saved:[],latest:[]}}D=fresh();
+var D;function fresh(){return {pending:[],drafted:false,handle:"",channel:null,videos:[],cached:false,running:false,vt:0,t0:0,end:0,calls:[],ev:[],decoded:0,qpc:0,q:0,cost:0,dcost:0,results:[],hooks:[],jms:0,jn:0,lift:{},saved:[],latest:[],tx:null,grp:null,cmp:null}}D=fresh();
 function toV(r,i){return {i:i,rec:r,id:r.id,title:r.title||"",views:r.views||0,likes:r.likes||0,age:Math.max(1,Math.round((Date.now()-Date.parse(r.posted_at))/864e5)),thumb:r.thumbnail,hook:null,conf:1,ans:null,at:null}}
-function apply(v,r,t){var a=r.answers||{};v.ans=a;v.hook=a.hook&&HN[a.hook.choice]?a.hook.choice:null;var cs=Object.keys(a).map(function(k){return a[k]}).filter(function(x){return x&&x.type==="choice"}).map(function(x){return +x.confidence});v.conf=cs.length?Math.min.apply(null,cs):1;v.at=t}
+function apply(v,r,t){var a=r.answers||{};v.ans=a;v.src=r.source||null;v.hook=a.hook&&HN[a.hook.choice]?a.hook.choice:null;var cs=Object.keys(a).map(function(k){return a[k]}).filter(function(x){return x&&x.type==="choice"}).map(function(x){return +x.confidence});v.conf=cs.length?Math.min.apply(null,cs):1;v.at=t}
 function dec(){return D.videos.filter(function(v){return v.at!==null})}
 function flagged(){return dec().filter(function(v){return v.conf<U.thr})}
 function bg(v){return v.thumb?"url('"+String(v.thumb).replace(/'/g,"%27")+"') center/cover":"linear-gradient(170deg,#9AA0B4,#565D78)"}
@@ -694,7 +715,7 @@ function openDr(l,i,render){dl=l&&l.length?l:[i];di=Math.max(0,dl.indexOf(i));dR
 function closeAll(){$("drawer").classList.remove("open");$("drawer").setAttribute("aria-hidden","true");$("scrim").classList.remove("open");closeSide()}
 function rD(){var v=D.videos[dl[di]];if(!v)return;var all=med(dec().map(function(x){return x.views}))||1,a=v.ans||{};$("dpos").textContent=(di+1)+" of "+dl.length;
   $("db").innerHTML='<div class="dv"><div class="dtop"><a class="dthumb" href="'+esc(v.rec.url)+'" target="_blank" rel="noopener" aria-label="Watch on YouTube" title="Watch on YouTube" style="background:'+bg(v)+'"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></span></a><div><h3>'+esc(v.title)+(v.conf<U.thr?'<span class="flag">Needs review</span>':'')+'</h3><div class="sub">Posted '+new Date(v.rec.posted_at).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})+'</div>'+
-  '<div class="dstats"><div><b>'+fmt(v.views)+'</b><span>views</span></div><div><b>'+(v.views/all).toFixed(1)+'x</b><span>vs median</span></div><div><b>'+Math.round(v.conf*100)+'%</b><span>lowest confidence</span></div></div></div></div><div class="ansg">'+Object.keys(a).map(function(k){return block(k,a[k])}).join("")+'</div></div>'}
+  '<div class="dstats"><div><b>'+fmt(v.views)+'</b><span>views</span></div><div><b>'+(v.views/all).toFixed(1)+'x</b><span>vs median</span></div><div><b>'+Math.round(v.conf*100)+'%</b><span>lowest confidence</span></div></div>'+txBlock(v)+'</div></div><div class="ansg">'+Object.keys(a).map(function(k){return block(k,a[k])}).join("")+'</div></div>'}
 // Panel width: drag the left edge, or toggle between the default and wide sizes. Content reflows through container queries on .db.
 var DW_MIN=360,DW_KEY="cd-drawer-w";
 function dwMax(){return Math.max(DW_MIN,innerWidth-64)}
@@ -821,6 +842,7 @@ function rS(){$("dpos").textContent="Settings";var j=SET;if(!j){$("db").innerHTM
     '<div class="sx"><h4>Model Race models</h4><p>Which model each provider races with. Leave blank for the default.</p><form data-sform="models">'+mods+'<div class="sxa"><button class="btn">Save models</button></div></form></div>'+
     '<div class="sx"><h4>Defaults</h4><p>Applied every time you open the dashboard.</p><form data-sform="defaults">'+
       '<label class="sxr"><span>Needs-review threshold<small>Videos where Jev is less confident than this are flagged</small></span><span style="display:flex;gap:8px;align-items:center"><input type="range" name="REVIEW_THRESHOLD" min="0.3" max="0.95" step="0.05" value="'+j.REVIEW_THRESHOLD+'" style="flex:1" oninput="this.nextSibling.textContent=(+this.value).toFixed(2)"><b>'+j.REVIEW_THRESHOLD.toFixed(2)+'</b></span></label>'+
+      '<label class="sxr"><span>Hook strategy groups<small>How many top and latest Shorts get transcribed</small></span><select name="TRANSCRIPT_GROUP"><option value="10"'+(j.TRANSCRIPT_GROUP!==5?' selected':'')+'>10 top + 10 latest</option><option value="5"'+(j.TRANSCRIPT_GROUP===5?' selected':'')+'>5 top + 5 latest</option></select></label>'+
       '<label class="sxr"><span>Hooks per Draft<small>How many ideas each Draft click writes</small></span><select name="DRAFT_COUNT">'+dc+'</select></label>'+
       '<div class="sxa"><button class="btn">Save defaults</button></div></form></div>'+
     '<div class="sx"><h4>Password</h4><p>Changing it signs out every other device.</p><form data-sform="pw">'+
@@ -837,12 +859,112 @@ function setSubmit(e){var f=e.target;if(dR!==rS)return;e.preventDefault();
   if(f.dataset.key){var v=f.querySelector("input").value.trim();if(!v)return;var o={};o[f.dataset.key]=v;saveSet({set:o},"Key saved.");return}
   var t=f.dataset.sform,fd=new FormData(f);
   if(t==="models"){var set={},clear=[];MKEYS.forEach(function(k){var v=String(fd.get(k[0])||"").trim();if(v)set[k[0]]=v;else clear.push(k[0])});saveSet({set:set,clear:clear},"Models saved.")}
-  if(t==="defaults"){thrTouched=false;saveSet({set:{REVIEW_THRESHOLD:String(fd.get("REVIEW_THRESHOLD")),DRAFT_COUNT:String(fd.get("DRAFT_COUNT"))}},"Defaults saved.")}
+  if(t==="defaults"){thrTouched=false;saveSet({set:{REVIEW_THRESHOLD:String(fd.get("REVIEW_THRESHOLD")),DRAFT_COUNT:String(fd.get("DRAFT_COUNT")),TRANSCRIPT_GROUP:String(fd.get("TRANSCRIPT_GROUP"))}},"Defaults saved.")}
   if(t==="pw"){if(fd.get("password")!==fd.get("again")){toast("The new passwords don’t match.");return}
     api("/api/auth/change",{current:fd.get("current"),password:fd.get("password")}).then(function(){f.reset();toast("Password changed. Other devices are signed out.")}).catch(function(x){toast(x.message)})}}
 $("db").addEventListener("submit",setSubmit);
 $("db").addEventListener("change",function(e){if(dR===rS&&e.target.name==="chatm")saveSet({set:{CHAT_MODEL:e.target.value}},"Chat model saved.")});
 $("openSet").onclick=openS;
+/* ---------- hook strategy check: what is said in the top and latest Shorts ---------- */
+// After the fast decode, the local helper (npm run dev starts it) downloads audio for the Top N by views
+// and the N latest Shorts, Workers AI Whisper turns it into text, and Jev re-decodes those Shorts from what
+// is said, then compares the two groups. Whisper only transcribes; every judgment is Jev's.
+var HELPER="http://127.0.0.1:8790",OPEN_S=45,TX_PAR=4;
+var TXL={ok:"Transcribed",no_speech:"No clear speech",none:"No transcript",queued:"Waiting",downloading:"Getting audio",transcribing:"Transcribing"};
+function txOf(v){return D.tx&&D.tx.items[v.id]||null}
+// Top N by views, then the N newest that aren't already in Top N, so the groups never overlap.
+function pickGroups(){var n=(SET&&SET.TRANSCRIPT_GROUP)||10,d=dec(),top=d.slice().sort(function(a,b){return b.views-a.views}).slice(0,n),inTop={};top.forEach(function(v){inTop[v.id]=1});
+  var latest=d.slice().sort(function(a,b){return b.rec.posted_at.localeCompare(a.rec.posted_at)}).filter(function(v){return !inTop[v.id]}).slice(0,n);return {n:n,top:top.map(function(v){return v.i}),latest:latest.map(function(v){return v.i})}}
+function helperCheck(){if(!/^(localhost|127\.0\.0\.1)$/.test(location.hostname))return Promise.resolve({ok:false,why:"Transcripts only work locally: run the app with npm run dev."});
+  var c=new AbortController(),t=setTimeout(function(){c.abort()},2500);
+  return fetch(HELPER+"/health",{signal:c.signal}).then(function(r){return r.json()}).then(function(j){clearTimeout(t);return j.uv===false||j.error?{ok:false,why:j.error||"uv isn't installed."}:{ok:true}})
+    .catch(function(){clearTimeout(t);return {ok:false,why:"The transcript helper isn't running. Start the app with npm run dev."}})}
+function txMark(X,v,st,why){var it=X.tx.items[v.id]||{};it.status=st;if(why)it.why=why;X.tx.items[v.id]=it;if(X===D){renderHS();if(dR===rD&&$("drawer").classList.contains("open")&&D.videos[dl[di]]===v)rD()}}
+function txRun(){var X=D;if(!X.handle||(X.tx&&X.tx.running))return;var g=pickGroups(),vids=g.top.concat(g.latest).map(function(i){return X.videos[i]});X.grp=g;X.cmp=null;
+  X.tx={running:true,items:{},done:0,total:vids.length,limit:false,helper:"",t0:performance.now(),ms:0};vids.forEach(function(v){X.tx.items[v.id]={status:"queued"}});
+  if(!vids.length){X.tx.running=false;renderHS();return}busy("s6",true);renderHS();
+  api("/api/transcripts?handle="+encodeURIComponent(X.handle)).then(function(j){(j.items||[]).forEach(function(t){if(X.tx.items[t.id]){t.cached=true;X.tx.items[t.id]=t;X.tx.done++}});renderHS();
+    // Alternate top and latest, so a run cut short by a limit still has Shorts from both groups to compare.
+    var order=[];for(var k=0;k<Math.max(g.top.length,g.latest.length);k++){if(g.top[k]!=null)order.push(X.videos[g.top[k]]);if(g.latest[k]!=null)order.push(X.videos[g.latest[k]])}
+    var todo=order.filter(function(v){return X.tx.items[v.id].status==="queued"});if(!todo.length)return;
+    return helperCheck().then(function(h){if(!h.ok){X.tx.helper=h.why;todo.forEach(function(v){X.tx.done++;txMark(X,v,"none",h.why)});return}return txFetch(X,todo)})})
+  .catch(function(e){say("Transcripts: "+e.message,true)})
+  .then(function(){if(X===D)return txUpgrade(X,vids)})
+  .then(function(){if(X===D)return txCompare(X)})
+  .catch(function(e){say("Hook strategy check: "+e.message,true)})
+  .then(function(){X.tx.running=false;X.tx.ms=performance.now()-X.tx.t0;busy("s6",false);if(X===D)renderHS()})}
+// Audio one Short at a time (the helper also spaces them 3 s apart); each file goes to Whisper as soon as it
+// arrives, up to TX_PAR at once. Audio only ever lives in memory here, and the helper has already deleted its file.
+function txFetch(X,todo){var active=0,waiters=[],pend=[],chain=Promise.resolve();
+  function slot(){if(active<TX_PAR){active++;return Promise.resolve()}return new Promise(function(r){waiters.push(r)})}
+  function free(){var w=waiters.shift();if(w)w();else active--}
+  function fin(v,st,why){X.tx.done++;txMark(X,v,st,why)}
+  todo.forEach(function(v){chain=chain.then(function(){if(X!==D)return;if(X.tx.limit){fin(v,"none","Workers AI daily limit");return}txMark(X,v,"downloading");
+    return fetch(HELPER+"/audio?id="+encodeURIComponent(v.id),{headers:{"x-jev-helper":"1"}}).then(function(r){
+      if(!r.ok)return r.json().catch(function(){return {}}).then(function(j){fin(v,"none",j.rate_limited?"YouTube rate limit":"Audio download failed")});
+      return r.blob().then(function(b){txMark(X,v,"transcribing");return slot().then(function(){
+        pend.push(fetch("/api/transcribe?handle="+encodeURIComponent(X.handle)+"&id="+encodeURIComponent(v.id)+"&dur="+(v.rec.duration_s||0),{method:"POST",credentials:"same-origin",headers:{"content-type":b.type||"application/octet-stream"},body:b})
+          .then(function(r){return r.json().catch(function(){return {error:r.statusText}}).then(function(j){if(!r.ok){if(j.limit)X.tx.limit=true;fin(v,"none",j.limit?"Workers AI daily limit":"Transcription failed"+(j.error?": "+String(j.error).slice(0,140):""));return}
+            j.cached=false;X.tx.items[v.id]=j;fin(v,j.status)})}).catch(function(){fin(v,"none","Transcription failed")}).then(free))})})},
+    function(){fin(v,"none","The transcript helper isn't running. Start the app with npm run dev.")})})});
+  return chain.then(function(){return Promise.all(pend)})}
+// Jev re-decodes the transcribed Shorts from what is said: opening (first ~45 s) plus the full transcript.
+function txUpgrade(X,vids){var go=vids.filter(function(v){var t=X.tx.items[v.id];return t&&t.status==="ok"&&v.src!=="transcript"});if(!go.length)return;var b=[];for(var i=0;i<go.length;i+=BATCH)b.push(go.slice(i,i+BATCH));
+  return Promise.all(b.map(function(bt){return api("/api/classify",{videos:bt.map(function(v){var t=X.tx.items[v.id];return Object.assign({},v.rec,{opening:t.opening,transcript:t.text})}),threshold:U.thr}).then(function(j){X.cost+=j.cost_usd||0;
+    (j.results||[]).forEach(function(r,k){var v=bt[k];if(!v||v.id!==r.id)return;apply(v,r,v.at);for(var q=0;q<X.results.length;q++)if(X.results[q].id===r.id)X.results[q]=r});
+    log(null,"Jev re-decoded "+bt.length+" Shorts from their transcripts",j.latency_ms+" ms",'<b>'+bt.length+' Shorts, read from what is said</b><hr>'+trow("Jev time",j.latency_ms+" ms")+trow("Cost","$"+(+j.cost_usd||0).toFixed(5)))})}))
+  .then(function(){if(X!==D)return;refresh();renderChips();renderGallery();
+    return (X.saving||Promise.resolve()).then(function(){return api("/api/save",{handle:X.handle,channel:X.channel,records:X.videos.map(function(v){return v.rec}),results:X.results,stats:X.stats||D.stats||{}})}).catch(function(){})})}
+function txCompare(X){var it=function(i){var v=X.videos[i],t=X.tx.items[v.id];return t&&t.status==="ok"?{title:v.title,opening:t.opening||t.text}:null};
+  var top=X.grp.top.map(it).filter(Boolean),latest=X.grp.latest.map(function(i){return {i:i,x:it(i)}}).filter(function(o){return o.x});
+  if(!top.length||!latest.length){X.cmp={none:true};return}
+  return api("/api/compare",{top:top,latest:latest.map(function(o){return o.x})}).then(function(j){X.cost+=j.cost_usd||0;var f={};latest.forEach(function(o,k){f[X.videos[o.i].id]=j.follows[k]});X.cmp={follows:f,closeness:j.closeness,ms:j.latency_ms};
+    log(null,"Jev compared top and latest openings",j.latency_ms+" ms",'<b>Hook strategy check</b><hr>'+trow("Closeness",esc(j.closeness.label||""))+trow("Jev time",j.latency_ms+" ms"))})}
+function utcReset(){var n=new Date(),r=Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate()+1)-n.getTime(),h=Math.floor(r/36e5),m=Math.round(r%36e5/6e4);return h+" h "+m+" min"}
+// Spoken hook types per group, counted from Jev's answers on transcribed Shorts only.
+function grpStats(ids){var c={},sc={},n=0,miss={none:0,no_speech:0,work:0};ids.forEach(function(i){var v=D.videos[i],t=txOf(v),st=t?t.status:"none";
+  if(st==="ok"&&v.src==="transcript"){n++;if(v.hook)c[v.hook]=(c[v.hook]||0)+1;var s=v.ans&&v.ans.structure&&v.ans.structure.choice;if(s)sc[s]=(sc[s]||0)+1}else if(st==="none"||st==="no_speech")miss[st]++;else miss.work++});
+  var top=Object.keys(c).sort(function(a,b){return c[b]-c[a]})[0]||null;return {c:c,sc:sc,n:n,miss:miss,top:top}}
+function renderHS(){var el=$("hs");if(!el)return;var X=D,T=X.tx;$("txClear").hidden=!(X.handle&&T&&!T.running);
+  if(!X.handle||!T||!X.grp){$("st6").textContent="Waiting";el.innerHTML='<p class="hs-empty">After the fast decode, Jev reads what is actually said in this creator’s top Shorts and their latest ones, then checks whether the newest videos still open the way the best ones do. Audio is turned into text by Workers AI Whisper; Jev makes every judgment.</p>';return}
+  var G=X.grp,tot=T.total,done=T.done,ok=0;Object.keys(T.items).forEach(function(k){if(T.items[k].status==="ok")ok++});
+  $("st6").textContent=T.running?(done<tot?"Transcribing "+Math.min(done+1,tot)+" of "+tot:"Re-decoding with Jev"):(ok?"Done":"No transcripts");
+  var A=grpStats(G.top),B=grpStats(G.latest),h="";
+  if(T.running)h+='<div class="hsp"><div class="bar"><i style="width:'+Math.round(done/Math.max(1,tot)*100)+'%"></i></div><span>'+(done<tot?"Transcribing "+Math.min(done+1,tot)+" of "+tot:"Jev is re-decoding from the transcripts…")+'</span></div>';
+  if(T.limit)h+='<div class="hsn">Workers AI’s free daily limit is used up, so the remaining Shorts keep their title-based results. It resets at 00:00 UTC (in '+utcReset()+').</div>';
+  if(T.helper)h+='<div class="hsn">'+esc(T.helper)+' Shorts keep their title-based results.</div>';
+  var nm=function(k){return k?esc(hn(k)):"no clear pattern"};
+  if(!T.running){var C=X.cmp;
+    if(C&&!C.none){var fol=0,m=0;G.latest.forEach(function(i){var p=C.follows[D.videos[i].id];if(p!=null){m++;if(p>=.5)fol++}});
+      var useTop=A.top?(B.c[A.top]||0):0,miss=(A.miss.none+A.miss.no_speech+B.miss.none+B.miss.no_speech);
+      h+='<div class="hsv"><b>Top performers mostly open with '+nm(A.top)+(A.top?' hooks ('+A.c[A.top]+' of '+A.n+')':'')+'; '+useTop+' of the latest '+B.n+' do.</b>'+
+        '<p>Jev judged '+fol+' of '+m+' latest openings to follow the winning hook pattern'+(C.closeness&&C.closeness.label?': “'+esc(C.closeness.label)+'.”':'.')+' Latest Shorts are judged on how they open, not on views.</p>'+
+        '<small>Based on '+A.n+' top and '+B.n+' recent Shorts with transcripts'+(miss?' ('+miss+' missing: '+(A.miss.none+B.miss.none)+' No transcript, '+(A.miss.no_speech+B.miss.no_speech)+' No clear speech)':'')+'.</small></div>'}
+    else h+='<div class="hsv" style="border-left-color:var(--warn)"><b>Not enough transcripts for a verdict.</b><p>Jev needs at least one transcribed Short in each group. '+(ok?ok+" of "+tot+" were transcribed.":"None were transcribed.")+'</p></div>'}
+  var col2=function(title,ids,S,latest){var hooks=Object.keys(S.c).sort(function(a,b){return S.c[b]-S.c[a]}),st=Object.keys(S.sc).sort(function(a,b){return S.sc[b]-S.sc[a]}).slice(0,3);
+    return '<div class="hsg"><h4>'+title+'</h4><div class="sub">'+S.n+' of '+ids.length+' transcribed'+(latest?' · judged on hooks, not views':'')+'</div>'+
+      (hooks.length?hooks.map(function(k){return '<div class="hsb" style="--hc:'+col(k)+'"><span>'+esc(hn(k))+'</span><i style="--w:'+Math.round(S.c[k]/S.n*100)+'%"></i><b>'+S.c[k]+'</b></div>'}).join(""):'<div class="hss">No spoken hooks yet.</div>')+
+      (st.length?'<div class="hss">Structure: '+st.map(function(k){return esc(hn(k))+' '+S.sc[k]}).join(", ")+'</div>':'')+
+      ids.map(function(i){var v=D.videos[i],t=txOf(v)||{},s=t.status||"none",cls=s==="ok"?"ok":(s==="none"||s==="no_speech")?"none":"work",f=latest&&X.cmp&&X.cmp.follows?X.cmp.follows[v.id]:null;
+        return '<button class="hsr" data-hv="'+i+'" data-hg="'+(latest?"latest":"top")+'"><span style="background-image:url(\''+esc(v.thumb||"")+'\')"></span><div>'+esc(v.title)+'<small>'+fmt(v.views)+' views'+(v.src==="transcript"&&v.hook?' · opens with '+esc(hn(v.hook)):'')+(f!=null?' · '+(f>=.5?'follows the pattern':'different hook')+' ('+Math.round(f*100)+'%)':'')+'</small></div><span class="txs '+cls+'"'+(t.why?' title="'+esc(t.why)+'"':'')+'>'+TXL[s]+'</span></button>'}).join("")+'</div>'};
+  h+='<div class="hsc">'+col2("Top "+G.top.length+" by views",G.top,A,false)+col2("Latest "+G.latest.length,G.latest,B,true)+'</div>';
+  el.innerHTML=h}
+$("hs").onclick=function(e){var r=e.target.closest("[data-hv]");if(!r)return;var g=D.grp[r.dataset.hg];openD(+r.dataset.hv,g)};
+$("txClear").onclick=function(){if(!D.handle)return;var X=D;api("/api/transcripts",{handle:X.handle,action:"clear"}).then(function(){if(X!==D)return;X.tx=null;X.cmp=null;renderHS();
+  $("hs").innerHTML='<p class="hs-empty">Cached transcripts for '+esc(X.handle)+' are cleared. <button class="lnk" id="txAgain">Fetch them again</button></p>';$("st6").textContent="Cleared";toast("Cached transcripts cleared.")}).catch(function(e){toast(e.message)})};
+$("hs").addEventListener("click",function(e){if(e.target.id==="txAgain")txRun()});
+renderHS();
+// Side panel: the transcript with the opening highlighted, and a link that starts the video at the hook.
+function txBlock(v){var t=txOf(v);if(!t)return "";var s=t.status;
+  var chip='<span class="txs '+(s==="ok"?"ok":(s==="none"||s==="no_speech")?"none":"work")+'">'+TXL[s]+'</span>';
+  if(s!=="ok"&&s!=="no_speech")return '<div class="dtx"><div class="kh"><b>Transcript</b>'+chip+'</div>'+(t.why?'<div class="sub" style="margin-top:6px">'+esc(t.why)+'. Jev used the title and description.</div>':'')+'</div>';
+  var seg=t.segments||[],start=seg.length?Math.floor(seg[0][0]):0,mm=Math.floor(start/60)+":"+("0"+start%60).slice(-2);
+  var op=seg.filter(function(x){return x[0]<OPEN_S}).map(function(x){return esc(x[2])}).join(" "),rest=seg.filter(function(x){return x[0]>=OPEN_S}).map(function(x){return esc(x[2])}).join(" ");
+  var body=(op?'<mark>'+op+'</mark>':'')+(rest?' '+rest:'');
+  return '<div class="dtx"><div class="kh"><b>Transcript</b>'+chip+'</div>'+
+    '<div class="kh" style="margin-top:6px"><a href="https://www.youtube.com/watch?v='+encodeURIComponent(v.id)+'&t='+start+'s" target="_blank" rel="noopener">Watch from the hook ('+mm+') ↗</a><span class="sub">'+(t.language?esc(t.language)+' · ':'')+(t.words||0)+' words'+(v.src==="transcript"?' · Jev read this':'')+'</span></div>'+
+    (s==="no_speech"?'<div class="sub" style="margin-top:6px">Under 1 word per second, so this looks like music or near-silence. Jev kept the title-based result.</div>':'')+
+    '<div class="tt"><small>Highlighted: the opening, first ~'+OPEN_S+' seconds</small>'+(body||'<span class="sub">Nothing was said.</span>')+'</div></div>'}
 /* ---------- your hooks: every scored hook in one place ---------- */
 // Shortlisted hooks are saved per creator, so they show here even after a reload clears the in-memory list.
 var lf="all",lHi=null,lBack=false;
@@ -907,7 +1029,7 @@ $("chf").onsubmit=function(e){e.preventDefault();ask($("chi").value);$("chi").va
 function setCreator(){var c=D.channel||{};document.body.classList.add("has-data");$("av").style.background=c.avatar?"url('"+c.avatar+"') center/cover":"var(--contrarian)";$("av").textContent=c.avatar?"":(c.title||D.handle).slice(0,2).toUpperCase();
   $("cname").textContent=c.title||D.handle;$("cmeta").textContent=D.handle+", "+D.videos.length+" Shorts"}
 function resetChat(){var c=$("chb");while(c.children.length>2)c.removeChild(c.lastChild)}
-function reset(){if(D.handle)resetChat();D=fresh();U.filter=null;U.review=false;U.out=false;live=null;F4={};sugN=0;resetView();$("log").innerHTML="";renderHooks();renderSug();["fTop","fCombo","fBlind"].forEach(function(i){$(i).textContent="Waiting"})}
+function reset(){if(D.handle)resetChat();D=fresh();renderHS();U.filter=null;U.review=false;U.out=false;live=null;F4={};sugN=0;resetView();$("log").innerHTML="";renderHooks();renderSug();["fTop","fCombo","fBlind"].forEach(function(i){$(i).textContent="Waiting"})}
 function start(fr){var h=($("h").value||"").trim();if(!h){$("h").focus();return}if(D.running)return;$("run").disabled=true;$("run").textContent="Pulling...";$("wErr").textContent="";say("Pulling Shorts from YouTube...");pulling(true);
   api("/api/ingest?handle="+encodeURIComponent(h)+(fr?"&fresh=1":"")).then(function(j){pulling(false);reset();D.handle=j.handle;D.channel=j.channel||{title:j.handle};D.cached=!!j.cached;D.videos=(j.records||[]).map(toV);
     if(!D.videos.length){$("run").disabled=false;$("run").textContent="Decode";var m="No Shorts found for "+j.handle+". Try a creator who posts Shorts.";$("wErr").textContent=m;say(m,true);return}
@@ -926,10 +1048,11 @@ function run(){var b=[];for(var i=0;i<D.videos.length;i+=BATCH)b.push(D.videos.s
     .catch(function(e){var t=now();X.ev.push({t:t,f:function(){c.t=t;c.err=true;c.msg=e.message;say("A Jev call failed: "+e.message,true)}})}).then(function(){return lane(l)})}
   var ls=[];for(var l=0;l<LANES;l++)ls.push(lane(l));
   Promise.all(ls).then(function(){var t=now();X.ev.push({t:t,f:function(){X.running=false;X.end=X.vt;document.body.classList.remove("running");busy("s1",false);busy("s2",false);say("Decoded "+X.decoded+" Shorts in "+X.end.toFixed(1)+" s for $"+X.dcost.toFixed(4)+".");
-    api("/api/save",{handle:X.handle,channel:X.channel,records:X.videos.map(function(v){return v.rec}),results:X.results,stats:{qpc:X.qpc,calls:X.calls.length,cost_usd:X.dcost,duration_s:X.end}}).then(loadLib).catch(function(){});
+    X.stats={qpc:X.qpc,calls:X.calls.length,cost_usd:X.dcost,duration_s:X.end};X.saving=api("/api/save",{handle:X.handle,channel:X.channel,records:X.videos.map(function(v){return v.rec}),results:X.results,stats:X.stats}).then(loadLib).catch(function(){});
     if(X===D)done(false)}})})}
 function done(cached){$("rerun").hidden=false;$("slow").hidden=false;U.watch=false;$("run").disabled=false;$("run").textContent="Decode";refresh();renderChips();renderSug();showGallery(true);["st1","st2"].forEach(function(i){$(i).textContent="Done"});
-  if(!cached&&!D.hooks.length&&!D.drafted)$("draft").click()}
+  if(!cached&&!D.hooks.length&&!D.drafted)$("draft").click();
+  txRun()}
 $("run").onclick=function(){start(false)};$("rerun").onclick=function(){U.watch=false;$("h").value=D.handle;start(true)};$("slow").onclick=function(){U.watch=true;$("h").value=D.handle;toast("Replaying at watch speed. Timings shown are real.");start(true)};$("h").onkeydown=function(e){if(e.key==="Enter")start(false)};
 
 /* ---------- counters + loop ---------- */
