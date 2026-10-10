@@ -35,29 +35,12 @@
         "Decent",
         "Scroll-stopping"
       ]
-    },
-    "topic": {
-      "type": "choice",
-      "instructions": "What primary topic does the video in `{v}` cover?",
-      "criteria": {
-        "education": "Teaches a skill, method, fact, or explanation",
-        "personal_story": "Focuses on the creator's own experience or journey",
-        "opinion": "Argues for a viewpoint or reaction",
-        "product": "Reviews, demonstrates, or recommends a product or service",
-        "entertainment": "Primarily aims to amuse, surprise, or entertain"
-      }
-    },
-    "promises_number": {
-      "type": "noul",
-      "instructions": "Does the title in `{v}.title` promise a specific number?"
     }
   },
   "per_video_spoken": {
     "hook": "Which hook type does the speaker use in `{v}.opening`, the first ~45 seconds of what is said in the video? Use `{v}.title` only if the opening is unclear.",
     "structure": "What structure does the video follow, based on what is said in `{v}.transcript`?",
     "cta": "Does the speaker in `{v}.transcript`, or the description in `{v}.description`, ask the viewer to take an action, like follow, comment, or click a link?",
-    "strength": "How strong is the spoken opening `{v}.opening` as a hook for a short-form video?",
-    "topic": "What primary topic does the video cover, based on what is said in `{v}.transcript`?",
-    "promises_number": "Does the spoken opening `{v}.opening` or the title `{v}.title` promise a specific number?"
+    "strength": "How strong is the spoken opening `{v}.opening` as a hook for a short-form video?"
   }
 }
