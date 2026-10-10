@@ -82,7 +82,7 @@ function check(k: string, v: string) {
   if (MODEL_KEYS.includes(k)) { if (v.length > 120 || !/^[\w.\-/:@]+$/.test(v)) throw new Error("Model ids use letters, numbers, and . - / : @ only."); return; }
   if (k === "CHAT_MODEL") { if (v !== "default" && !CHALLENGERS[v]) throw new Error("Unknown chat model."); return; }
   if (k === "REVIEW_THRESHOLD") { const n = Number(v); if (!(n >= 0.3 && n <= 0.95)) throw new Error("Threshold must be between 0.30 and 0.95."); return; }
-  if (k === "TRANSCRIPT_GROUP") { if (v !== "5" && v !== "10") throw new Error("Group size must be 5 or 10."); return; }
+  if (k === "TRANSCRIPT_GROUP") { if (!["5", "10", "20"].includes(v)) throw new Error("Group size must be 5, 10, or 20."); return; }
   if (k === "DRAFT_COUNT") { const n = Number(v); if (!Number.isInteger(n) || n < 3 || n > 10) throw new Error("Draft count must be 3 to 10."); return; }
   throw new Error(`Unknown setting ${k}.`);
 }

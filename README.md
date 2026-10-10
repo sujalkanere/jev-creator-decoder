@@ -51,12 +51,22 @@ Google Cloud only supplies the YouTube API key. TypeSafe runs Jev. Cloudflare ho
 ## Hook strategy check
 *Is this creator still using the hooks that made their top videos work?*
 1. The fast decode runs first, from titles and descriptions, exactly as before.
-2. The app picks the **Top 10 by views** and the **10 latest** Shorts (no overlap; 5 + 5 in Settings).
-3. The transcript helper downloads each Short's audio with yt-dlp, one at a time, 3 seconds apart, with one retry after 30 seconds on HTTP 403/429. Each audio file is deleted as soon as it's read; only text is kept.
+2. The app picks the **Top 10 by views** and the **10 latest** Shorts (no overlap). **Settings → Hook strategy groups** offers 5, 10 (default), or 20 per group.
+3. The transcript helper downloads each Short's audio with yt-dlp, one at a time, 3 seconds apart, with one retry after 30 seconds on HTTP 403/429. Each audio file is deleted as soon as it's read; only text is kept. Top and latest alternate, so a run cut short still has Shorts from both groups.
 4. Workers AI **Whisper** (`@cf/openai/whisper-large-v3-turbo`) turns the audio into text with timestamps, up to 4 at a time. Whisper only transcribes.
 5. **Jev** re-decodes those Shorts from what is said: `opening` (the first ~45 seconds) plus the full `transcript`, with the `per_video_spoken` instructions in `schema.json`. Their labels upgrade on screen.
 6. **Jev** compares the groups with the questions in `compare.json`: does each latest opening grab attention the way the top openings do? Latest Shorts are judged on hook patterns, not views.
 7. The verdict shows the sample size, for example "Based on 10 top and 8 recent Shorts with transcripts (2 missing)".
+
+Expect about 16 to 21 seconds per Short, mostly audio download time:
+
+| Hook strategy groups | Shorts | Transcript phase | Whisper Neurons |
+|---|---|---|---|
+| 5 per group | 10 | ~3–4 min | ~500 |
+| 10 per group (default) | 20 | ~5–7 min | ~950 |
+| 20 per group | 40 | ~11–14 min | ~1,900 |
+
+Measured on @maximussoares7 at 20 per group: 40 of 40 downloads succeeded with one 403/429 retry, and Whisper used 1,873 Neurons.
 
 Transcripts are cached per video, so re-runs never transcribe the same Short twice. **Clear cached transcripts** on the panel removes them for that creator.
 
@@ -114,7 +124,7 @@ Question types: `choice` picks one option and returns confidence, `noul` returns
 | Ask the Decoder answers | `@cf/meta/llama-3.3-70b-instruct-fp8-fast` |
 | Hook strategy check transcripts (speech to text only) | `@cf/openai/whisper-large-v3-turbo` |
 
-The Llama models and Whisper run on Workers AI and share the free 10,000 Neurons per day. Whisper costs 46.63 Neurons per audio minute: about 300 to 1,100 Neurons for one creator's 20 Shorts, so a few new creators a day fit comfortably (cached transcripts cost nothing). When the daily Neurons run out, Workers AI calls fail until 00:00 UTC and the dashboard says so. Jev on Workers AI is paid from AI Gateway credits instead, which is why the app calls it on TypeSafe's API with your key.
+The Llama models and Whisper run on Workers AI and share the free 10,000 Neurons per day. Whisper costs 46.63 Neurons per audio minute: about 300 to 1,100 Neurons for one creator's 20 Shorts, and roughly 1,900 for 40 Shorts at 20 per group, so a few new creators a day fit comfortably (cached transcripts cost nothing). When the daily Neurons run out, Workers AI calls fail until 00:00 UTC and the dashboard says so. Jev on Workers AI is paid from AI Gateway credits instead, which is why the app calls it on TypeSafe's API with your key.
 
 ## Costs
 - Jev: $0.042 per 1M input tokens, output free, paid from your TypeSafe credit ($5 to start). A 200-video decode costs well under $0.01.
