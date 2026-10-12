@@ -341,6 +341,23 @@ body:not(.has-data) .zoomc{display:none}
 .dtx{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px}.dtx .kh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
 .dtx .tt{margin-top:8px;max-height:240px;overflow-y:auto;font-size:13px;line-height:1.55}.dtx mark{background:color-mix(in srgb,var(--best) 22%,transparent);color:inherit;border-radius:3px;padding:0 1px}.dtx .tt small{display:block;color:var(--fnt);font-size:11px;margin-bottom:4px}
 .dtx a{color:var(--ink);font-weight:600;font-size:12.5px}
+/* hook strategy comparison: clickable verdicts, mix bars, side panel charts */
+.hsv.clk{cursor:pointer;position:relative;transition:background .15s}.hsv.clk:hover{background:var(--sunk)}.hsv.clk:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.hsv .more{position:absolute;right:14px;top:12px;font-size:12px;color:var(--mut)}.hsv.clk:hover .more{color:var(--ink)}
+.mixr{display:flex;align-items:center;gap:10px;margin-top:6px;font-size:12px;color:var(--mut)}.mixr>span:first-child{width:46px;flex:none}
+.mixb{display:flex;flex:1;height:10px;border-radius:5px;overflow:hidden;background:var(--line)}.mixb i{display:block;height:100%;background:var(--hc)}.mixb i+i{box-shadow:inset 1px 0 0 var(--card)}
+.fdots{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.fdots i{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--best);flex:none}.fdots i.on{background:var(--best)}
+.bfly{display:grid;grid-template-columns:minmax(0,1fr) minmax(84px,max-content) minmax(0,1fr);gap:7px 10px;align-items:center;font-size:12.5px;margin-top:8px}
+.bfly .h{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--fnt)}.bfly .h.l{text-align:right}
+.bfly .l,.bfly .r{display:flex;align-items:center;gap:6px;min-width:0}.bfly .l{justify-content:flex-end}
+.bfly i{display:block;height:12px;border-radius:3px;background:var(--hc);min-width:2px}.bfly .r i{opacity:.55}
+.bfly .k{text-align:center;font-weight:600;line-height:1.2}.bfly small{color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
+.cmeter{position:relative;height:8px;border-radius:4px;margin:14px 0 4px;background:linear-gradient(90deg,var(--line),color-mix(in srgb,var(--best) 70%,var(--line)))}.cmeter b{position:absolute;top:-4px;width:4px;height:16px;border-radius:2px;background:var(--ink);transform:translateX(-50%)}
+.cends{display:flex;justify-content:space-between;font-size:11px;color:var(--fnt)}
+.flw{display:grid;grid-template-columns:26px minmax(0,1fr) minmax(70px,130px) 38px;gap:10px;align-items:center;width:100%;border:0;border-top:1px solid var(--line);background:none;color:var(--ink);font:inherit;text-align:left;padding:7px 0;cursor:pointer}.flw:hover{background:var(--sunk)}
+.flw>span:first-child{width:26px;height:40px;border-radius:5px;background-size:cover;background-position:center}.flw div{min-width:0;font-size:12.5px;line-height:1.3}.flw small{display:block;color:var(--mut)}
+.flw .pb{position:relative;height:8px;border-radius:4px;background:var(--line)}.flw .pb i{position:absolute;inset:0 auto 0 0;border-radius:4px;background:var(--best)}.flw .pb.no i{background:var(--warn)}.flw .pb::after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:var(--mut)}
+.flw b{font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums}
 /* newest draft round: tinted and tagged until the next Draft */
 .newp{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--hc,var(--ink));color:#fff;border-radius:999px;padding:1px 7px;margin:0 6px;vertical-align:1px}
 .hc.new,.lr.new{border-color:var(--hc);background:color-mix(in srgb,var(--hc) 7%,var(--card))}
@@ -720,7 +737,7 @@ function block(k,a){if(!a)return "";var tip=(DEF[k]||"Jev\u2019s answer to the \
   else{var n=+a.noul||0;h+='<span>'+(n>=.5?"Yes":"No")+'</span></div>';b='<div class="pr win"><span>Probability</span><i style="--w:'+Math.round(n*100)+'%"></i><span>'+Math.round(n*100)+'%</span></div>'}return h+b+'</div>'}
 function openD(i,l){openDr(l,i,rD)}
 // The drawer shows either videos (rD) or scored hooks (rH); dl holds the list it steps through.
-function openDr(l,i,render){dl=l&&l.length?l:[i];di=Math.max(0,dl.indexOf(i));dR=render;$("drawer").classList.toggle("solo",render===rB||render===rL||render===rS);lBack=false;dR();$("drawer").classList.add("open");$("drawer").setAttribute("aria-hidden","false");$("scrim").classList.add("open");$("dx").focus()}
+function openDr(l,i,render){dl=l&&l.length?l:[i];di=Math.max(0,dl.indexOf(i));dR=render;$("drawer").classList.toggle("solo",render===rB||render===rL||render===rS||render===rC);lBack=false;dR();$("drawer").classList.add("open");$("drawer").setAttribute("aria-hidden","false");$("scrim").classList.add("open");$("dx").focus()}
 function closeAll(){$("drawer").classList.remove("open");$("drawer").setAttribute("aria-hidden","true");$("scrim").classList.remove("open");closeSide()}
 function rD(){var v=D.videos[dl[di]];if(!v)return;var all=med(dec().map(function(x){return x.views}))||1,a=v.ans||{};$("dpos").textContent=(di+1)+" of "+dl.length;
   $("db").innerHTML='<div class="dv"><div class="dtop"><a class="dthumb" href="'+esc(v.rec.url)+'" target="_blank" rel="noopener" aria-label="Watch on YouTube" title="Watch on YouTube" style="background:'+bg(v)+'"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></span></a><div><h3>'+esc(v.title)+(v.conf<U.thr?'<span class="flag">Needs review</span>':'')+'</h3><div class="sub">Posted '+new Date(v.rec.posted_at).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})+'</div>'+
@@ -797,7 +814,7 @@ function rH(){var c=hookAt(),isLive=dl[di]===-1;if(!c)return;
     '<div class="hacts">'+(lBack?'<button class="ghost back" data-ha="back">\u2039 Back to list</button>':'')+(isLive?'<button class="btn" data-ha="add">Add to list</button>':'')+'<button class="'+(isLive?"ghost":"btn")+'" data-ha="save">'+(sv?"Shortlisted ✓":"Shortlist")+'</button><button class="ghost" data-ha="copy">Copy</button><button class="ghost" data-ha="vary">Edit and rescore</button></div>'}
 // Adding or shortlisting the live preview moves it into the ranked list, and the drawer follows it there.
 function adoptLive(){var c=live;D.hooks.push(c);live=null;$("hookIn").value="";renderHooks();openH(D.hooks.length-1);return c}
-$("db").onclick=function(e){if(dR===rL&&listClick(e))return;if(dR===rS&&setClick(e))return;if(e.target.closest("[data-ha=back]")){openL();return}if(e.target.closest("[data-ba=copy]")){copy(snapText());toast("Creator snapshot copied.");return}var v=e.target.closest("[data-vv]");if(v){openD(+v.dataset.vv,topList());return}var b=e.target.closest("[data-ha]");if(!b||dR!==rH)return;var c=hookAt();if(!c)return;var isLive=dl[di]===-1;
+$("db").onclick=function(e){if(dR===rC){var cv=e.target.closest("[data-cv]");if(cv){openD(+cv.dataset.cv,D.grp.latest);return}}if(dR===rL&&listClick(e))return;if(dR===rS&&setClick(e))return;if(e.target.closest("[data-ha=back]")){openL();return}if(e.target.closest("[data-ba=copy]")){copy(snapText());toast("Creator snapshot copied.");return}var v=e.target.closest("[data-vv]");if(v){openD(+v.dataset.vv,topList());return}var b=e.target.closest("[data-ha]");if(!b||dR!==rH)return;var c=hookAt();if(!c)return;var isLive=dl[di]===-1;
   if(b.dataset.ha==="add"&&isLive){var t=adoptLive().text;openL(t);toast("Added to your hooks.")}
   if(b.dataset.ha==="save"){if(isLive)c=adoptLive();toggleSave(c)}
   if(b.dataset.ha==="copy"){copy(c.text);toast("Hook copied.")}
@@ -950,6 +967,42 @@ function utcReset(){var n=new Date(),r=Date.UTC(n.getUTCFullYear(),n.getUTCMonth
 function grpStats(ids){var c={},sc={},n=0,miss={none:0,no_speech:0,work:0};ids.forEach(function(i){var v=D.videos[i],t=txOf(v),st=t?t.status:"none";
   if(st==="ok"&&v.src==="transcript"){n++;if(v.hook)c[v.hook]=(c[v.hook]||0)+1;var s=v.ans&&v.ans.structure&&v.ans.structure.choice;if(s)sc[s]=(sc[s]||0)+1}else if(st==="none"||st==="no_speech")miss[st]++;else miss.work++});
   var top=Object.keys(c).sort(function(a,b){return c[b]-c[a]})[0]||null;return {c:c,sc:sc,n:n,miss:miss,top:top}}
+// Jev verdict: the most common hook type in each group, from Jev's existing labels on the transcribed Shorts.
+// No extra API call. If the top hook is tied for first in Latest, it counts as aligned; other ties go to the
+// hook listed first in the dashboard's hook order, so the same data always gives the same verdict.
+var MIN_VERDICT=3; // usable transcripts needed in each group before comparing
+// Every hook type tied for the highest count, in the dashboard's hook order. Both verdict boxes use this,
+// so they always name the same hook, and a tie is shown as a tie instead of picking one.
+function leaders(c){var ord=HOOKS.map(function(h){return h[0]}),ks=Object.keys(c);if(!ks.length)return [];var mx=Math.max.apply(null,ks.map(function(k){return c[k]}));
+  return ks.filter(function(k){return c[k]===mx}).sort(function(a,b){return ord.indexOf(a)-ord.indexOf(b)})}
+function domHook(c){return leaders(c)[0]||null}
+function hkNames(ks){var n=ks.map(function(k){return '<span'+defTip("hook",k)+'>'+esc(hn(k))+'</span>'});return n.length<2?n.join(""):n.slice(0,-1).join(", ")+" and "+n[n.length-1]}
+function hookVerdict(A,B,nTop,nLatest){var sample="Top: "+A.n+"/"+nTop+" transcribed \u00b7 Latest: "+B.n+"/"+nLatest+" transcribed",a=leaders(A.c),b=leaders(B.c);
+  if(A.n<MIN_VERDICT||B.n<MIN_VERDICT||!a.length||!b.length)return {ok:false,sample:sample};
+  // Aligned when the groups share a most-common hook (a tie that includes the top hook counts).
+  var shared=a.filter(function(k){return b.indexOf(k)>=0});return {ok:true,top:a,latest:b,shared:shared,align:shared.length>0,sample:sample}}
+function verdictText(V){return !V.ok?'Not enough transcripts to compare hook strategies.':V.align?'Latest hooks align with the top-performing pattern: '+hkNames(V.shared)+'.':'Latest hooks are shifting from '+hkNames(V.top)+' to '+hkNames(V.latest)+'.'}
+// One stacked bar of a group's hook mix, in hook order, each segment with its definition on hover.
+function mixBar(S){return '<span class="mixb">'+HOOKS.map(function(h){var k=h[0],n=S.c[k]||0;return n?'<i style="--hc:'+col(k)+';width:'+(n/S.n*100)+'%"'+tipAttr('<b>'+esc(hn(k))+' hook</b><hr>'+trow("Shorts",n+" of "+S.n)+'<span class="m">'+esc((OPT.hook||{})[k]||"")+'</span>')+'></i>':''}).join("")+'</span>'}
+// Side panel: the full Top vs Latest comparison behind both verdict boxes.
+function bfly(rows,A,B){return '<div class="bfly"><span class="h l">Top \u00b7 '+A.n+'</span><span></span><span class="h">Latest \u00b7 '+B.n+'</span>'+rows.map(function(r){var a=A.n?r.a/A.n*100:0,b=B.n?r.b/B.n*100:0;
+  return '<span class="l"><small>'+Math.round(a)+'% \u00b7 '+r.a+'</small><i style="--hc:'+r.c+';width:'+a+'%"></i></span><span class="k"'+r.tip+'>'+esc(r.label)+'</span><span class="r"><i style="--hc:'+r.c+';width:'+b+'%"></i><small>'+r.b+' \u00b7 '+Math.round(b)+'%</small></span>'}).join("")+'</div>'}
+function rC(){var X=D,G=X.grp,T=X.tx;$("dpos").textContent="Hook strategy";if(!G||!T){$("db").innerHTML='<p class="bfe">Decode a creator first.</p>';return}
+  var A=grpStats(G.top),B=grpStats(G.latest),V=hookVerdict(A,B,G.top.length,G.latest.length),C=X.cmp&&!X.cmp.none?X.cmp:null;
+  var hooks=HOOKS.map(function(h){return h[0]}).filter(function(k){return A.c[k]||B.c[k]}).map(function(k){return {label:hn(k),a:A.c[k]||0,b:B.c[k]||0,c:col(k),tip:defTip("hook",k)}});
+  var sk=Object.keys(A.sc).concat(Object.keys(B.sc)).filter(function(k,i,l){return l.indexOf(k)===i}).sort(function(x,y){return ((B.sc[y]||0)+(A.sc[y]||0))-((B.sc[x]||0)+(A.sc[x]||0))});
+  var strs=sk.map(function(k){return {label:hn(k),a:A.sc[k]||0,b:B.sc[k]||0,c:"var(--ink)",tip:defTip("structure",k)}});
+  var lat=G.latest.map(function(i){return D.videos[i]}).filter(function(v){return C&&C.follows[v.id]!=null}).sort(function(x,y){return C.follows[y.id]-C.follows[x.id]});
+  var fol=lat.filter(function(v){return C.follows[v.id]>=.5}).length,miss=A.miss.none+B.miss.none,ns=A.miss.no_speech+B.miss.no_speech;
+  $("db").innerHTML='<div class="bfh"><div class="sub">'+esc(X.handle)+'</div><h3>Hook strategy comparison</h3></div>'+
+    '<div class="hsv" style="margin-top:12px'+(V.ok?'':';border-left-color:var(--warn)')+'"><small style="margin:0 0 4px;text-transform:uppercase;letter-spacing:.08em">Jev verdict</small><b>'+verdictText(V)+'</b><small>'+V.sample+'</small></div>'+
+    '<div class="sec">Hook mix, Top vs Latest</div>'+(hooks.length?bfly(hooks,A,B)+'<p class="sub" style="margin:8px 0 0">Share of each group\u2019s transcribed Shorts, from Jev\u2019s hook labels. Darker bars are Top, lighter bars are Latest.</p>':'<p class="bfe">No transcribed Shorts yet.</p>')+
+    (strs.length?'<div class="sec">Structure mix</div>'+bfly(strs,A,B):'')+
+    '<div class="sec">Jev\u2019s judgment</div>'+(C?'<p style="margin:0;font-size:13.5px"><b>'+fol+' of '+lat.length+'</b> latest openings follow the winning hook pattern'+(C.closeness&&C.closeness.label?'. Overall: \u201c'+esc(C.closeness.label)+'.\u201d':'.')+'</p>'+
+      '<div class="cmeter"'+tipAttr('<b>How closely Latest follows Top</b><hr>'+trow("Jev\u2019s score",Math.round(C.closeness.score*100)+"%")+'<span class="m">From compare.json: hook patterns only, not views.</span>')+'><b style="left:'+Math.round(C.closeness.score*100)+'%"></b></div><div class="cends"><span>Opens differently</span><span>Opens like the top performers</span></div>'+
+      '<div style="margin-top:12px">'+lat.map(function(v){var p=C.follows[v.id];return '<button class="flw" data-cv="'+v.i+'"><span style="background-image:url(\''+esc(v.thumb||"")+'\')"></span><div>'+esc(v.title)+'<small>'+(v.hook?'opens with <span'+defTip("hook",v.hook)+'>'+esc(hn(v.hook))+'</span>':'no hook label')+'</small></div><span class="pb'+(p>=.5?'':' no')+'"'+tipAttr('<b>Follows the pattern?</b><hr>'+trow("Jev\u2019s probability",Math.round(p*100)+"%")+'<span class="m">The line marks 50%.</span>')+'><i style="width:'+Math.round(p*100)+'%"></i></span><b>'+Math.round(p*100)+'%</b></button>'}).join("")+'</div>'
+      :'<p class="bfe">Jev compares the groups once each has at least one transcribed Short.</p>')+
+    (miss||ns?'<p class="sub" style="margin-top:12px">Not included: '+miss+' No transcript, '+ns+' No clear speech.</p>':'')}
 function renderHS(){var el=$("hs");if(!el)return;var X=D,T=X.tx;$("txClear").hidden=!(X.handle&&T&&!T.running);
   if(!X.handle||!T||!X.grp){$("st6").textContent="Waiting";el.innerHTML='<p class="hs-empty">After the fast decode, Jev reads what is actually said in this creator’s top Shorts and their latest ones, then checks whether the newest videos still open the way the best ones do. Audio is turned into text by Workers AI Whisper; Jev makes every judgment.</p>';return}
   var G=X.grp,tot=T.total,done=T.done,ok=0;Object.keys(T.items).forEach(function(k){if(T.items[k].status==="ok")ok++});
@@ -960,13 +1013,19 @@ function renderHS(){var el=$("hs");if(!el)return;var X=D,T=X.tx;$("txClear").hid
   if(T.limit)h+='<div class="hsn">Workers AI’s free daily limit is used up, so the remaining Shorts keep their title-based results. It resets at 00:00 UTC (in '+utcReset()+').</div>';
   if(T.helper)h+='<div class="hsn">'+esc(T.helper)+' Shorts keep their title-based results.</div>';
   var nm=function(k){return k?esc(hn(k)):"no clear pattern"};
-  if(!T.running){var C=X.cmp;
-    if(C&&!C.none){var fol=0,m=0;G.latest.forEach(function(i){var p=C.follows[D.videos[i].id];if(p!=null){m++;if(p>=.5)fol++}});
-      var useTop=A.top?(B.c[A.top]||0):0,miss=(A.miss.none+A.miss.no_speech+B.miss.none+B.miss.no_speech);
-      h+='<div class="hsv"'+tipAttr('<b>Jev\u2019s verdict</b><hr><span class="m">Hook counts come from Jev\u2019s answers on each transcribed Short. Jev also judged whether each latest opening follows the top openings\u2019 hook pattern (compare.json).</span>')+'><b>Top performers mostly open with <span'+(A.top?defTip("hook",A.top):'')+'>'+nm(A.top)+(A.top?' hooks':'')+'</span>'+(A.top?' ('+A.c[A.top]+' of '+A.n+')':'')+'; '+useTop+' of the latest '+B.n+' do.</b>'+
-        '<p>Jev judged '+fol+' of '+m+' latest openings to follow the winning hook pattern'+(C.closeness&&C.closeness.label?': “'+esc(C.closeness.label)+'.”':'.')+' Latest Shorts are judged on how they open, not on views.</p>'+
-        '<small>Based on '+A.n+' top and '+B.n+' recent Shorts with transcripts'+(miss?' ('+miss+' missing: '+(A.miss.none+B.miss.none)+' No transcript, '+(A.miss.no_speech+B.miss.no_speech)+' No clear speech)':'')+'.</small></div>'}
-    else h+='<div class="hsv" style="border-left-color:var(--warn)"><b>Not enough transcripts for a verdict.</b><p>Jev needs at least one transcribed Short in each group. '+(ok?ok+" of "+tot+" were transcribed.":"None were transcribed.")+'</p></div>'}
+  // One Jev verdict box: the label-based verdict, both groups' hook mix, Jev's per-Short judgment, and the sample.
+  // The whole box opens the comparison view in the side panel.
+  if(!T.running){var C=X.cmp&&!X.cmp.none?X.cmp:null,V=hookVerdict(A,B,G.top.length,G.latest.length),miss=A.miss.none+B.miss.none,ns=A.miss.no_speech+B.miss.no_speech;
+    var open=' class="hsv clk" data-hc="1" role="button" tabindex="0" aria-label="Open the hook strategy comparison"'+tipAttr('<b>Jev’s verdict</b><hr><span class="m">The hook mix comes from Jev’s labels on each transcribed Short. Jev also judged whether each latest opening follows the top openings’ hook pattern (compare.json). Click for the full comparison.</span>');
+    var head='<span class="more">View comparison ›</span><small style="margin:0 0 4px;text-transform:uppercase;letter-spacing:.08em">Jev verdict</small><b>'+verdictText(V)+'</b>';
+    var foot='<small>'+V.sample+(miss||ns?' · not included: '+miss+' No transcript, '+ns+' No clear speech':'')+'</small>';
+    if(!V.ok)h+='<div'+open+' style="border-left-color:var(--warn)">'+head+'<p>Jev needs at least '+MIN_VERDICT+' transcribed Shorts in each group.</p>'+foot+'</div>';
+    else{var LA=V.top,useTop=LA.reduce(function(t,k){return t+(B.c[k]||0)},0),fol=0,m=0,dots="";
+      if(C)G.latest.forEach(function(i){var v=D.videos[i],p=C.follows[v.id];if(p==null)return;m++;if(p>=.5)fol++;dots+='<i class="'+(p>=.5?'on':'')+'"'+tipAttr('<b>'+esc(v.title)+'</b><hr>'+trow("Follows the pattern",Math.round(p*100)+"%"))+'></i>'});
+      h+='<div'+open+'>'+head+'<div class="mixr"><span>Top</span>'+mixBar(A)+'</div><div class="mixr"><span>Latest</span>'+mixBar(B)+'</div>'+
+        '<p>Top performers mostly open with '+hkNames(LA)+' hooks ('+(LA.length>1?A.c[LA[0]]+' each':A.c[LA[0]]+' of '+A.n)+'); '+useTop+' of the latest '+B.n+' do.'+
+        (C?' Jev judged '+fol+' of '+m+' latest openings to follow the winning hook pattern'+(C.closeness&&C.closeness.label?': “'+esc(C.closeness.label)+'.”':'.'):'')+' Latest Shorts are judged on how they open, not on views.</p>'+
+        (dots?'<div class="fdots" aria-hidden="true">'+dots+'</div>':'')+foot+'</div>'}}
   var col2=function(title,ids,S,latest){var hooks=Object.keys(S.c).sort(function(a,b){return S.c[b]-S.c[a]}),st=Object.keys(S.sc).sort(function(a,b){return S.sc[b]-S.sc[a]}).slice(0,3);
     return '<div class="hsg"><div><h4>'+title+'</h4><div class="sub">'+S.n+' of '+ids.length+' transcribed'+(latest?' · judged on hooks, not views':'')+'</div></div><div>'+
       (hooks.length?hooks.map(function(k){return '<div class="hsb" style="--hc:'+col(k)+';cursor:help"'+defTip("hook",k)+'><span>'+esc(hn(k))+'</span><i style="--w:'+Math.round(S.c[k]/S.n*100)+'%"></i><b>'+S.c[k]+'</b></div>'}).join(""):'<div class="hss">No spoken hooks yet.</div>')+'</div><div>'+
@@ -974,8 +1033,9 @@ function renderHS(){var el=$("hs");if(!el)return;var X=D,T=X.tx;$("txClear").hid
       ids.map(function(i){var v=D.videos[i],t=txOf(v)||{},s=t.status||"none",cls=s==="ok"?"ok":(s==="none"||s==="no_speech")?"none":"work",f=latest&&X.cmp&&X.cmp.follows?X.cmp.follows[v.id]:null;
         return '<button class="hsr'+(s==="downloading"||s==="transcribing"?' act':'')+'" data-hv="'+i+'" data-hg="'+(latest?"latest":"top")+'"><span style="background-image:url(\''+esc(v.thumb||"")+'\')"></span><div>'+esc(v.title)+'<small>'+fmt(v.views)+' views'+(v.src==="transcript"&&v.hook?' · opens with <span'+defTip("hook",v.hook)+'>'+esc(hn(v.hook))+'</span>':'')+(f!=null?' · '+(f>=.5?'follows the pattern':'different hook')+' ('+Math.round(f*100)+'%)':'')+'</small></div><span class="txs '+cls+'"'+chipTip(t)+'>'+TXL[s]+'</span></button>'}).join("")+'</div></div>'};
   h+='<div class="hsc">'+col2("Top "+G.top.length+" by views",G.top,A,false)+col2("Latest "+G.latest.length,G.latest,B,true)+'</div>';
-  el.innerHTML=h}
-$("hs").onclick=function(e){var r=e.target.closest("[data-hv]");if(!r)return;var g=D.grp[r.dataset.hg];openD(+r.dataset.hv,g)};
+  el.innerHTML=h;if(dR===rC&&$("drawer").classList.contains("open"))rC()}
+$("hs").addEventListener("keydown",function(e){if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-hc]")){e.preventDefault();openDr([0],0,rC)}});
+$("hs").onclick=function(e){if(e.target.closest("[data-hc]")){openDr([0],0,rC);return}var r=e.target.closest("[data-hv]");if(!r)return;var g=D.grp[r.dataset.hg];openD(+r.dataset.hv,g)};
 $("txClear").onclick=function(){if(!D.handle)return;var X=D;api("/api/transcripts",{handle:X.handle,action:"clear"}).then(function(){if(X!==D)return;X.tx=null;X.cmp=null;renderHS();
   $("hs").innerHTML='<p class="hs-empty">Cached transcripts for '+esc(X.handle)+' are cleared. <button class="lnk" id="txAgain">Fetch them again</button></p>';$("st6").textContent="Cleared";toast("Cached transcripts cleared.")}).catch(function(e){toast(e.message)})};
 $("hs").addEventListener("click",function(e){if(e.target.id==="txAgain")txRun()});
