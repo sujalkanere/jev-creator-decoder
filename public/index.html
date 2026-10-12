@@ -260,8 +260,8 @@ body:not(.has-data) .stage .stats,body:not(.has-data) .stage .pf{opacity:.45}
 .pull-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
 .pull h2{margin:4px 0;font-size:20px;letter-spacing:-.02em}
 .pull-t{font-size:22px;font-weight:600;letter-spacing:-.02em;flex:none}
-.pull-row{display:flex;gap:6px;margin-top:18px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,#000 75%,transparent);mask-image:linear-gradient(90deg,#000 75%,transparent)}
-.pull-row i{width:54px;height:88px;border-radius:9px;flex:none;background:var(--sunk);border:1px solid var(--line);position:relative;overflow:hidden;animation:rise 1.8s ease-in-out infinite;animation-delay:calc(var(--i)*90ms)}
+.pull-row{display:grid;grid-template-columns:repeat(var(--n,18),minmax(0,1fr));gap:6px;margin-top:18px}
+.pull-row i{height:88px;border-radius:9px;background:var(--sunk);border:1px solid var(--line);position:relative;overflow:hidden;animation:rise 1.8s ease-in-out infinite;animation-delay:calc(var(--i)*90ms)}
 .pull-row i::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,color-mix(in srgb,var(--card) 80%,transparent) 50%,transparent 70%);transform:translateX(-100%);animation:shimmer 1.8s ease-in-out infinite;animation-delay:calc(var(--i)*90ms)}
 .pull-row b{position:absolute;left:0;right:0;bottom:0;height:16px;background:var(--hc);opacity:0;animation:band 1.8s ease-in-out infinite;animation-delay:calc(var(--i)*90ms)}
 @keyframes rise{0%,100%{transform:none}40%{transform:translateY(-6px)}}
@@ -560,7 +560,7 @@ function say(t,err){$("mode").textContent=t||"";$("mode").classList.toggle("err"
 // A card glows while work for it is in flight. Counted, since drafts and live scoring can overlap.
 var bz={};function busy(id,on){bz[id]=Math.max(0,(bz[id]||0)+(on?1:-1));$(id).classList.toggle("busy",bz[id]>0)}
 // The YouTube card only appears if the pull takes longer than a blink, so library loads don't flash it.
-var pullT0=0,pullTm=0;function pulling(on){clearTimeout(pullTm);if(on){pullT0=performance.now();pullTm=setTimeout(function(){document.body.classList.add("pulling")},250)}else document.body.classList.remove("pulling")}
+var pullT0=0,pullTm=0;function pulling(on){clearTimeout(pullTm);if(on){pullT0=performance.now();pullTm=setTimeout(function(){document.body.classList.add("pulling");fillPull()},250)}else document.body.classList.remove("pulling")}
 /* ---------- hover card ---------- */
 // Canvases register a hit test in HOV (local x,y -> html or null). Everything else uses data-tip,
 // which holds html whose dynamic parts are already escaped.
@@ -576,7 +576,10 @@ var TIPS={k1:"Batched requests sent to Jev. Each call carries up to 10 videos.",
   k7:"Hooks Jev has judged for this creator, including your shortlist.",k8:"Average time for one Jev call to score hooks.",k9:"Hooks you saved. They stay in your library for this creator.",
   fTop:"The hook type with the highest median-view lift, among types used in 5 or more Shorts.",fCombo:"The hook and structure pair with the highest lift, among pairs used in 3 or more Shorts.",fBlind:"A hook type that outperforms (1.1x or more) but the creator rarely uses.",fRev:"Same as Flagged: videos where Jev was unsure. Click Review them to step through.",tc:"How long the decode took, and how many Shorts per second Jev got through."};
 Object.keys(TIPS).forEach(function(k){$(k).parentNode.dataset.tip=esc(TIPS[k])});
-(function(){var h="";for(var i=0;i<18;i++)h+='<i style="--i:'+i+';--hc:var(--'+HOOKS[i%HOOKS.length][0]+')"><b></b></i>';$("pullRow").innerHTML=h})();
+// As many Shorts-shaped tiles as fit the card (about 54 px each), stretched so the row ends at the card's edge.
+function fillPull(){var r=$("pullRow"),w=r.clientWidth;if(!w)return;var n=Math.max(1,Math.floor((w+6)/60));if(r.children.length===n)return;
+  var h="";for(var i=0;i<n;i++)h+='<i style="--i:'+i+';--hc:var(--'+HOOKS[i%HOOKS.length][0]+')"><b></b></i>';r.style.setProperty("--n",n);r.innerHTML=h}
+addEventListener("resize",function(){if(document.body.classList.contains("pulling"))fillPull()});
 
 /* ---------- state ---------- */
 var D;function fresh(){return {pending:[],drafted:false,handle:"",channel:null,videos:[],cached:false,running:false,vt:0,t0:0,end:0,calls:[],ev:[],decoded:0,qpc:0,q:0,cost:0,dcost:0,results:[],hooks:[],jms:0,jn:0,lift:{},saved:[],latest:[],tx:null,grp:null,cmp:null}}D=fresh();
@@ -878,6 +881,22 @@ $("openSet").onclick=openS;
 var HELPER="http://127.0.0.1:8790",OPEN_S=45,TX_PAR=4;
 var TXL={ok:"Transcribed",no_speech:"No clear speech",none:"No transcript",queued:"Waiting",downloading:"Getting audio",transcribing:"Transcribing"};
 function txOf(v){return D.tx&&D.tx.items[v.id]||null}
+// Hover help: which tool is doing the work at each step. Only Jev makes decisions; yt-dlp and Whisper fetch and transcribe.
+var TXTOOL={queued:["Waiting in line","The transcript helper gets audio one Short at a time, 3 seconds apart."],
+  downloading:["yt-dlp, on your computer","The transcript helper is downloading this Short\u2019s audio. This is not Jev."],
+  transcribing:["Whisper, on Cloudflare Workers AI","Turning the audio into text with timestamps. This is not Jev."],
+  ok:["Whisper, then Jev","Whisper transcribed it, then Jev re-decoded it from what is said in the opening and transcript."],
+  no_speech:["Whisper","Under 1 word per second, so it looks like music or near-silence. Jev kept the title-based result."],
+  none:["No tool finished","Jev kept the title-based result."]};
+function tipAttr(h){return ' data-tip="'+esc(h)+'"'}
+function chipTip(t){var s=t.status||"none",x=TXTOOL[s];return tipAttr('<b>'+TXL[s]+'</b><hr>'+trow("Tool",x[0])+'<div class="m" style="margin-top:4px;max-width:260px">'+x[1]+(t.why?' '+esc(t.why)+'.':'')+'</div>')}
+// Definition of a hook type or structure, in the same words as the side panel's card definitions.
+function defTip(group,k){var d=(OPT[group]||{})[k];return d?tipAttr('<b>'+esc(hn(k))+(group==="hook"?' hook':' structure')+'</b><hr><span class="m">'+esc(d)+'</span>'):''}
+// Live breakdown of who is working, for the status and progress bar.
+function phaseHtml(T){var c={queued:0,downloading:0,transcribing:0,done:0};Object.keys(T.items).forEach(function(k){var s=T.items[k].status;if(c[s]!=null)c[s]++;else c.done++});
+  var jev=T.running&&T.done>=T.total;
+  return '<b>Who is working now</b><hr>'+trow("yt-dlp (your computer)",c.downloading?"getting audio":"idle")+trow("Whisper (Workers AI)",c.transcribing?"transcribing "+c.transcribing:"idle")+trow("Jev",jev?"re-decoding and comparing":T.running?"waits for transcripts":"done")+trow("Waiting",c.queued)+trow("Finished",c.done+" of "+T.total)+
+    '<div class="m" style="margin-top:4px;max-width:270px">yt-dlp and Whisper only fetch audio and turn it into text. Jev makes every decision.</div>'}
 // Top N by views, then the N newest that aren't already in Top N, so the groups never overlap.
 function pickGroups(){var n=(SET&&SET.TRANSCRIPT_GROUP)||10,d=dec(),top=d.slice().sort(function(a,b){return b.views-a.views}).slice(0,n),inTop={};top.forEach(function(v){inTop[v.id]=1});
   var latest=d.slice().sort(function(a,b){return b.rec.posted_at.localeCompare(a.rec.posted_at)}).filter(function(v){return !inTop[v.id]}).slice(0,n);return {n:n,top:top.map(function(v){return v.i}),latest:latest.map(function(v){return v.i})}}
@@ -935,24 +954,25 @@ function renderHS(){var el=$("hs");if(!el)return;var X=D,T=X.tx;$("txClear").hid
   if(!X.handle||!T||!X.grp){$("st6").textContent="Waiting";el.innerHTML='<p class="hs-empty">After the fast decode, Jev reads what is actually said in this creator’s top Shorts and their latest ones, then checks whether the newest videos still open the way the best ones do. Audio is turned into text by Workers AI Whisper; Jev makes every judgment.</p>';return}
   var G=X.grp,tot=T.total,done=T.done,ok=0;Object.keys(T.items).forEach(function(k){if(T.items[k].status==="ok")ok++});
   $("st6").textContent=T.running?(done<tot?"Transcribing "+Math.min(done+1,tot)+" of "+tot:"Re-decoding with Jev"):(ok?"Done":"No transcripts");
+  if(T.running)$("st6").setAttribute("data-tip",phaseHtml(T));else $("st6").removeAttribute("data-tip");
   var A=grpStats(G.top),B=grpStats(G.latest),h="";
-  if(T.running)h+='<div class="hsp"><div class="bar"><i style="width:'+Math.round(done/Math.max(1,tot)*100)+'%"></i></div><span>'+(done<tot?"Transcribing "+Math.min(done+1,tot)+" of "+tot:"Jev is re-decoding from the transcripts…")+'</span></div>';
+  if(T.running)h+='<div class="hsp" style="cursor:help"'+tipAttr(phaseHtml(T))+'><div class="bar"><i style="width:'+Math.round(done/Math.max(1,tot)*100)+'%"></i></div><span>'+(done<tot?"Transcribing "+Math.min(done+1,tot)+" of "+tot:"Jev is re-decoding from the transcripts…")+'</span></div>';
   if(T.limit)h+='<div class="hsn">Workers AI’s free daily limit is used up, so the remaining Shorts keep their title-based results. It resets at 00:00 UTC (in '+utcReset()+').</div>';
   if(T.helper)h+='<div class="hsn">'+esc(T.helper)+' Shorts keep their title-based results.</div>';
   var nm=function(k){return k?esc(hn(k)):"no clear pattern"};
   if(!T.running){var C=X.cmp;
     if(C&&!C.none){var fol=0,m=0;G.latest.forEach(function(i){var p=C.follows[D.videos[i].id];if(p!=null){m++;if(p>=.5)fol++}});
       var useTop=A.top?(B.c[A.top]||0):0,miss=(A.miss.none+A.miss.no_speech+B.miss.none+B.miss.no_speech);
-      h+='<div class="hsv"><b>Top performers mostly open with '+nm(A.top)+(A.top?' hooks ('+A.c[A.top]+' of '+A.n+')':'')+'; '+useTop+' of the latest '+B.n+' do.</b>'+
+      h+='<div class="hsv"'+tipAttr('<b>Jev\u2019s verdict</b><hr><span class="m">Hook counts come from Jev\u2019s answers on each transcribed Short. Jev also judged whether each latest opening follows the top openings\u2019 hook pattern (compare.json).</span>')+'><b>Top performers mostly open with <span'+(A.top?defTip("hook",A.top):'')+'>'+nm(A.top)+(A.top?' hooks':'')+'</span>'+(A.top?' ('+A.c[A.top]+' of '+A.n+')':'')+'; '+useTop+' of the latest '+B.n+' do.</b>'+
         '<p>Jev judged '+fol+' of '+m+' latest openings to follow the winning hook pattern'+(C.closeness&&C.closeness.label?': “'+esc(C.closeness.label)+'.”':'.')+' Latest Shorts are judged on how they open, not on views.</p>'+
         '<small>Based on '+A.n+' top and '+B.n+' recent Shorts with transcripts'+(miss?' ('+miss+' missing: '+(A.miss.none+B.miss.none)+' No transcript, '+(A.miss.no_speech+B.miss.no_speech)+' No clear speech)':'')+'.</small></div>'}
     else h+='<div class="hsv" style="border-left-color:var(--warn)"><b>Not enough transcripts for a verdict.</b><p>Jev needs at least one transcribed Short in each group. '+(ok?ok+" of "+tot+" were transcribed.":"None were transcribed.")+'</p></div>'}
   var col2=function(title,ids,S,latest){var hooks=Object.keys(S.c).sort(function(a,b){return S.c[b]-S.c[a]}),st=Object.keys(S.sc).sort(function(a,b){return S.sc[b]-S.sc[a]}).slice(0,3);
     return '<div class="hsg"><div><h4>'+title+'</h4><div class="sub">'+S.n+' of '+ids.length+' transcribed'+(latest?' · judged on hooks, not views':'')+'</div></div><div>'+
-      (hooks.length?hooks.map(function(k){return '<div class="hsb" style="--hc:'+col(k)+'"><span>'+esc(hn(k))+'</span><i style="--w:'+Math.round(S.c[k]/S.n*100)+'%"></i><b>'+S.c[k]+'</b></div>'}).join(""):'<div class="hss">No spoken hooks yet.</div>')+'</div><div>'+
-      (st.length?'<div class="hss">Structure: '+st.map(function(k){return esc(hn(k))+' '+S.sc[k]}).join(", ")+'</div>':'')+'</div><div>'+
+      (hooks.length?hooks.map(function(k){return '<div class="hsb" style="--hc:'+col(k)+';cursor:help"'+defTip("hook",k)+'><span>'+esc(hn(k))+'</span><i style="--w:'+Math.round(S.c[k]/S.n*100)+'%"></i><b>'+S.c[k]+'</b></div>'}).join(""):'<div class="hss">No spoken hooks yet.</div>')+'</div><div>'+
+      (st.length?'<div class="hss">Structure: '+st.map(function(k){return '<span style="cursor:help;text-decoration:underline dotted"'+defTip("structure",k)+'>'+esc(hn(k))+'</span> '+S.sc[k]}).join(", ")+'</div>':'')+'</div><div>'+
       ids.map(function(i){var v=D.videos[i],t=txOf(v)||{},s=t.status||"none",cls=s==="ok"?"ok":(s==="none"||s==="no_speech")?"none":"work",f=latest&&X.cmp&&X.cmp.follows?X.cmp.follows[v.id]:null;
-        return '<button class="hsr'+(s==="downloading"||s==="transcribing"?' act':'')+'" data-hv="'+i+'" data-hg="'+(latest?"latest":"top")+'"><span style="background-image:url(\''+esc(v.thumb||"")+'\')"></span><div>'+esc(v.title)+'<small>'+fmt(v.views)+' views'+(v.src==="transcript"&&v.hook?' · opens with '+esc(hn(v.hook)):'')+(f!=null?' · '+(f>=.5?'follows the pattern':'different hook')+' ('+Math.round(f*100)+'%)':'')+'</small></div><span class="txs '+cls+'"'+(t.why?' title="'+esc(t.why)+'"':'')+'>'+TXL[s]+'</span></button>'}).join("")+'</div></div>'};
+        return '<button class="hsr'+(s==="downloading"||s==="transcribing"?' act':'')+'" data-hv="'+i+'" data-hg="'+(latest?"latest":"top")+'"><span style="background-image:url(\''+esc(v.thumb||"")+'\')"></span><div>'+esc(v.title)+'<small>'+fmt(v.views)+' views'+(v.src==="transcript"&&v.hook?' · opens with <span'+defTip("hook",v.hook)+'>'+esc(hn(v.hook))+'</span>':'')+(f!=null?' · '+(f>=.5?'follows the pattern':'different hook')+' ('+Math.round(f*100)+'%)':'')+'</small></div><span class="txs '+cls+'"'+chipTip(t)+'>'+TXL[s]+'</span></button>'}).join("")+'</div></div>'};
   h+='<div class="hsc">'+col2("Top "+G.top.length+" by views",G.top,A,false)+col2("Latest "+G.latest.length,G.latest,B,true)+'</div>';
   el.innerHTML=h}
 $("hs").onclick=function(e){var r=e.target.closest("[data-hv]");if(!r)return;var g=D.grp[r.dataset.hg];openD(+r.dataset.hv,g)};
@@ -962,7 +982,7 @@ $("hs").addEventListener("click",function(e){if(e.target.id==="txAgain")txRun()}
 renderHS();
 // Side panel: the transcript with the opening highlighted, and a link that starts the video at the hook.
 function txBlock(v){var t=txOf(v);if(!t)return "";var s=t.status;
-  var chip='<span class="txs '+(s==="ok"?"ok":(s==="none"||s==="no_speech")?"none":"work")+'">'+TXL[s]+'</span>';
+  var chip='<span class="txs '+(s==="ok"?"ok":(s==="none"||s==="no_speech")?"none":"work")+'"'+chipTip(t)+'>'+TXL[s]+'</span>';
   if(s!=="ok"&&s!=="no_speech")return '<div class="dtx"><div class="kh"><b>Transcript</b>'+chip+'</div>'+(t.why?'<div class="sub" style="margin-top:6px">'+esc(t.why)+'. Jev used the title and description.</div>':'')+'</div>';
   var seg=t.segments||[],start=seg.length?Math.floor(seg[0][0]):0,mm=Math.floor(start/60)+":"+("0"+start%60).slice(-2);
   var op=seg.filter(function(x){return x[0]<OPEN_S}).map(function(x){return esc(x[2])}).join(" "),rest=seg.filter(function(x){return x[0]>=OPEN_S}).map(function(x){return esc(x[2])}).join(" ");
