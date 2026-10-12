@@ -7,7 +7,7 @@ Paste everything below the line into the Reme project generator.
 Generate a detailed, beginner-friendly Reme project from this brief. Use every fact, command, file name, and button label exactly as written. The project has **Steps 1 to 4 plus one Secret Mission**, nothing more. For every file the learner edits, include an "I'd like to check the full code" section showing that file's full contents from the repository.
 
 ## Repository and links
-- Repository: https://github.com/Nik-1019/Jev-Creator-Decoder-Reme (branch `main`, the finished project)
+- Repository: https://github.com/sujalkanere/jev-creator-decoder (branch `main`, the finished project)
 
 ## Overview
 **Title:** Jev Content Decoder @sujalkanere
@@ -86,8 +86,8 @@ Generate a detailed, beginner-friendly Reme project from this brief. Use every f
 5. **Create a free Cloudflare account** at dash.cloudflare.com. You don't need to change any settings there; setup handles the rest.
 6. **Clone the repository:**
    ```bash
-   git clone https://github.com/Nik-1019/Jev-Creator-Decoder-Reme.git
-   cd Jev-Creator-Decoder-Reme
+   git clone https://github.com/sujalkanere/jev-creator-decoder.git
+   cd jev-creator-decoder
    ```
 7. **Install the packages:**
    ```bash
