@@ -9,6 +9,24 @@ export const JEV_PRICE_PER_M_INPUT = 0.042; // USD per 1M input tokens. Output t
 const LONE_SURROGATE = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g;
 const wellFormed = (_k: string, v: unknown) => (typeof v === "string" ? v.replace(LONE_SURROGATE, "") : v);
 
+// Calls local or hosted Laya System-1 HTTP API.
+async function runLaya(env: any, input: { state: unknown; questions: Record<string, any> }) {
+  const url = env.LAYA_URL || "http://127.0.0.1:8000/v1/systemone";
+  const headers: Record<string, string> = { "content-type": "application/json" };
+  if (env.LAYA_API_KEY) headers.authorization = `Bearer ${env.LAYA_API_KEY}`;
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ state: input.state, model: env.LAYA_MODEL || "laya", questions: input.questions }, wellFormed),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Laya (${url}) returned HTTP ${res.status}: ${body.slice(0, 200)}`);
+  }
+  return await res.json();
+}
+
 // Calls TypeSafe's own HTTP API. Throws on network errors and non-2xx responses.
 async function runJevTypesafe(env: any, input: { state: unknown; questions: Record<string, any> }) {
   const res = await fetch("https://api.typesafe.ai/v1/systemone", {
@@ -23,11 +41,27 @@ async function runJevTypesafe(env: any, input: { state: unknown; questions: Reco
   return await res.json();
 }
 
-// Runs Jev on TypeSafe's own HTTP API when TYPESAFE_API_KEY is set, falling back to
-// Cloudflare Workers AI if that call fails. Without the key, Cloudflare is used alone.
-// Both speak the same state/questions/answers contract, so callers read the result the same way.
+// Runs the System 1 decision engine.
+// Prioritizes Laya (open source, $0 cost) when LAYA_URL is set or when TYPESAFE_API_KEY is not provided.
+// If TYPESAFE_API_KEY is provided, calls TypeSafe with fallback to Workers AI.
 export async function runJev(env: any, input: { state: unknown; questions: Record<string, any> }) {
-  if (!env.TYPESAFE_API_KEY) return await env.AI.run(JEV_MODEL, input);
+  const useLaya = Boolean(env.LAYA_URL || !env.TYPESAFE_API_KEY);
+  if (useLaya) {
+    try {
+      return await runLaya(env, input);
+    } catch (layaErr: any) {
+      if (env.TYPESAFE_API_KEY) {
+        try {
+          return await runJevTypesafe(env, input);
+        } catch (tsErr: any) {
+          throw new Error(`Decision model unavailable: Laya (${layaErr?.message || layaErr}) and TypeSafe (${tsErr?.message || tsErr})`);
+        }
+      }
+      const targetUrl = env.LAYA_URL || "http://127.0.0.1:8000/v1/systemone";
+      throw new Error(`Laya unavailable at ${targetUrl}: ${layaErr?.message || layaErr}. Make sure your local server is running (e.g. run 'laya-serve' in a terminal).`);
+    }
+  }
+
   try {
     return await runJevTypesafe(env, input);
   } catch (tsErr: any) {
@@ -90,12 +124,16 @@ export async function classifyBatch(env: any, videos: VideoRecord[], threshold =
     return { id: v.id, answers: a, needs_review: minConf < threshold, ...(spoken ? { source: "transcript" } : {}) };
   });
 
+  const modelName = res?.model || (env.LAYA_URL || !env.TYPESAFE_API_KEY ? "laya" : JEV_MODEL);
+  const isLaya = /laya/i.test(modelName) || !env.TYPESAFE_API_KEY;
+  const cost_usd = isLaya ? 0 : (input_tokens * JEV_PRICE_PER_M_INPUT) / 1_000_000;
+
   return {
-    model: res?.model || JEV_MODEL,
+    model: modelName,
     results,
     questions: Object.keys(questions).length,
     latency_ms,
     input_tokens,
-    cost_usd: (input_tokens * JEV_PRICE_PER_M_INPUT) / 1_000_000,
+    cost_usd,
   };
 }

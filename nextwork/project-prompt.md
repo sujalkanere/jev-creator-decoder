@@ -1,18 +1,18 @@
-# NextWork Project Prompt: Jev Content Decoder
+# Reme Project Prompt: Jev Content Decoder @sujalkanere
 
-Paste everything below the line into the NextWork project generator.
+Paste everything below the line into the Reme project generator.
 
 ---
 
-Generate a detailed, beginner-friendly NextWork project from this brief. Use every fact, command, file name, and button label exactly as written. The project has **Steps 1 to 4 plus one Secret Mission**, nothing more. For every file the learner edits, include an "I'd like to check the full code" section showing that file's full contents from the repository.
+Generate a detailed, beginner-friendly Reme project from this brief. Use every fact, command, file name, and button label exactly as written. The project has **Steps 1 to 4 plus one Secret Mission**, nothing more. For every file the learner edits, include an "I'd like to check the full code" section showing that file's full contents from the repository.
 
 ## Repository and links
-- Repository: https://github.com/Nik-1019/Jev-Creator-Decoder-NextWork (branch `main`, the finished project)
+- Repository: https://github.com/Nik-1019/Jev-Creator-Decoder-Reme (branch `main`, the finished project)
 
 ## Overview
-**Title:** Jev Content Decoder
+**Title:** Jev Content Decoder @sujalkanere
 **Persona:** You are the AI content strategist at a creator-led agency. Every client asks what actually works for creators in their niche, and answering it means hours of scrolling. You are going to run an internal tool that answers it in about a minute, powered by a brand-new decision model called Jev.
-**What you will build:** the NextWork Content Decoder, a dashboard you run on your own Cloudflare account. Enter any YouTube creator, and Jev labels every recent Short by hook type, structure, call to action, and hook strength from its title, in seconds. Then the app transcribes what the creator actually says in their 10 most-viewed and 10 latest Shorts, and Jev re-analyzes those spoken openings to check whether the creator's current hooks still match what worked. The dashboard shows which hooks actually drive views, runs this Top vs Latest hook strategy check, scores new hook ideas before you film, opens a creator snapshot, and answers questions about the results.
+**What you will build:** the Reme Content Decoder, a dashboard you run on your own Cloudflare account. Enter any YouTube creator, and Jev labels every recent Short by hook type, structure, call to action, and hook strength from its title, in seconds. Then the app transcribes what the creator actually says in their 10 most-viewed and 10 latest Shorts, and Jev re-analyzes those spoken openings to check whether the creator's current hooks still match what worked. The dashboard shows which hooks actually drive views, runs this Top vs Latest hook strategy check, scores new hook ideas before you film, opens a creator snapshot, and answers questions about the results.
 **Difficulty:** Intermediate
 **Time:** about 65 minutes, plus about 20 for the Secret Mission
 **Cost:** $5, one time. TypeSafe asks you to add $5 of credit before you can create an API key, and your Jev usage comes out of that credit (a 200-video decode costs well under $0.01). Cloudflare and YouTube are free with no credit card.
@@ -86,8 +86,8 @@ Generate a detailed, beginner-friendly NextWork project from this brief. Use eve
 5. **Create a free Cloudflare account** at dash.cloudflare.com. You don't need to change any settings there; setup handles the rest.
 6. **Clone the repository:**
    ```bash
-   git clone https://github.com/Nik-1019/Jev-Creator-Decoder-NextWork.git
-   cd Jev-Creator-Decoder-NextWork
+   git clone https://github.com/Nik-1019/Jev-Creator-Decoder-Reme.git
+   cd Jev-Creator-Decoder-Reme
    ```
 7. **Install the packages:**
    ```bash

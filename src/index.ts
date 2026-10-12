@@ -16,6 +16,9 @@ export interface Env {
   SETUP_TOKEN?: string;
   SETTINGS_SECRET?: string; // encrypts API keys saved from the Settings page; npm run setup / ship create it
   TYPESAFE_API_KEY?: string; // optional: when set, Jev runs on TypeSafe's API first, with Workers AI as fallback
+  LAYA_URL?: string; // optional: local or remote Laya System-1 URL (defaults to http://127.0.0.1:8000/v1/systemone)
+  LAYA_API_KEY?: string; // optional: bearer token for remote Laya hosting
+  LAYA_MODEL?: string; // optional: model name override (defaults to "laya")
   // Optional Model Race challengers. Each appears in the race once its key is set.
   ANTHROPIC_API_KEY?: string;
   OPENAI_API_KEY?: string;

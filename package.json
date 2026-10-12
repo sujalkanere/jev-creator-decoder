@@ -1,5 +1,5 @@
 {
-  "name": "nextwork-content-decoder",
+  "name": "reme-content-decoder",
   "version": "1.0.0",
   "private": true,
   "description": "Decode any YouTube creator's Shorts with Jev, TypeSafe AI's System One model, on Cloudflare Workers.",
@@ -8,7 +8,10 @@
     "dev": "node scripts/dev.mjs",
     "helper": "node scripts/helper.mjs",
     "ship": "node scripts/ship.mjs",
-    "reset-password": "node scripts/reset-password.mjs"
+    "reset-password": "node scripts/reset-password.mjs",
+    "serve:laya": "node -e \"Object.assign(process.env,{LAYA_DEVICE:'cuda',LAYA_MODELS:process.env.LAYA_MODELS||'typed-decisions'});require('child_process').execFileSync('laya-serve',[],{stdio:'inherit'})\"",
+    "serve:laya:cpu": "laya-serve",
+    "test:laya": "node scripts/test-laya.mjs"
   },
   "devDependencies": {
     "wrangler": "4.145.0"

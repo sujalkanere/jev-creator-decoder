@@ -4,7 +4,7 @@
 // browser: the Settings page only sees whether a key is set, where it came from, and its last 4 characters.
 import { CHALLENGERS, listChallengers } from "./race";
 
-export const SECRET_KEYS = ["YOUTUBE_API_KEY", "TYPESAFE_API_KEY", "ANTHROPIC_API_KEY", "OPENAI_API_KEY", "OPENROUTER_API_KEY"];
+export const SECRET_KEYS = ["YOUTUBE_API_KEY", "TYPESAFE_API_KEY", "LAYA_URL", "LAYA_API_KEY", "ANTHROPIC_API_KEY", "OPENAI_API_KEY", "OPENROUTER_API_KEY"];
 const MODEL_KEYS = ["ANTHROPIC_MODEL", "OPENAI_MODEL", "OPENROUTER_MODEL"];
 export const DEFAULTS = { CHAT_MODEL: "default", REVIEW_THRESHOLD: "0.6", DRAFT_COUNT: "5", TRANSCRIPT_GROUP: "10" };
 const PLAIN_KEYS = [...MODEL_KEYS, ...Object.keys(DEFAULTS)];

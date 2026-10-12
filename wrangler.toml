@@ -1,4 +1,4 @@
-name = "nextwork-content-decoder"
+name = "reme-content-decoder"
 main = "src/index.ts"
 compatibility_date = "2026-05-01"
 
@@ -20,5 +20,5 @@ remote = true
 [[d1_databases]]
 binding = "DB"
 database_name = "content-decoder"
-database_id = "823b6ec5-5bab-4b5d-9641-02059adac37b"
+database_id = "38612ad0-100f-47ed-b5ff-2c527b70425d"
 migrations_dir = "migrations"
